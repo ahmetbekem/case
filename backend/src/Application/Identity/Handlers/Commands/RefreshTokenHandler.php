@@ -117,9 +117,11 @@ final class RefreshTokenHandler extends AbstractCommandHandler
             ipAddress: $command->getUserIp(),
         );
 
+        // Insert NEW token first so the FK on the old token's
+        // replaced_by_token_id has a target by the time we update it.
+        $this->refreshTokenRepository->save($newRefreshResult['token']);
         $token->markAsRotated($newRefreshResult['token']->getId());
         $this->refreshTokenRepository->save($token);
-        $this->refreshTokenRepository->save($newRefreshResult['token']);
 
         $this->auditLogger->log(new AuditEvent(
             actor: 'userId:' . $user->getId()->value(),

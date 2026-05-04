@@ -93,7 +93,11 @@ return [
             'charset' => env('DB_CHARSET', 'utf8'),
             'prefix' => '',
             'prefix_indexes' => true,
-            'search_path' => 'public',
+            // Multi-schema search path — when an Eloquent model declares
+            // $table = 'identity.users', Postgres falls back to whichever
+            // schema in this list contains a matching unqualified name.
+            // Migrations always use schema-qualified names regardless.
+            'search_path' => 'public,identity,catalog,sales,currency',
             'sslmode' => 'prefer',
         ],
 

@@ -57,10 +57,22 @@ final class LoginUserHandler extends AbstractCommandHandler
             throw InvalidCredentialsException::forLogin();
         }
 
-        if (!$this->passwordHasher->verify(
-            PlainPassword::fromString($command->password),
-            $user->getPasswordHash(),
-        )) {
+        // Wrap PlainPassword construction — a too-short input must surface
+        // as InvalidCredentials (401) not Validation (422), otherwise the
+        // 422 reveals "this account exists, you just got the password wrong".
+        try {
+            $plain = PlainPassword::fromString($command->password);
+        } catch (\Domain\Shared\Exceptions\ValidationException) {
+            $this->emitFailureAudit(
+                $command,
+                'userId:' . $user->getId()->value(),
+                'user:' . $user->getId()->value(),
+                'password_format_invalid',
+            );
+            throw InvalidCredentialsException::forLogin();
+        }
+
+        if (!$this->passwordHasher->verify($plain, $user->getPasswordHash())) {
             $this->emitFailureAudit(
                 $command,
                 'userId:' . $user->getId()->value(),
