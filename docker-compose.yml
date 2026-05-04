@@ -1,0 +1,230 @@
+name: dehasoft-test
+
+services:
+  # ─────────────────────────────────────────────────────────────
+  # PostgreSQL 15 — primary datastore (4 schemas: identity, catalog, sales, currency)
+  # ─────────────────────────────────────────────────────────────
+  postgres:
+    image: postgres:15-alpine
+    container_name: dehasoft-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-testproject}
+      POSTGRES_USER: ${POSTGRES_USER:-dehasoft}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-dehasoft_pass}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-dehasoft} -d ${POSTGRES_DB:-testproject}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - dehasoft-net
+
+  # ─────────────────────────────────────────────────────────────
+  # Redis 7 — cache (currency rates, JWT blacklist) + queue backend
+  # ─────────────────────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: dehasoft-redis
+    restart: unless-stopped
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis-data:/data
+    command: ["redis-server", "--appendonly", "yes"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - dehasoft-net
+
+  # ─────────────────────────────────────────────────────────────
+  # RabbitMQ 3.13 — log message broker (audit/app/access exchanges)
+  # Management UI: http://localhost:15672 (admin/admin)
+  # ─────────────────────────────────────────────────────────────
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    container_name: dehasoft-rabbitmq
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-admin}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-admin}
+    ports:
+      - "${RABBITMQ_PORT:-5672}:5672"
+      - "${RABBITMQ_MGMT_PORT:-15672}:15672"
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+      # TODO TASK 0.18: declarative topology mount (definitions.json + rabbitmq.conf)
+      # - ./infrastructure/rabbitmq/definitions.json:/etc/rabbitmq/definitions.json:ro
+      # - ./infrastructure/rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+    networks:
+      - dehasoft-net
+
+  # ─────────────────────────────────────────────────────────────
+  # Elasticsearch 8.13 — log storage (audit/app/access indices)
+  # ─────────────────────────────────────────────────────────────
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.13.0
+    container_name: dehasoft-elasticsearch
+    restart: unless-stopped
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+      - bootstrap.memory_lock=true
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - "${ELASTICSEARCH_PORT:-9200}:9200"
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:9200/_cluster/health | grep -E '(green|yellow)' || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+    networks:
+      - dehasoft-net
+
+  # ─────────────────────────────────────────────────────────────
+  # Kibana 8.13 — log visualization (http://localhost:5601)
+  # ─────────────────────────────────────────────────────────────
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.13.0
+    container_name: dehasoft-kibana
+    restart: unless-stopped
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    ports:
+      - "${KIBANA_PORT:-5601}:5601"
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:5601/api/status || exit 1"]
+      interval: 20s
+      timeout: 10s
+      retries: 10
+    networks:
+      - dehasoft-net
+
+  # ─────────────────────────────────────────────────────────────
+  # APPLICATION SERVICES — uncomment as bootstraps land
+  # ─────────────────────────────────────────────────────────────
+
+  # TODO TASK 0.13: enable backend after Dockerfile lands (currently no build context)
+  # backend:
+  #   build:
+  #     context: ./backend
+  #     dockerfile: Dockerfile
+  #   container_name: dehasoft-backend
+  #   restart: unless-stopped
+  #   environment:
+  #     DB_CONNECTION: pgsql
+  #     DB_HOST: postgres
+  #     DB_PORT: 5432
+  #     DB_DATABASE: ${POSTGRES_DB:-testproject}
+  #     DB_USERNAME: ${POSTGRES_USER:-dehasoft}
+  #     DB_PASSWORD: ${POSTGRES_PASSWORD:-dehasoft_pass}
+  #     REDIS_HOST: redis
+  #     REDIS_PORT: 6379
+  #     RABBITMQ_HOST: rabbitmq
+  #     RABBITMQ_PORT: 5672
+  #     RABBITMQ_USER: ${RABBITMQ_USER:-admin}
+  #     RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:-admin}
+  #     LOG_CHANNEL: stack
+  #     APP_ENV: ${APP_ENV:-local}
+  #     APP_DEBUG: ${APP_DEBUG:-true}
+  #     BACKEND_PROXY_SECRET: ${BACKEND_PROXY_SECRET}
+  #   expose:
+  #     - "9000"
+  #   depends_on:
+  #     postgres: { condition: service_healthy }
+  #     redis: { condition: service_healthy }
+  #     rabbitmq: { condition: service_healthy }
+  #   networks:
+  #     - dehasoft-net
+
+  # TODO TASK 0.13: queue-worker shares backend image, runs queue:work command
+  # queue-worker:
+  #   build:
+  #     context: ./backend
+  #     dockerfile: Dockerfile
+  #   container_name: dehasoft-queue-worker
+  #   restart: unless-stopped
+  #   command: php artisan queue:work --queue=logs --tries=3 --timeout=60
+  #   environment:
+  #     # (same as backend)
+  #     DB_CONNECTION: pgsql
+  #     DB_HOST: postgres
+  #     REDIS_HOST: redis
+  #     RABBITMQ_HOST: rabbitmq
+  #   depends_on:
+  #     redis: { condition: service_healthy }
+  #     rabbitmq: { condition: service_healthy }
+  #   networks:
+  #     - dehasoft-net
+
+  # TODO TASK 0.14: enable frontend after Dockerfile lands
+  # frontend:
+  #   build:
+  #     context: ./frontend
+  #     dockerfile: Dockerfile
+  #   container_name: dehasoft-frontend
+  #   restart: unless-stopped
+  #   environment:
+  #     LARAVEL_API_URL: http://backend:9000/api/v1
+  #     BACKEND_PROXY_SECRET: ${BACKEND_PROXY_SECRET}
+  #     NODE_ENV: ${NODE_ENV:-development}
+  #   ports:
+  #     - "${FRONTEND_PORT:-3000}:3000"
+  #   depends_on:
+  #     - backend
+  #   networks:
+  #     - dehasoft-net
+
+  # TODO TASK 0.17: enable log-service after Dockerfile lands
+  # log-service:
+  #   build:
+  #     context: ./log-service
+  #     dockerfile: Dockerfile
+  #   container_name: dehasoft-log-service
+  #   restart: unless-stopped
+  #   environment:
+  #     RABBITMQ_URL: amqp://${RABBITMQ_USER:-admin}:${RABBITMQ_PASSWORD:-admin}@rabbitmq:5672
+  #     ELASTICSEARCH_URL: http://elasticsearch:9200
+  #     LOG_LEVEL: ${LOG_LEVEL:-info}
+  #   depends_on:
+  #     rabbitmq: { condition: service_healthy }
+  #     elasticsearch: { condition: service_healthy }
+  #   networks:
+  #     - dehasoft-net
+
+# ─────────────────────────────────────────────────────────────
+volumes:
+  postgres-data:
+    driver: local
+  redis-data:
+    driver: local
+  rabbitmq-data:
+    driver: local
+  elasticsearch-data:
+    driver: local
+
+networks:
+  dehasoft-net:
+    driver: bridge
+    name: dehasoft-net
