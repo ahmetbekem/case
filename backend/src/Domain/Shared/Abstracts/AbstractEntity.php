@@ -9,10 +9,10 @@ use Domain\Shared\Contracts\ValueObjectInterface;
 
 abstract class AbstractEntity implements EntityInterface
 {
-    protected ?\DateTimeImmutable $createdAt = null;
+    protected \DateTimeImmutable $createdAt;
     protected ?\DateTimeImmutable $updatedAt = null;
 
-    public function getCreatedAt(): ?\DateTimeImmutable
+    public function getCreatedAt(): \DateTimeImmutable
     {
         return $this->createdAt;
     }

@@ -82,7 +82,7 @@ final class RefreshToken extends AbstractEntity
 
     // ─── Getters ────────────────────────────────────────────────
 
-    public function getId(): ValueObjectInterface
+    public function getId(): RefreshTokenId
     {
         return $this->id;
     }

@@ -32,7 +32,7 @@ final class User extends AbstractEntity
 
     // ─── Getters ────────────────────────────────────────────────
 
-    public function getId(): ValueObjectInterface
+    public function getId(): UserId
     {
         return $this->id;
     }
