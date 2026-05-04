@@ -8,6 +8,7 @@ use Application\Identity\Commands\LogoutUserCommand;
 use Application\Shared\Abstracts\AbstractCommandHandler;
 use Application\Shared\Contracts\CommandInterface;
 use Application\Shared\Contracts\TransactionInterface;
+use Domain\Identity\Contracts\JwtBlacklistInterface;
 use Domain\Identity\Contracts\RefreshTokenRepositoryInterface;
 use Domain\Identity\Entities\RefreshToken;
 use Domain\Logging\Contracts\AuditLoggerInterface;
@@ -18,6 +19,7 @@ final class LogoutUserHandler extends AbstractCommandHandler
 {
     public function __construct(
         private readonly RefreshTokenRepositoryInterface $refreshTokenRepository,
+        private readonly JwtBlacklistInterface $jwtBlacklist,
         private readonly AuditLoggerInterface $auditLogger,
         TransactionInterface $transaction,
         LoggerInterface $logger,
@@ -53,6 +55,15 @@ final class LogoutUserHandler extends AbstractCommandHandler
             familyId: $token->getFamilyId(),
             reason: RefreshToken::REVOKE_REASON_LOGOUT,
         );
+
+        // Blacklist the still-valid access token for the rest of its lifetime
+        // so it cannot be reused before its natural expiry (SECURITY.md §4.6).
+        if ($command->accessTokenJti !== null && $command->accessTokenRemainingTtl !== null) {
+            $this->jwtBlacklist->add(
+                $command->accessTokenJti,
+                $command->accessTokenRemainingTtl,
+            );
+        }
 
         $this->auditLogger->log(new AuditEvent(
             actor: 'userId:' . $token->getUserId()->value(),

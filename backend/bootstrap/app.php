@@ -13,6 +13,10 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
 use Presentation\Identity\Middleware\JwtAuthMiddleware;
+use Presentation\Shared\Middleware\CorrelationIdMiddleware;
+use Presentation\Shared\Middleware\CsrfOriginMiddleware;
+use Presentation\Shared\Middleware\ProxyOriginMiddleware;
+use Presentation\Shared\Middleware\RoleMiddleware;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -22,10 +26,21 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        // Module middleware aliases. ProxyOriginMiddleware + RoleMiddleware
-        // come in TASK 0.8 (Security Middleware).
+        // Global API stack — runs on every /api/* request, in order.
+        // CorrelationId first so subsequent middleware (audit logs!) can
+        // attach the id to their events. ProxyOrigin next — fail fast on
+        // unauthorised callers. CsrfOrigin filters itself to state-changing
+        // methods only.
+        $middleware->appendToGroup('api', [
+            CorrelationIdMiddleware::class,
+            ProxyOriginMiddleware::class,
+            CsrfOriginMiddleware::class,
+        ]);
+
+        // Route-level aliases (used as middleware('jwt.auth'), middleware('role:admin'))
         $middleware->alias([
             'jwt.auth' => JwtAuthMiddleware::class,
+            'role'     => RoleMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

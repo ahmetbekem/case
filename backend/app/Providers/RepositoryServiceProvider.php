@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Providers;
 
 use Application\Shared\Contracts\TransactionInterface;
+use Domain\Identity\Contracts\JwtBlacklistInterface;
 use Domain\Identity\Contracts\JwtIssuerInterface;
 use Domain\Identity\Contracts\PasswordHasherInterface;
 use Domain\Identity\Contracts\RefreshTokenRepositoryInterface;
@@ -14,6 +15,7 @@ use Infrastructure\Identity\Repositories\EloquentRefreshTokenRepository;
 use Infrastructure\Identity\Repositories\EloquentUserRepository;
 use Infrastructure\Identity\Services\BcryptPasswordHasher;
 use Infrastructure\Identity\Services\HmacJwtIssuer;
+use Infrastructure\Identity\Services\RedisJwtBlacklist;
 use Infrastructure\Shared\Persistence\EloquentTransaction;
 
 final class RepositoryServiceProvider extends ServiceProvider
@@ -35,6 +37,9 @@ final class RepositoryServiceProvider extends ServiceProvider
 
         // ─── Cross-cutting infrastructure ───
         TransactionInterface::class            => EloquentTransaction::class,
+
+        // ─── JWT denylist (cache-backed; array driver in tests) ───
+        JwtBlacklistInterface::class           => RedisJwtBlacklist::class,
     ];
 
     public function register(): void

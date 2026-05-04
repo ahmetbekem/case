@@ -77,11 +77,17 @@ final class AuthController extends AbstractApiController
 
     public function logout(Request $request): JsonResponse
     {
+        $jti = $request->attributes->get('jwt_jti');
+        $exp = $request->attributes->get('jwt_exp');
+        $remaining = is_int($exp) ? max(0, $exp - time()) : null;
+
         $command = new LogoutUserCommand(
             userId: $this->getUserId($request),
             correlationId: $this->getCorrelationId($request),
             userIp: $request->ip() ?? '0.0.0.0',
             refreshToken: (string) $request->input('refresh_token', ''),
+            accessTokenJti: is_string($jti) ? $jti : null,
+            accessTokenRemainingTtl: $remaining,
         );
 
         $this->commandBus->dispatch($command);

@@ -40,5 +40,7 @@
         <env name="QUEUE_CONNECTION" value="sync"/>
         <env name="SESSION_DRIVER" value="array"/>
         <env name="TELESCOPE_ENABLED" value="false"/>
+        <env name="BACKEND_PROXY_SECRET" value="test-proxy-secret-for-pest-suite"/>
+        <env name="SECURITY_ALLOWED_ORIGINS" value="http://localhost"/>
     </php>
 </phpunit>

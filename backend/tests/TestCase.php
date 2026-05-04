@@ -10,11 +10,17 @@ abstract class TestCase extends BaseTestCase
 {
     protected function setUp(): void
     {
-        // Suppress PHP 8.5 deprecation warnings from Laravel 11's MySQL
-        // config so Pest does not flag every test as `DEPR`. Same rationale
-        // as the bootstrap/app.php filter — temporary until upstream patch.
         error_reporting(E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED);
 
         parent::setUp();
+
+        // Default headers for every Feature HTTP test:
+        // - X-Proxy-Secret satisfies ProxyOriginMiddleware
+        // - Origin satisfies CsrfOriginMiddleware on POST/PUT/PATCH/DELETE
+        // Specific tests can drop these via $this->withoutHeaders([...]).
+        $this->withHeaders([
+            'X-Proxy-Secret' => (string) config('security.proxy_secret', ''),
+            'Origin' => 'http://localhost',
+        ]);
     }
 }

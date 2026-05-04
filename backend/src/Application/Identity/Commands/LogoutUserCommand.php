@@ -13,6 +13,12 @@ final readonly class LogoutUserCommand extends AbstractCommand
         string $correlationId,
         string $userIp,
         public string $refreshToken,
+        // Optional: when present we also blacklist the access token jti
+        // for the rest of its lifetime so it can't be replayed before its
+        // natural 15-minute expiry. Pulled from JwtAuthMiddleware attributes
+        // by AuthController::logout (request->attributes 'jwt_jti' / 'jwt_exp').
+        public ?string $accessTokenJti = null,
+        public ?int $accessTokenRemainingTtl = null,
     ) {
         parent::__construct($userId, $correlationId, $userIp);
     }
