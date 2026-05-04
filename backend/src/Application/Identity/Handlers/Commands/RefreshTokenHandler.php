@@ -49,6 +49,40 @@ final class RefreshTokenHandler extends AbstractCommandHandler
     }
 
     /**
+     * Override AbstractCommandHandler::handle() to bypass the transaction
+     * wrapper. Replay detection's revokeFamily UPDATE MUST commit even
+     * when we throw RefreshTokenReplayException immediately afterward —
+     * if it lived inside a transaction the rollback would un-revoke the
+     * stolen family, defeating the whole point of detection.
+     *
+     * Each individual operation in this handler is already atomic at the
+     * SQL level (single UPDATE / INSERT statements), so we lose nothing
+     * meaningful by stepping outside the wrapping transaction.
+     */
+    public function handle(CommandInterface $command): mixed
+    {
+        $startedAt = microtime(true);
+        try {
+            $result = $this->doHandle($command);
+            $this->logger->info('Command handled', [
+                'command' => $command->getCommandName(),
+                'durationMs' => (int) ((microtime(true) - $startedAt) * 1000),
+                'correlationId' => $command->getCorrelationId(),
+                'userId' => $command->getUserId(),
+            ]);
+            return $result;
+        } catch (\Throwable $e) {
+            $this->logger->error('Command failed', [
+                'command' => $command->getCommandName(),
+                'errorClass' => $e::class,
+                'error' => $e->getMessage(),
+                'correlationId' => $command->getCorrelationId(),
+            ]);
+            throw $e;
+        }
+    }
+
+    /**
      * @throws InvalidRefreshTokenException
      * @throws RefreshTokenExpiredException
      * @throws RefreshTokenReplayException
