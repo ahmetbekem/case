@@ -2,7 +2,7 @@
 
 Onion Architecture + CQRS + DDD (Lite). 4 modül: Identity, Catalog, Sales, Currency.
 
-**Bootstrap:** TASK 0.4'te `composer create-project` ile kurulacak.
+**Bootstrap:** ✅ TASK 0.4 tamam — Laravel 11.51, Pest 3.8, JWT-Auth 2.3, ramsey/uuid, php-amqplib, predis kuruldu. PSR-4 autoload `Application/`, `Domain/`, `Infrastructure/`, `Presentation/` namespace'leriyle haritalandı. `src/` 4×5 layer-module hiyerarşisi hazır.
 
 ## Layer Yapısı
 
