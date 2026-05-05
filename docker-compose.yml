@@ -252,22 +252,32 @@ services:
     networks:
       - dehasoft-net
 
-  # TODO TASK 0.17: enable log-service after Dockerfile lands
-  # log-service:
-  #   build:
-  #     context: ./log-service
-  #     dockerfile: Dockerfile
-  #   container_name: dehasoft-log-service
-  #   restart: unless-stopped
-  #   environment:
-  #     RABBITMQ_URL: amqp://${RABBITMQ_USER:-admin}:${RABBITMQ_PASSWORD:-admin}@rabbitmq:5672
-  #     ELASTICSEARCH_URL: http://elasticsearch:9200
-  #     LOG_LEVEL: ${LOG_LEVEL:-info}
-  #   depends_on:
-  #     rabbitmq: { condition: service_healthy }
-  #     elasticsearch: { condition: service_healthy }
-  #   networks:
-  #     - dehasoft-net
+  # ─────────────────────────────────────────────────────────────
+  # Log service (Node.js/TypeScript) — RabbitMQ → Elasticsearch
+  # 3 consumer: audit, app, access. Topology defansif olarak burada da
+  # tanımlanır; TASK 0.18 declarative definitions.json devreye girince
+  # broker tarafında zaten mevcut olduğu için noop'a düşer.
+  # ─────────────────────────────────────────────────────────────
+  log-service:
+    build:
+      context: ./log-service
+      dockerfile: Dockerfile
+    container_name: dehasoft-log-service
+    restart: unless-stopped
+    environment:
+      NODE_ENV: ${NODE_ENV:-production}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: ${RABBITMQ_USER:-admin}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:-admin}
+      RABBITMQ_VHOST: /
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+    depends_on:
+      rabbitmq: { condition: service_healthy }
+      elasticsearch: { condition: service_healthy }
+    networks:
+      - dehasoft-net
 
 # ─────────────────────────────────────────────────────────────
 volumes:
