@@ -48,8 +48,10 @@ const eslintConfig = defineConfig([
 
   // server-fetch.ts is the one canonical caller of serverEnv — the
   // banned-imports rule is meant to fence OUT every OTHER consumer.
+  // BFF route handlers (src/app/api/**) are also server-only and need
+  // server-fetch + serverEnv to talk to Laravel.
   {
-    files: ["src/shared/api/server-fetch.ts"],
+    files: ["src/shared/api/server-fetch.ts", "src/app/api/**/*.ts"],
     rules: {
       "no-restricted-imports": "off",
     },
