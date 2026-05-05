@@ -61,9 +61,10 @@ services:
       - "${RABBITMQ_MGMT_PORT:-15672}:15672"
     volumes:
       - rabbitmq-data:/var/lib/rabbitmq
-      # TODO TASK 0.18: declarative topology mount (definitions.json + rabbitmq.conf)
-      # - ./infrastructure/rabbitmq/definitions.json:/etc/rabbitmq/definitions.json:ro
-      # - ./infrastructure/rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
+      # Declarative topology — exchanges, queues, bindings, policies.
+      # rabbitmq.conf load_definitions ile broker boot'ta yüklüyor.
+      - ./infrastructure/rabbitmq/definitions.json:/etc/rabbitmq/definitions.json:ro
+      - ./infrastructure/rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
     healthcheck:
       test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
       interval: 15s

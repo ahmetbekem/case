@@ -1,0 +1,19 @@
+{
+  "template": {
+    "mappings": {
+      "properties": {
+        "method": { "type": "keyword" },
+        "path": { "type": "keyword" },
+        "statusCode": { "type": "short" },
+        "durationMs": { "type": "integer" },
+        "ipAddress": { "type": "ip" },
+        "userAgent": { "type": "keyword" },
+        "requestSize": { "type": "long" },
+        "responseSize": { "type": "long" }
+      }
+    }
+  },
+  "_meta": {
+    "description": "Access log özel alanları (HTTP istatistikleri)"
+  }
+}

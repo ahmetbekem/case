@@ -1,0 +1,14 @@
+{
+  "index_patterns": ["logs-app-*"],
+  "priority": 200,
+  "composed_of": ["logs-common"],
+  "template": {
+    "settings": {
+      "index.lifecycle.name": "logs-app-policy"
+    }
+  },
+  "_meta": {
+    "description": "Application logs — ILM 14 gün retention",
+    "category": "app"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "index_patterns": ["logs-access-*"],
+  "priority": 200,
+  "composed_of": ["logs-common", "logs-access"],
+  "template": {
+    "settings": {
+      "index.lifecycle.name": "logs-access-policy"
+    }
+  },
+  "_meta": {
+    "description": "Access logs — ILM 30 gün retention",
+    "category": "access"
+  }
+}

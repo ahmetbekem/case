@@ -1,0 +1,14 @@
+{
+  "index_patterns": ["logs-audit-*"],
+  "priority": 200,
+  "composed_of": ["logs-common", "logs-audit"],
+  "template": {
+    "settings": {
+      "index.lifecycle.name": "logs-audit-policy"
+    }
+  },
+  "_meta": {
+    "description": "Audit logs — ILM 90 gün retention",
+    "category": "audit"
+  }
+}

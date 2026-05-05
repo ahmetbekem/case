@@ -1,0 +1,34 @@
+{
+  "template": {
+    "settings": {
+      "number_of_shards": 1,
+      "number_of_replicas": 0,
+      "index.refresh_interval": "5s",
+      "index.codec": "best_compression"
+    },
+    "mappings": {
+      "dynamic": "true",
+      "_source": { "enabled": true },
+      "properties": {
+        "@timestamp": { "type": "date" },
+        "id": { "type": "keyword" },
+        "timestamp": { "type": "date" },
+        "level": { "type": "keyword" },
+        "module": { "type": "keyword" },
+        "action": { "type": "keyword" },
+        "category": { "type": "keyword" },
+        "routingKey": { "type": "keyword" },
+        "correlationId": { "type": "keyword" },
+        "userId": { "type": "keyword" },
+        "message": { "type": "text" },
+        "context": {
+          "type": "object",
+          "enabled": true
+        }
+      }
+    }
+  },
+  "_meta": {
+    "description": "Logs ortak alanlar — audit/app/access için tek kaynak"
+  }
+}

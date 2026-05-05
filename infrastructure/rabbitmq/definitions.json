@@ -1,0 +1,126 @@
+{
+  "rabbit_version": "3.13.0",
+  "users": [
+    {
+      "name": "admin",
+      "password_hash": "kI3GCmuz7tp9wJQo4CwKdfoH8j4jGNyVlii5XN/a7VRhnWh5",
+      "hashing_algorithm": "rabbit_password_hashing_sha256",
+      "tags": ["administrator"]
+    }
+  ],
+  "vhosts": [
+    { "name": "/" }
+  ],
+  "permissions": [
+    {
+      "user": "admin",
+      "vhost": "/",
+      "configure": ".*",
+      "write": ".*",
+      "read": ".*"
+    }
+  ],
+  "policies": [
+    {
+      "vhost": "/",
+      "name": "ha-logs",
+      "pattern": "^logs\\.",
+      "apply-to": "queues",
+      "definition": {
+        "max-length": 100000,
+        "overflow": "drop-head"
+      },
+      "priority": 0
+    }
+  ],
+  "exchanges": [
+    {
+      "name": "logs.exchange",
+      "vhost": "/",
+      "type": "topic",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    },
+    {
+      "name": "logs.dlx",
+      "vhost": "/",
+      "type": "topic",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    }
+  ],
+  "queues": [
+    {
+      "name": "logs.audit.queue",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-dead-letter-exchange": "logs.dlx"
+      }
+    },
+    {
+      "name": "logs.app.queue",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-dead-letter-exchange": "logs.dlx"
+      }
+    },
+    {
+      "name": "logs.access.queue",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-dead-letter-exchange": "logs.dlx"
+      }
+    },
+    {
+      "name": "logs.dlq",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    }
+  ],
+  "bindings": [
+    {
+      "source": "logs.exchange",
+      "vhost": "/",
+      "destination": "logs.audit.queue",
+      "destination_type": "queue",
+      "routing_key": "log.audit.#",
+      "arguments": {}
+    },
+    {
+      "source": "logs.exchange",
+      "vhost": "/",
+      "destination": "logs.app.queue",
+      "destination_type": "queue",
+      "routing_key": "log.app.#",
+      "arguments": {}
+    },
+    {
+      "source": "logs.exchange",
+      "vhost": "/",
+      "destination": "logs.access.queue",
+      "destination_type": "queue",
+      "routing_key": "log.access.#",
+      "arguments": {}
+    },
+    {
+      "source": "logs.dlx",
+      "vhost": "/",
+      "destination": "logs.dlq",
+      "destination_type": "queue",
+      "routing_key": "#",
+      "arguments": {}
+    }
+  ]
+}
