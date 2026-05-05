@@ -27,6 +27,18 @@ export function useCancelOrderMutation() {
         queryKey: ['order', 'list'],
         exact: false,
       });
+      // Backend cancel anında stokları geri yazar (CancelOrderHandler.restock).
+      // Kullanıcı /products veya /admin/products sekmesindeyse cache stale
+      // kalmasın diye product list + detail query'lerini de invalidate ediyoruz.
+      await queryClient.invalidateQueries({
+        queryKey: ['product'],
+        exact: false,
+      });
+      // Sepet snapshot'ı (varsa) da fiyat/stock referansı taşıdığı için tazele
+      await queryClient.invalidateQueries({
+        queryKey: ['cart'],
+        exact: false,
+      });
     },
   });
 }

@@ -35,6 +35,12 @@ export function usePlaceOrderMutation() {
         queryKey: ['order', 'list'],
         exact: false,
       });
+      // PlaceOrderHandler.decreaseStock — sipariş kalemleri stoktan düşürüldü;
+      // /products veya /admin/products açıksa stok rakamları stale kalmasın.
+      await queryClient.invalidateQueries({
+        queryKey: ['product'],
+        exact: false,
+      });
       router.push(`/orders/${response.data.id}`);
       router.refresh();
     },
