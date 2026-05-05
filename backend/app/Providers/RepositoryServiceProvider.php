@@ -42,28 +42,22 @@ final class RepositoryServiceProvider extends ServiceProvider
      * @var array<class-string, class-string>
      */
     public array $bindings = [
-        // ─── Identity Repositories ───
         UserRepositoryInterface::class         => EloquentUserRepository::class,
         RefreshTokenRepositoryInterface::class => EloquentRefreshTokenRepository::class,
 
-        // ─── Catalog Repositories ───
         ProductRepositoryInterface::class      => EloquentProductRepository::class,
 
-        // ─── Currency Repositories + Providers + Domain Services ───
         ExchangeRateRepositoryInterface::class => EloquentExchangeRateRepository::class,
         ExchangeRateProviderInterface::class   => FrankfurterApiProvider::class,
         // CurrencyConverter is a stateless final readonly service — Container
         // can autowire it directly; we list it for explicitness.
         CurrencyConverter::class               => CurrencyConverter::class,
 
-        // ─── Sales Repositories ───
         CartRepositoryInterface::class         => EloquentCartRepository::class,
         OrderRepositoryInterface::class        => EloquentOrderRepository::class,
 
-        // ─── Cross-cutting infrastructure ───
         TransactionInterface::class            => EloquentTransaction::class,
 
-        // ─── JWT denylist (cache-backed; array driver in tests) ───
         JwtBlacklistInterface::class           => RedisJwtBlacklist::class,
     ];
 

@@ -65,22 +65,18 @@ final class BusServiceProvider extends ServiceProvider
      * @var array<class-string, class-string>
      */
     protected array $commandHandlers = [
-        // ─── Identity ───
         RegisterUserCommand::class => RegisterUserHandler::class,
         LoginUserCommand::class    => LoginUserHandler::class,
         RefreshTokenCommand::class => RefreshTokenHandler::class,
         LogoutUserCommand::class   => LogoutUserHandler::class,
 
-        // ─── Catalog ───
         CreateProductCommand::class => CreateProductHandler::class,
         UpdateProductCommand::class => UpdateProductHandler::class,
         DeleteProductCommand::class => DeleteProductHandler::class,
         AdjustStockCommand::class   => AdjustStockHandler::class,
 
-        // ─── Currency ───
         SyncCurrencyRatesCommand::class => SyncCurrencyRatesHandler::class,
 
-        // ─── Sales ───
         AddItemToCartCommand::class            => AddItemToCartHandler::class,
         UpdateCartItemQuantityCommand::class   => UpdateCartItemQuantityHandler::class,
         RemoveCartItemCommand::class           => RemoveCartItemHandler::class,
@@ -93,18 +89,14 @@ final class BusServiceProvider extends ServiceProvider
      * @var array<class-string, class-string>
      */
     protected array $queryHandlers = [
-        // ─── Identity ───
         GetCurrentUserQuery::class => GetCurrentUserHandler::class,
 
-        // ─── Catalog ───
         GetProductQuery::class     => GetProductHandler::class,
         ListProductsQuery::class   => ListProductsHandler::class,
 
-        // ─── Currency ───
         GetExchangeRateQuery::class           => GetExchangeRateHandler::class,
         ListSupportedCurrenciesQuery::class   => ListSupportedCurrenciesHandler::class,
 
-        // ─── Sales ───
         GetCartQuery::class             => GetCartHandler::class,
         GetOrderQuery::class            => GetOrderHandler::class,
         ListUserOrdersQuery::class      => ListUserOrdersHandler::class,
