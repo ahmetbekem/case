@@ -65,6 +65,14 @@ return [
             'replace_placeholders' => true,
         ],
 
+        // Custom channel — ships application logs to RabbitMQ via the
+        // logs Redis queue. See LOGGING_SERVICE.md §7.5.
+        'rabbitmq' => [
+            'driver' => 'custom',
+            'via' => \Infrastructure\Logging\Application\RabbitMqLogChannel::class,
+            'level' => env('LOG_LEVEL', 'info'),
+        ],
+
         'daily' => [
             'driver' => 'daily',
             'path' => storage_path('logs/laravel.log'),

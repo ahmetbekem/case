@@ -11,6 +11,9 @@
         <testsuite name="Application">
             <directory>tests/Unit/Application</directory>
         </testsuite>
+        <testsuite name="Infrastructure">
+            <directory>tests/Unit/Infrastructure</directory>
+        </testsuite>
         <testsuite name="Feature">
             <directory>tests/Feature</directory>
         </testsuite>

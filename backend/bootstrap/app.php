@@ -12,6 +12,8 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
+use Infrastructure\Logging\Access\AccessLogMiddleware;
+use Infrastructure\Logging\Console\ReplayAuditFallbackCommand;
 use Presentation\Identity\Middleware\JwtAuthMiddleware;
 use Presentation\Shared\Middleware\CorrelationIdMiddleware;
 use Presentation\Shared\Middleware\CsrfOriginMiddleware;
@@ -25,6 +27,9 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
+    ->withCommands([
+        ReplayAuditFallbackCommand::class,
+    ])
     ->withMiddleware(function (Middleware $middleware) {
         // Global API stack — runs on every /api/* request, in order.
         // CorrelationId first so subsequent middleware (audit logs!) can
@@ -35,6 +40,9 @@ return Application::configure(basePath: dirname(__DIR__))
             CorrelationIdMiddleware::class,
             ProxyOriginMiddleware::class,
             CsrfOriginMiddleware::class,
+            // AccessLogMiddleware terminates after the response is sent
+            // so log shipping never adds latency to the user-facing path.
+            AccessLogMiddleware::class,
         ]);
 
         // Route-level aliases (used as middleware('jwt.auth'), middleware('role:admin'))
