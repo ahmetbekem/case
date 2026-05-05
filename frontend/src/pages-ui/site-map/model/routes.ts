@@ -13,7 +13,7 @@ export interface RouteEntry {
   external?: boolean;
   /** true ise kart "Coming Soon" disabled görünür */
   comingSoon?: boolean;
-  /** Sayfa-bazlı not (ör. "Next.js scaffold placeholder") */
+  /** Sayfa-bazlı opsiyonel etiket (ör. "beta", "deprecated") */
   badge?: string;
 }
 
@@ -31,10 +31,10 @@ export const SECTIONS: ReadonlyArray<RouteSection> = [
       {
         path: '/',
         title: 'Anasayfa',
-        description: 'Şu an Next.js scaffold placeholder — gerçek anasayfa henüz yazılmadı.',
+        description:
+          'Karşılama + sayfalar arası geçiş hub\'ı. Public + customer + admin + dev araçları kart\'ları role göre dinamik görünür.',
         access: 'public',
         endpoints: [],
-        badge: 'placeholder',
       },
       {
         path: '/login',

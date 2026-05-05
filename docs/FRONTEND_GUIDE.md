@@ -18,7 +18,7 @@ ayrıca işaretlenmiştir.
 
 | Route | Dosya | Auth | Rol | Backend Endpoint(ler)i | Açıklama |
 |-------|-------|------|-----|------------------------|----------|
-| `/` | `app/page.tsx` | Public | — | (yok) | **⚠️ Next.js scaffold placeholder** — gerçek anasayfa henüz yazılmadı |
+| `/` | `app/(shop)/page.tsx` | Public | — | (yok) | Karşılama + sayfalar arası geçiş hub'ı (role-aware kart'lar) |
 | `/login` | `app/(auth)/login/page.tsx` | Public | — | `POST /api/auth/login` | Giriş formu (email + password) |
 | `/register` | `app/(auth)/register/page.tsx` | Public | — | `POST /api/auth/register` | Yeni hesap kaydı |
 | `/products` | `app/(shop)/products/page.tsx` | Public | — | `GET /api/catalog/products` | Ürün listesi (paginated, search, currency switch) |
@@ -252,21 +252,22 @@ export function useAddCartItemMutation() {
 ```
 src/app/
 ├── layout.tsx                   # Root: HTML, Geist fonts, QueryProvider
-├── page.tsx                     # / (⚠️ Next.js scaffold placeholder)
 ├── globals.css
 │
-├── (auth)/                      # Route group — auth sayfaları
+├── (auth)/                      # Route group — auth sayfaları (Header/Footer YOK)
 │   ├── login/page.tsx
-│   └── register/page.tsx        # → minimal layout (header yok)
+│   └── register/page.tsx
 │
-├── (shop)/                      # Route group — shopping flow
-│   ├── layout.tsx               # Header (Brand + currency switch + cart count + UserMenu)
+├── (shop)/                      # Route group — Header + Footer wrap'li sayfalar
+│   ├── layout.tsx               # Header (Brand+currency+cart+UserMenu) + main + Footer
+│   ├── page.tsx                 # / — karşılama + sayfa geçiş hub'ı (role-aware)
+│   ├── site-map/page.tsx        # canlı route + endpoint rehberi
+│   ├── products/page.tsx
+│   ├── products/[id]/page.tsx
 │   ├── cart/page.tsx
 │   ├── checkout/page.tsx
 │   ├── orders/page.tsx
-│   ├── orders/[id]/page.tsx
-│   ├── products/page.tsx
-│   └── products/[id]/page.tsx
+│   └── orders/[id]/page.tsx
 │
 ├── (admin)/                     # Route group — admin
 │   └── admin/
@@ -355,7 +356,6 @@ Tam shadcn init yapılmadı — `cn.ts` helper + manual `Button`, `Input`, `Labe
 
 | Eksik | Etki | Tahmini iş |
 |-------|------|-----------|
-| Anasayfa (`/`) — Next.js scaffold | Demoda kötü görünür | 1-2 saat |
 | `error.tsx` / `not-found.tsx` / `loading.tsx` | Hata cevabı default Next.js fallback | 1 saat |
 | Login `returnUrl` | Auth-required action'lardan login'e yönlenip geri dönmek imkansız | 2-3 saat |
 | `/profile` sayfası | User kendi bilgilerini güncelleyemiyor | 2 saat |

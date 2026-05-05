@@ -217,7 +217,7 @@ Tüm sayfa-route-endpoint haritası: [`docs/FRONTEND_GUIDE.md`](docs/FRONTEND_GU
 
 | Servis | URL |
 |---|---|
-| Anasayfa | http://localhost:3030 (⚠️ scaffold placeholder) |
+| Anasayfa | http://localhost:3030 |
 | Site Haritası | http://localhost:3030/site-map |
 | Ürünler | http://localhost:3030/products |
 | Login | http://localhost:3030/login |
