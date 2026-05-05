@@ -344,6 +344,12 @@ cd backend && php artisan db:seed --force
 
 Idempotent — tekrar çalıştırılınca aynı email'lerin şifresini günceller, yeni kayıt yaratmaz.
 
+### Demo Ürünler
+
+`ProductSeeder` ardından **12 ürün** yüklenir (giyim 3 / ayakkabı 2 / elektronik 3 / kitap 2 / ev 2). `created_by` admin kullanıcı. Para birimi karışık (TRY/USD/EUR) — currency switcher demo'su için. Bir ürün (`HOME-MUG-CERAMIC`) **stoksuz** — out-of-stock UI testi için.
+
+SKU üzerinden updateOrCreate; tekrar seed yeni kayıt yaratmaz.
+
 > **Not:** `UserFactory.php` silindi (Faker dev-only, prod container'da yok ve auto-discovery hata veriyordu). Faker tabanlı yeni factory gerekirse: `composer require --dev fakerphp/faker` + image rebuild.
 
 ### URL'ler (sistem ayaktayken)
