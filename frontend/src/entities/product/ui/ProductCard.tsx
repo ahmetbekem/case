@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 
-import { formatMoney } from '@/shared/lib/format';
+import { ConvertedPrice } from '@/entities/currency';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/shared/ui';
 
 import type { Product } from '../model/types';
@@ -33,9 +33,13 @@ export function ProductCard({ product, action }: ProductCardProps) {
             {product.description}
           </p>
         )}
-        <p className="text-lg font-semibold text-slate-900">
-          {formatMoney(product.price, product.currency)}
-        </p>
+        <div className="flex items-end justify-between gap-2">
+          <ConvertedPrice
+            amount={product.price}
+            currency={product.currency}
+            className="text-lg font-semibold text-slate-900 items-start"
+          />
+        </div>
         <p
           className={
             inStock

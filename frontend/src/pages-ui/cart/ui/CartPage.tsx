@@ -5,6 +5,7 @@ import { Trash2 } from 'lucide-react';
 import Link from 'next/link';
 
 import { CART_QUERY_KEY, useCart } from '@/entities/cart';
+import { ConvertedPrice } from '@/entities/currency';
 import { ClientApiError, clientFetch } from '@/shared/api/client';
 import { formatMoney } from '@/shared/lib/format';
 import { Button, Card, CardContent, Input } from '@/shared/ui';
@@ -127,9 +128,12 @@ export function CartPage() {
                 disabled={update.isPending}
               />
 
-              <p className="w-24 text-right font-medium text-slate-900">
-                {formatMoney(item.lineTotal, item.currency)}
-              </p>
+              <ConvertedPrice
+                amount={item.lineTotal}
+                currency={item.currency}
+                className="w-32 text-right font-medium text-slate-900"
+                originalClassName="text-right"
+              />
 
               <Button
                 variant="ghost"
@@ -160,12 +164,14 @@ export function CartPage() {
           Sepeti Boşalt
         </Button>
         <div className="flex flex-col items-end gap-2 sm:flex-row sm:items-center sm:gap-6">
-          <p className="text-lg">
-            Toplam:{' '}
-            <span className="font-bold text-slate-900">
-              {formatMoney(cart.subtotal, cart.currency)}
-            </span>
-          </p>
+          <div className="flex items-center gap-2 text-lg">
+            <span>Toplam:</span>
+            <ConvertedPrice
+              amount={cart.subtotal}
+              currency={cart.currency}
+              className="text-lg font-bold text-slate-900 items-end"
+            />
+          </div>
           <Link href="/checkout">
             <Button>Ödemeye Geç</Button>
           </Link>

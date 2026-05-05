@@ -3,7 +3,12 @@
 import { useState } from 'react';
 
 import { useCart } from '@/entities/cart';
-import { useCurrencyStore, useSupportedCurrencies } from '@/entities/currency';
+import {
+  ConvertedPrice,
+  useCurrencyStore,
+  useSupportedCurrencies,
+  type CurrencyCode,
+} from '@/entities/currency';
 import { ClientApiError } from '@/shared/api/client';
 import { formatMoney } from '@/shared/lib/format';
 import {
@@ -20,11 +25,14 @@ import { usePlaceOrderMutation } from '../api/placeOrderMutation';
 export function CheckoutForm() {
   const { data: cart, isLoading } = useCart();
   const { data: currencies } = useSupportedCurrencies();
-  const selectedCurrency = useCurrencyStore((s) => s.selected);
 
-  const [displayCurrency, setDisplayCurrency] = useState<'TRY' | 'USD' | 'EUR'>(
-    selectedCurrency,
-  );
+  // Display currency = global header currency'si. Form'daki selector
+  // store'a yazar; başka bir sekmede header'dan değişirse burası da
+  // anında yansıtır (zustand subscribe). Sipariş bu para biriminde
+  // dondurulur (PlaceOrderHandler.exchangeRateSnapshot).
+  const displayCurrency = useCurrencyStore((s) => s.selected);
+  const setDisplayCurrency = useCurrencyStore((s) => s.setSelected);
+
   const [notes, setNotes] = useState('');
 
   const mutation = usePlaceOrderMutation();
@@ -56,7 +64,7 @@ export function CheckoutForm() {
               id="displayCurrency"
               value={displayCurrency}
               onChange={(event) =>
-                setDisplayCurrency(event.target.value as 'TRY' | 'USD' | 'EUR')
+                setDisplayCurrency(event.target.value as CurrencyCode)
               }
               className="flex h-10 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900"
             >
@@ -71,7 +79,8 @@ export function CheckoutForm() {
               ))}
             </select>
             <p className="text-xs text-slate-500">
-              Sipariş bu para biriminde dondurulacak.
+              Sipariş bu para biriminde dondurulacak. Header üzerindeki
+              switcher ile aynı değer; biri değişirse diğeri de senkron olur.
             </p>
           </div>
 
@@ -102,17 +111,30 @@ export function CheckoutForm() {
         </CardHeader>
         <CardContent className="space-y-3 text-sm">
           {cart.items.map((item) => (
-            <div key={item.id} className="flex justify-between">
+            <div key={item.id} className="flex items-start justify-between gap-2">
               <span className="truncate pr-2">
                 {item.quantity} × {item.productId.slice(0, 8)}…
               </span>
-              <span>{formatMoney(item.lineTotal, item.currency)}</span>
+              <ConvertedPrice
+                amount={item.lineTotal}
+                currency={item.currency}
+                showOriginal={false}
+                className="text-sm items-end"
+              />
             </div>
           ))}
-          <div className="flex justify-between border-t border-slate-200 pt-3 text-base font-semibold text-slate-900">
+          <div className="flex items-start justify-between border-t border-slate-200 pt-3 text-base font-semibold text-slate-900">
             <span>Toplam</span>
-            <span>{formatMoney(cart.subtotal, cart.currency)}</span>
+            <ConvertedPrice
+              amount={cart.subtotal}
+              currency={cart.currency}
+              className="text-base font-semibold text-slate-900 items-end"
+            />
           </div>
+          <p className="text-xs text-slate-500">
+            Sepet base tutarı: {formatMoney(cart.subtotal, cart.currency)}.
+            Sipariş anında {displayCurrency} kuru dondurulacak.
+          </p>
           <Button
             type="button"
             className="w-full"
