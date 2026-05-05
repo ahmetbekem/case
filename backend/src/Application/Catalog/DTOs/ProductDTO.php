@@ -6,7 +6,28 @@ namespace Application\Catalog\DTOs;
 
 use Application\Shared\Abstracts\AbstractOutputDTO;
 use Domain\Catalog\Entities\Product;
+use OpenApi\Attributes as OA;
 
+#[OA\Schema(
+    schema: 'ProductDTO',
+    title: 'Product',
+    description: 'Ürün kaydı — fiyat, ürünün kendi base currency\'sinde döner. '
+        . 'Frontend tarafı görüntü dönüşümünü Currency modülünden ayrıca alır.',
+    properties: [
+        new OA\Property(property: 'id', type: 'string', format: 'uuid', example: '550e8400-e29b-41d4-a716-446655440000'),
+        new OA\Property(property: 'sku', type: 'string', example: 'BABT-SYAH-42'),
+        new OA\Property(property: 'name', type: 'string', example: 'Babet Ayakkabı Siyah 42'),
+        new OA\Property(property: 'description', type: 'string', nullable: true),
+        new OA\Property(property: 'price', type: 'number', format: 'float', example: 1000.00),
+        new OA\Property(property: 'currency', type: 'string', enum: ['TRY', 'USD', 'EUR'], example: 'TRY'),
+        new OA\Property(property: 'stock', type: 'integer', example: 50),
+        new OA\Property(property: 'isActive', type: 'boolean', example: true),
+        new OA\Property(property: 'createdBy', type: 'string', format: 'uuid', description: 'Oluşturan admin ID'),
+        new OA\Property(property: 'createdAt', type: 'string', format: 'date-time'),
+        new OA\Property(property: 'updatedAt', type: 'string', format: 'date-time', nullable: true),
+    ],
+    type: 'object',
+)]
 final readonly class ProductDTO extends AbstractOutputDTO
 {
     public function __construct(

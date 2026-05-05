@@ -6,7 +6,21 @@ namespace Presentation\Catalog\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use OpenApi\Attributes as OA;
 
+#[OA\Schema(
+    schema: 'CreateProductRequest',
+    required: ['sku', 'name', 'price', 'stock'],
+    properties: [
+        new OA\Property(property: 'sku', type: 'string', minLength: 3, maxLength: 64, pattern: '^[A-Z0-9\\-]+$', example: 'BABT-SYAH-42'),
+        new OA\Property(property: 'name', type: 'string', minLength: 2, maxLength: 255, example: 'Babet Ayakkabı'),
+        new OA\Property(property: 'description', type: 'string', maxLength: 5000, nullable: true),
+        new OA\Property(property: 'price', type: 'number', format: 'float', minimum: 0, maximum: 999999.99, example: 1000.00),
+        new OA\Property(property: 'currency', type: 'string', enum: ['TRY', 'USD', 'EUR'], default: 'TRY'),
+        new OA\Property(property: 'stock', type: 'integer', minimum: 0, maximum: 1000000, example: 50),
+    ],
+    type: 'object',
+)]
 final class CreateProductRequest extends FormRequest
 {
     public function authorize(): bool

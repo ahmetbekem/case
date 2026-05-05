@@ -6,11 +6,24 @@ namespace Presentation\Catalog\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use OpenApi\Attributes as OA;
 
-/**
- * Partial update — every field optional. Handler treats null as
- * "leave as-is" rather than "clear to null".
- */
+// Partial update — her alan opsiyonel. Handler null'ı "olduğu gibi bırak"
+// olarak yorumlar (null'a temizleme değil).
+
+#[OA\Schema(
+    schema: 'UpdateProductRequest',
+    description: 'Tüm alanlar opsiyonel. Sadece gönderilenler güncellenir; '
+        . 'isActive ile pasifleştirme/aktifleştirme tek endpoint üzerinden yapılır.',
+    properties: [
+        new OA\Property(property: 'name', type: 'string', minLength: 2, maxLength: 255),
+        new OA\Property(property: 'description', type: 'string', maxLength: 5000, nullable: true),
+        new OA\Property(property: 'price', type: 'number', format: 'float', minimum: 0, maximum: 999999.99),
+        new OA\Property(property: 'currency', type: 'string', enum: ['TRY', 'USD', 'EUR']),
+        new OA\Property(property: 'isActive', type: 'boolean'),
+    ],
+    type: 'object',
+)]
 final class UpdateProductRequest extends FormRequest
 {
     public function authorize(): bool

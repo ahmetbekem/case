@@ -20,6 +20,516 @@
         }
     ],
     "paths": {
+        "/catalog/products": {
+            "get": {
+                "tags": [
+                    "Catalog"
+                ],
+                "summary": "Ürün listesi",
+                "description": "Sayfalanmış ürün listesi. Public; auth gerekmez. pageSize server-side 100'e cap edilir. Admin kullanıcı `activeOnly=false` ile pasifleri de görebilir.",
+                "operationId": "2496c9b34042497db2b83cc98ae91aff",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1,
+                            "minimum": 1
+                        }
+                    },
+                    {
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 20,
+                            "minimum": 1
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Ürün adında arama",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "maxLength": 255
+                        }
+                    },
+                    {
+                        "name": "activeOnly",
+                        "in": "query",
+                        "description": "Default true; admin false geçirebilir",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean",
+                            "default": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Sayfalanmış liste",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/ProductDTO"
+                                            }
+                                        },
+                                        "meta": {
+                                            "$ref": "#/components/schemas/PaginationMeta"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    },
+                    "429": {
+                        "description": "Rate limit exceeded",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RateLimitError"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Catalog (Admin)"
+                ],
+                "summary": "Yeni ürün oluştur",
+                "description": "Yalnızca admin rolü erişebilir. SKU otomatik UPPERCASE'e çevrilir.",
+                "operationId": "c3d02eaa26c15bf3084e165fdbe64243",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateProductRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Ürün oluşturuldu",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/ProductDTO"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Product created"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Auth gerekli",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedError"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Admin değil",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenError"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Duplicate SKU",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ConflictError"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/catalog/products/{id}": {
+            "get": {
+                "tags": [
+                    "Catalog"
+                ],
+                "summary": "Ürün detay",
+                "description": "Tek ürün kaydını döner. Public; auth gerekmez.",
+                "operationId": "aeb4ce8cec37501dcde3bfb35ae022cd",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Ürün",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/ProductDTO"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Ürün bulunamadı",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundError"
+                                }
+                            }
+                        }
+                    },
+                    "429": {
+                        "description": "Rate limit exceeded",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RateLimitError"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Catalog (Admin)"
+                ],
+                "summary": "Ürün sil (soft)",
+                "description": "Yalnızca admin. Soft delete — kayıt audit zincirinde kalır.",
+                "operationId": "b55b2a99a91f79059c6da0c7d52865e0",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Ürün silindi (no content)"
+                    },
+                    "401": {
+                        "description": "Auth gerekli",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedError"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Admin değil",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenError"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Ürün bulunamadı",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "Catalog (Admin)"
+                ],
+                "summary": "Ürün güncelle (partial)",
+                "description": "Yalnızca admin. Tüm alanlar opsiyonel; gönderilenler güncellenir. isActive ile pasifleştirme/aktifleştirme aynı endpoint üzerinden.",
+                "operationId": "2b51f7d8a72290660325f6ba84f7dc37",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateProductRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Ürün güncellendi",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/ProductDTO"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Product updated"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Auth gerekli",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedError"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Admin değil",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenError"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Ürün bulunamadı",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundError"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/catalog/products/{id}/stock": {
+            "post": {
+                "tags": [
+                    "Catalog (Admin)"
+                ],
+                "summary": "Stok ayarla (delta)",
+                "description": "Yalnızca admin. delta pozitif veya negatif int; sonuçta negatife düşerse 409 döner.",
+                "operationId": "627016b52df5dec86877bc231609f587",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "delta"
+                                ],
+                                "properties": {
+                                    "delta": {
+                                        "description": "Pozitif (artır) veya negatif (azalt)",
+                                        "type": "integer",
+                                        "example": -5
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Stok güncellendi",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/ProductDTO"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Stock adjusted"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Auth gerekli",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedError"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Admin değil",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenError"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Ürün bulunamadı",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundError"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Yetersiz stok (sonuç negatif)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ConflictError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/auth/register": {
             "post": {
                 "tags": [
@@ -350,6 +860,66 @@
     },
     "components": {
         "schemas": {
+            "ProductDTO": {
+                "title": "Product",
+                "description": "Ürün kaydı — fiyat, ürünün kendi base currency'sinde döner. Frontend tarafı görüntü dönüşümünü Currency modülünden ayrıca alır.",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "example": "550e8400-e29b-41d4-a716-446655440000"
+                    },
+                    "sku": {
+                        "type": "string",
+                        "example": "BABT-SYAH-42"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Babet Ayakkabı Siyah 42"
+                    },
+                    "description": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "price": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 1000
+                    },
+                    "currency": {
+                        "type": "string",
+                        "example": "TRY",
+                        "enum": [
+                            "TRY",
+                            "USD",
+                            "EUR"
+                        ]
+                    },
+                    "stock": {
+                        "type": "integer",
+                        "example": 50
+                    },
+                    "isActive": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "createdBy": {
+                        "description": "Oluşturan admin ID",
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "createdAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
             "AuthTokenPairDTO": {
                 "title": "Token Pair",
                 "description": "Refresh cevabı — yeni access+refresh çifti, user payload yok.",
@@ -449,6 +1019,118 @@
                         "type": "string",
                         "format": "date-time",
                         "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "CreateProductRequest": {
+                "required": [
+                    "sku",
+                    "name",
+                    "price",
+                    "stock"
+                ],
+                "properties": {
+                    "sku": {
+                        "type": "string",
+                        "pattern": "^[A-Z0-9\\-]+$",
+                        "example": "BABT-SYAH-42",
+                        "maxLength": 64,
+                        "minLength": 3
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Babet Ayakkabı",
+                        "maxLength": 255,
+                        "minLength": 2
+                    },
+                    "description": {
+                        "type": "string",
+                        "nullable": true,
+                        "maxLength": 5000
+                    },
+                    "price": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 1000,
+                        "maximum": 999999.99,
+                        "minimum": 0
+                    },
+                    "currency": {
+                        "type": "string",
+                        "default": "TRY",
+                        "enum": [
+                            "TRY",
+                            "USD",
+                            "EUR"
+                        ]
+                    },
+                    "stock": {
+                        "type": "integer",
+                        "example": 50,
+                        "maximum": 1000000,
+                        "minimum": 0
+                    }
+                },
+                "type": "object"
+            },
+            "ListProductsRequest": {
+                "description": "Query string olarak gönderilen filtre+sayfalama parametreleri.",
+                "properties": {
+                    "page": {
+                        "type": "integer",
+                        "default": 1,
+                        "minimum": 1
+                    },
+                    "pageSize": {
+                        "description": "Server-side cap: 100",
+                        "type": "integer",
+                        "default": 20,
+                        "minimum": 1
+                    },
+                    "search": {
+                        "description": "Ürün adı içinde arama",
+                        "type": "string",
+                        "nullable": true,
+                        "maxLength": 255
+                    },
+                    "activeOnly": {
+                        "description": "Public okuma true; admin false geçirip pasifleri de görebilir",
+                        "type": "boolean",
+                        "default": true
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateProductRequest": {
+                "description": "Tüm alanlar opsiyonel. Sadece gönderilenler güncellenir; isActive ile pasifleştirme/aktifleştirme tek endpoint üzerinden yapılır.",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "maxLength": 255,
+                        "minLength": 2
+                    },
+                    "description": {
+                        "type": "string",
+                        "nullable": true,
+                        "maxLength": 5000
+                    },
+                    "price": {
+                        "type": "number",
+                        "format": "float",
+                        "maximum": 999999.99,
+                        "minimum": 0
+                    },
+                    "currency": {
+                        "type": "string",
+                        "enum": [
+                            "TRY",
+                            "USD",
+                            "EUR"
+                        ]
+                    },
+                    "isActive": {
+                        "type": "boolean"
                     }
                 },
                 "type": "object"
@@ -684,6 +1366,14 @@
         {
             "name": "Authentication",
             "description": "Login, register, token operations"
+        },
+        {
+            "name": "Catalog",
+            "description": "Public ürün okuma"
+        },
+        {
+            "name": "Catalog (Admin)",
+            "description": "Admin-only ürün yönetimi"
         },
         {
             "name": "System",
