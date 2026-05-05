@@ -1,0 +1,12 @@
+{
+  "name": "dehasoft-test-tools",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Repo-level tooling — Postman collection üretimi gibi tek-amaçlı script bağımlılıkları için minimal package.json",
+  "scripts": {
+    "postman:generate": "bash scripts/generate-postman-collection.sh"
+  },
+  "devDependencies": {
+    "openapi-to-postmanv2": "^4.21.0"
+  }
+}

@@ -40,6 +40,9 @@ log-service/node_modules/
 log-service/dist/
 log-service/.tsbuildinfo
 
+# Root tooling (Postman generation script bağımlılıkları)
+node_modules/
+
 # Coverage
 coverage/
 .nyc_output/
