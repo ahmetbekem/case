@@ -32,8 +32,6 @@ final class Product extends AbstractEntity
         $this->updatedAt = $updatedAt;
     }
 
-    // ─── Getters ────────────────────────────────────────────────
-
     public function getId(): ProductId
     {
         return $this->id;
@@ -73,8 +71,6 @@ final class Product extends AbstractEntity
     {
         return $this->createdBy;
     }
-
-    // ─── Behaviour ──────────────────────────────────────────────
 
     public function rename(string $name): void
     {
@@ -149,8 +145,6 @@ final class Product extends AbstractEntity
         $this->isActive = false;
         $this->markAsUpdated();
     }
-
-    // ─── Serialisation ──────────────────────────────────────────
 
     /**
      * @return array<string, mixed>
