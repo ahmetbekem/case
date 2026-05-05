@@ -20,6 +20,315 @@
         }
     ],
     "paths": {
+        "/auth/register": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Yeni kullanıcı kaydı",
+                "description": "Yeni customer hesabı açar ve login'le aynı zarfı (token + user) döner. Public endpoint. throttle:register profili ile rate-limit'li.",
+                "operationId": "c115abd862c196a7281a6deacea68f6c",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RegisterUserRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Kullanıcı oluşturuldu",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/TokenIssueResultDTO"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Registration successful"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Email zaten kayıtlı",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ConflictError"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    },
+                    "429": {
+                        "description": "Rate limit exceeded",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RateLimitError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/login": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Giriş yap",
+                "description": "Email + şifre ile giriş; access + refresh token + user kaydı döner. BFF cevabı httpOnly cookie'ye taşır. throttle:login profili.",
+                "operationId": "eb143a0681b1681ea930676c73613cfe",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LoginRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Giriş başarılı",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/TokenIssueResultDTO"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Email veya şifre hatalı",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedError"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    },
+                    "429": {
+                        "description": "Rate limit exceeded",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RateLimitError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/refresh": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Access token yenile",
+                "description": "Refresh token ile yeni access + refresh çifti üretir (rotation). Eski refresh token revoke edilir; replay 5s grace içinde tespit edilirse aile (family) revoke. throttle:refresh profili.",
+                "operationId": "65c1c1cee9946db23b235613420e59d5",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RefreshTokenRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Token yenilendi",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/AuthTokenPairDTO"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Refresh token geçersiz / revoked / replay tespiti",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedError"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    },
+                    "429": {
+                        "description": "Rate limit exceeded",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RateLimitError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/logout": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Çıkış yap",
+                "description": "Access token JTI Redis blacklist'e yazılır + refresh token revoke edilir. Body opsiyonel — refresh_token verilirse ailesi de revoke. 204 No Content döner.",
+                "operationId": "37afb5454b93d89834c9f594b248c274",
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "refresh_token": {
+                                        "description": "Opsiyonel — verilirse aile revoke",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "204": {
+                        "description": "Çıkış başarılı (no content)"
+                    },
+                    "401": {
+                        "description": "Auth gerekli",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/auth/me": {
+            "get": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Mevcut kullanıcı bilgisi",
+                "description": "Cookie/Bearer token ile çağrılır; ilgili kullanıcının kendi UserDTO'sunu döner.",
+                "operationId": "ce31b39894893af2939ae911bb5fe9b5",
+                "responses": {
+                    "200": {
+                        "description": "Mevcut kullanıcı",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/UserDTO"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Token gerekli/geçersiz",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedError"
+                                }
+                            }
+                        }
+                    },
+                    "429": {
+                        "description": "Rate limit exceeded",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RateLimitError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/up": {
             "get": {
                 "tags": [
@@ -41,6 +350,173 @@
     },
     "components": {
         "schemas": {
+            "AuthTokenPairDTO": {
+                "title": "Token Pair",
+                "description": "Refresh cevabı — yeni access+refresh çifti, user payload yok.",
+                "properties": {
+                    "accessToken": {
+                        "description": "JWT access token (HS256)",
+                        "type": "string"
+                    },
+                    "accessTokenExpiresIn": {
+                        "description": "TTL (saniye)",
+                        "type": "integer",
+                        "example": 900
+                    },
+                    "refreshToken": {
+                        "description": "64 karakter hex (rotation)",
+                        "type": "string"
+                    },
+                    "tokenType": {
+                        "type": "string",
+                        "example": "Bearer"
+                    }
+                },
+                "type": "object"
+            },
+            "TokenIssueResultDTO": {
+                "title": "Token + User",
+                "description": "Login + Register cevabı — token çifti + user kaydı tek round-trip'te.",
+                "properties": {
+                    "user": {
+                        "$ref": "#/components/schemas/UserDTO"
+                    },
+                    "accessToken": {
+                        "description": "JWT access token (HS256)",
+                        "type": "string"
+                    },
+                    "accessTokenExpiresIn": {
+                        "description": "TTL (saniye)",
+                        "type": "integer",
+                        "example": 900
+                    },
+                    "refreshToken": {
+                        "description": "64 karakter hex (rotation)",
+                        "type": "string"
+                    },
+                    "tokenType": {
+                        "type": "string",
+                        "example": "Bearer"
+                    }
+                },
+                "type": "object"
+            },
+            "UserDTO": {
+                "title": "User",
+                "description": "Kullanıcı kaydı — şifre alanı asla dönmez.",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "example": "550e8400-e29b-41d4-a716-446655440000"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "user@example.com"
+                    },
+                    "fullName": {
+                        "type": "string",
+                        "example": "Ali Veli"
+                    },
+                    "role": {
+                        "type": "string",
+                        "example": "customer",
+                        "enum": [
+                            "customer",
+                            "admin"
+                        ]
+                    },
+                    "isActive": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "emailVerifiedAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
+                    },
+                    "lastLoginAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
+                    },
+                    "createdAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "LoginRequest": {
+                "required": [
+                    "email",
+                    "password"
+                ],
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "user@example.com",
+                        "maxLength": 320
+                    },
+                    "password": {
+                        "type": "string",
+                        "format": "password",
+                        "example": "securePass123",
+                        "maxLength": 128
+                    }
+                },
+                "type": "object"
+            },
+            "RefreshTokenRequest": {
+                "required": [
+                    "refresh_token"
+                ],
+                "properties": {
+                    "refresh_token": {
+                        "description": "64 karakter hex (32 random byte) — RefreshToken::generate() ile uyumlu",
+                        "type": "string",
+                        "pattern": "^[a-f0-9]{64}$",
+                        "example": "a1b2c3d4e5f6789012345678901234567890123456789012345678901234abcd"
+                    }
+                },
+                "type": "object"
+            },
+            "RegisterUserRequest": {
+                "required": [
+                    "email",
+                    "password",
+                    "fullName"
+                ],
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "user@example.com",
+                        "maxLength": 320
+                    },
+                    "password": {
+                        "type": "string",
+                        "format": "password",
+                        "example": "securePass123",
+                        "maxLength": 128,
+                        "minLength": 8
+                    },
+                    "fullName": {
+                        "type": "string",
+                        "example": "Ali Veli",
+                        "maxLength": 255,
+                        "minLength": 2
+                    }
+                },
+                "type": "object"
+            },
             "PaginationMeta": {
                 "description": "Sayfalama meta verisi — listeleme cevaplarında `meta` altında döner.",
                 "properties": {
@@ -205,6 +681,10 @@
         }
     },
     "tags": [
+        {
+            "name": "Authentication",
+            "description": "Login, register, token operations"
+        },
         {
             "name": "System",
             "description": "Healthcheck ve alt-yapı endpoint'leri"

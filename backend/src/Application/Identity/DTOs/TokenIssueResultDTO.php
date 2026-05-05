@@ -5,12 +5,23 @@ declare(strict_types=1);
 namespace Application\Identity\DTOs;
 
 use Application\Shared\Abstracts\AbstractOutputDTO;
+use OpenApi\Attributes as OA;
 
-/**
- * Login + Register response — bundles the freshly issued token pair
- * with the user record (so the client can populate the auth store
- * in a single round-trip).
- */
+// Login + Register cevabı — token çifti + user kaydı tek round-trip'te.
+
+#[OA\Schema(
+    schema: 'TokenIssueResultDTO',
+    title: 'Token + User',
+    description: 'Login + Register cevabı — token çifti + user kaydı tek round-trip\'te.',
+    properties: [
+        new OA\Property(property: 'user', ref: '#/components/schemas/UserDTO'),
+        new OA\Property(property: 'accessToken', type: 'string', description: 'JWT access token (HS256)'),
+        new OA\Property(property: 'accessTokenExpiresIn', type: 'integer', description: 'TTL (saniye)', example: 900),
+        new OA\Property(property: 'refreshToken', type: 'string', description: '64 karakter hex (rotation)'),
+        new OA\Property(property: 'tokenType', type: 'string', example: 'Bearer'),
+    ],
+    type: 'object',
+)]
 final readonly class TokenIssueResultDTO extends AbstractOutputDTO
 {
     public function __construct(

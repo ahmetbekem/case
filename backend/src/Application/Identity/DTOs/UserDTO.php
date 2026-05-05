@@ -6,7 +6,25 @@ namespace Application\Identity\DTOs;
 
 use Application\Shared\Abstracts\AbstractOutputDTO;
 use Domain\Identity\Entities\User;
+use OpenApi\Attributes as OA;
 
+#[OA\Schema(
+    schema: 'UserDTO',
+    title: 'User',
+    description: 'Kullanıcı kaydı — şifre alanı asla dönmez.',
+    properties: [
+        new OA\Property(property: 'id', type: 'string', format: 'uuid', example: '550e8400-e29b-41d4-a716-446655440000'),
+        new OA\Property(property: 'email', type: 'string', format: 'email', example: 'user@example.com'),
+        new OA\Property(property: 'fullName', type: 'string', example: 'Ali Veli'),
+        new OA\Property(property: 'role', type: 'string', enum: ['customer', 'admin'], example: 'customer'),
+        new OA\Property(property: 'isActive', type: 'boolean', example: true),
+        new OA\Property(property: 'emailVerifiedAt', type: 'string', format: 'date-time', nullable: true),
+        new OA\Property(property: 'lastLoginAt', type: 'string', format: 'date-time', nullable: true),
+        new OA\Property(property: 'createdAt', type: 'string', format: 'date-time'),
+        new OA\Property(property: 'updatedAt', type: 'string', format: 'date-time', nullable: true),
+    ],
+    type: 'object',
+)]
 final readonly class UserDTO extends AbstractOutputDTO
 {
     public function __construct(

@@ -11,6 +11,7 @@ use Application\Identity\Commands\RegisterUserCommand;
 use Domain\Shared\Constants\HttpStatus;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use OpenApi\Attributes as OA;
 use Presentation\Identity\Requests\LoginRequest;
 use Presentation\Identity\Requests\RefreshTokenRequest;
 use Presentation\Identity\Requests\RegisterUserRequest;
@@ -24,6 +25,32 @@ use Presentation\Shared\Abstracts\AbstractApiController;
  */
 final class AuthController extends AbstractApiController
 {
+    #[OA\Post(
+        path: '/auth/register',
+        summary: 'Yeni kullanıcı kaydı',
+        description: 'Yeni customer hesabı açar ve login\'le aynı zarfı (token + user) döner. '
+            . 'Public endpoint. throttle:register profili ile rate-limit\'li.',
+        tags: ['Authentication'],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(ref: '#/components/schemas/RegisterUserRequest'),
+        ),
+        responses: [
+            new OA\Response(
+                response: 201,
+                description: 'Kullanıcı oluşturuldu',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'data', ref: '#/components/schemas/TokenIssueResultDTO'),
+                        new OA\Property(property: 'message', type: 'string', example: 'Registration successful'),
+                    ],
+                ),
+            ),
+            new OA\Response(response: 409, description: 'Email zaten kayıtlı', content: new OA\JsonContent(ref: '#/components/schemas/ConflictError')),
+            new OA\Response(response: 422, description: 'Validation error', content: new OA\JsonContent(ref: '#/components/schemas/ValidationError')),
+            new OA\Response(response: 429, description: 'Rate limit exceeded', content: new OA\JsonContent(ref: '#/components/schemas/RateLimitError')),
+        ],
+    )]
     public function register(RegisterUserRequest $request): JsonResponse
     {
         $command = new RegisterUserCommand(
@@ -44,6 +71,31 @@ final class AuthController extends AbstractApiController
         );
     }
 
+    #[OA\Post(
+        path: '/auth/login',
+        summary: 'Giriş yap',
+        description: 'Email + şifre ile giriş; access + refresh token + user kaydı döner. '
+            . 'BFF cevabı httpOnly cookie\'ye taşır. throttle:login profili.',
+        tags: ['Authentication'],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(ref: '#/components/schemas/LoginRequest'),
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Giriş başarılı',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'data', ref: '#/components/schemas/TokenIssueResultDTO'),
+                    ],
+                ),
+            ),
+            new OA\Response(response: 401, description: 'Email veya şifre hatalı', content: new OA\JsonContent(ref: '#/components/schemas/UnauthorizedError')),
+            new OA\Response(response: 422, description: 'Validation error', content: new OA\JsonContent(ref: '#/components/schemas/ValidationError')),
+            new OA\Response(response: 429, description: 'Rate limit exceeded', content: new OA\JsonContent(ref: '#/components/schemas/RateLimitError')),
+        ],
+    )]
     public function login(LoginRequest $request): JsonResponse
     {
         $command = new LoginUserCommand(
@@ -60,6 +112,32 @@ final class AuthController extends AbstractApiController
         return $this->success($result);
     }
 
+    #[OA\Post(
+        path: '/auth/refresh',
+        summary: 'Access token yenile',
+        description: 'Refresh token ile yeni access + refresh çifti üretir (rotation). '
+            . 'Eski refresh token revoke edilir; replay 5s grace içinde tespit edilirse aile (family) revoke. '
+            . 'throttle:refresh profili.',
+        tags: ['Authentication'],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(ref: '#/components/schemas/RefreshTokenRequest'),
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Token yenilendi',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'data', ref: '#/components/schemas/AuthTokenPairDTO'),
+                    ],
+                ),
+            ),
+            new OA\Response(response: 401, description: 'Refresh token geçersiz / revoked / replay tespiti', content: new OA\JsonContent(ref: '#/components/schemas/UnauthorizedError')),
+            new OA\Response(response: 422, description: 'Validation error', content: new OA\JsonContent(ref: '#/components/schemas/ValidationError')),
+            new OA\Response(response: 429, description: 'Rate limit exceeded', content: new OA\JsonContent(ref: '#/components/schemas/RateLimitError')),
+        ],
+    )]
     public function refresh(RefreshTokenRequest $request): JsonResponse
     {
         $command = new RefreshTokenCommand(
@@ -75,6 +153,26 @@ final class AuthController extends AbstractApiController
         return $this->success($result);
     }
 
+    #[OA\Post(
+        path: '/auth/logout',
+        summary: 'Çıkış yap',
+        description: 'Access token JTI Redis blacklist\'e yazılır + refresh token revoke edilir. '
+            . 'Body opsiyonel — refresh_token verilirse ailesi de revoke. 204 No Content döner.',
+        security: [['cookieAuth' => []], ['bearerAuth' => []]],
+        tags: ['Authentication'],
+        requestBody: new OA\RequestBody(
+            required: false,
+            content: new OA\JsonContent(
+                properties: [
+                    new OA\Property(property: 'refresh_token', type: 'string', description: 'Opsiyonel — verilirse aile revoke'),
+                ],
+            ),
+        ),
+        responses: [
+            new OA\Response(response: 204, description: 'Çıkış başarılı (no content)'),
+            new OA\Response(response: 401, description: 'Auth gerekli', content: new OA\JsonContent(ref: '#/components/schemas/UnauthorizedError')),
+        ],
+    )]
     public function logout(Request $request): JsonResponse
     {
         $jti = $request->attributes->get('jwt_jti');
