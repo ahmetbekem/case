@@ -24,6 +24,7 @@ use Domain\Sales\Entities\Order;
 use Domain\Sales\Entities\OrderItem;
 use Domain\Sales\Enums\OrderStatus;
 use Domain\Sales\Exceptions\EmptyCartException;
+use Domain\Sales\Exceptions\MixedCurrencyCartException;
 use Domain\Sales\ValueObjects\OrderId;
 use Domain\Sales\ValueObjects\OrderItemId;
 use Domain\Shared\ValueObjects\Currency;
@@ -85,6 +86,13 @@ final class PlaceOrderHandler extends AbstractCommandHandler
         $cart = $this->cartRepository->findActiveCartForUser($userId);
         if ($cart === null || $cart->isEmpty()) {
             throw EmptyCartException::cannotPlaceOrder();
+        }
+        // Cart aggregate mixed currency'e izin veriyor (UI'da rahat eklenebilsin)
+        // ama checkout matematiği tek currency varsayıyor — burada erkenden 409
+        if (!$cart->isUniformCurrency()) {
+            throw MixedCurrencyCartException::cannotPlaceOrder(
+                array_keys($cart->subtotalsByCurrency()),
+            );
         }
 
         $rateMap = $this->loadRateMap();

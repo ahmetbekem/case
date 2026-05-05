@@ -113,7 +113,7 @@ export function CheckoutForm() {
           {cart.items.map((item) => (
             <div key={item.id} className="flex items-start justify-between gap-2">
               <span className="truncate pr-2">
-                {item.quantity} × {item.productId.slice(0, 8)}…
+                {item.quantity} × {item.productName}
               </span>
               <ConvertedPrice
                 amount={item.lineTotal}
@@ -123,22 +123,33 @@ export function CheckoutForm() {
               />
             </div>
           ))}
-          <div className="flex items-start justify-between border-t border-slate-200 pt-3 text-base font-semibold text-slate-900">
-            <span>Toplam</span>
-            <ConvertedPrice
-              amount={cart.subtotal}
-              currency={cart.currency}
-              className="text-base font-semibold text-slate-900 items-end"
-            />
-          </div>
-          <p className="text-xs text-slate-500">
-            Sepet base tutarı: {formatMoney(cart.subtotal, cart.currency)}.
-            Sipariş anında {displayCurrency} kuru dondurulacak.
-          </p>
+          {!cart.isUniformCurrency && (
+            <div className="rounded-md border border-amber-200 bg-amber-50 p-2 text-xs text-amber-900">
+              Sepetinizde birden fazla para birimi var (
+              {Object.keys(cart.subtotalsByCurrency).join(', ')}). Sipariş yalnızca
+              tek currency&apos;de oluşturulabilir — lütfen <a href="/cart" className="underline">sepete</a> dönüp ürünleri tek currency&apos;ye düşürün.
+            </div>
+          )}
+          {cart.isUniformCurrency && (
+            <>
+              <div className="flex items-start justify-between border-t border-slate-200 pt-3 text-base font-semibold text-slate-900">
+                <span>Toplam</span>
+                <ConvertedPrice
+                  amount={cart.subtotal}
+                  currency={cart.currency}
+                  className="text-base font-semibold text-slate-900 items-end"
+                />
+              </div>
+              <p className="text-xs text-slate-500">
+                Sepet base tutarı: {formatMoney(cart.subtotal, cart.currency)}.
+                Sipariş anında {displayCurrency} kuru dondurulacak.
+              </p>
+            </>
+          )}
           <Button
             type="button"
             className="w-full"
-            disabled={mutation.isPending}
+            disabled={mutation.isPending || !cart.isUniformCurrency}
             onClick={() =>
               mutation.mutate({
                 displayCurrency,
@@ -146,7 +157,11 @@ export function CheckoutForm() {
               })
             }
           >
-            {mutation.isPending ? 'Sipariş veriliyor…' : 'Siparişi Onayla'}
+            {mutation.isPending
+              ? 'Sipariş veriliyor…'
+              : cart.isUniformCurrency
+                ? 'Siparişi Onayla'
+                : 'Tek currency gerekli'}
           </Button>
         </CardContent>
       </Card>

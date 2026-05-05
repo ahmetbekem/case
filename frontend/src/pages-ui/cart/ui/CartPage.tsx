@@ -1,11 +1,18 @@
 'use client';
 
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueries, useQueryClient } from '@tanstack/react-query';
 import { Trash2 } from 'lucide-react';
 import Link from 'next/link';
 
 import { CART_QUERY_KEY, useCart } from '@/entities/cart';
-import { ConvertedPrice } from '@/entities/currency';
+import {
+  ConvertedPrice,
+  EXCHANGE_RATE_QUERY_KEY,
+  useCurrencyStore,
+  type CurrencyCode,
+} from '@/entities/currency';
+import { clientFetch as cf } from '@/shared/api/client';
+import type { ApiResponse } from '@/shared/api/types';
 import { ClientApiError, clientFetch } from '@/shared/api/client';
 import { formatMoney } from '@/shared/lib/format';
 import { Button, Card, CardContent, Input } from '@/shared/ui';
@@ -107,10 +114,11 @@ export function CartPage() {
             >
               <div className="flex-1 space-y-1">
                 <p className="font-medium text-slate-900">
-                  {item.productId.slice(0, 8)}…
+                  {item.productName}
                 </p>
                 <p className="text-xs text-slate-500">
-                  Birim: {formatMoney(item.unitPrice, item.currency)}
+                  {item.productSku} · Birim:{' '}
+                  {formatMoney(item.unitPrice, item.currency)}
                 </p>
               </div>
 
@@ -155,28 +163,149 @@ export function CartPage() {
         </p>
       )}
 
+      <CartTotals cart={cart} onClear={() => clearCart.mutate()} clearing={clearCart.isPending} />
+    </div>
+  );
+}
+
+/**
+ * Toplam bölgesi — uniform cart için tek ConvertedPrice; mixed cart için
+ * her bucket'ı ayrı ConvertedPrice + sum (toplam display currency'de).
+ * Mixed durumda checkout butonu disable + uyarı.
+ */
+function CartTotals({
+  cart,
+  onClear,
+  clearing,
+}: {
+  cart: import('@/entities/cart').Cart;
+  onClear: () => void;
+  clearing: boolean;
+}) {
+  const target = useCurrencyStore((s) => s.selected);
+  const buckets = Object.entries(cart.subtotalsByCurrency) as Array<
+    [CurrencyCode, number]
+  >;
+
+  return (
+    <div className="space-y-4">
+      {!cart.isUniformCurrency && (
+        <p className="rounded-md border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
+          Sepetinizde birden fazla para birimi var (
+          {buckets.map(([code]) => code).join(', ')}). Aşağıda her birim {target}{' '}
+          karşılığına çevrilip toplanır. <strong>Ödemeyi tamamlayabilmek için</strong>{' '}
+          tek bir para birimine düşürün (farklı currency&apos;deki ürünleri çıkarın).
+        </p>
+      )}
+
       <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <Button
-          variant="outline"
-          onClick={() => clearCart.mutate()}
-          disabled={clearCart.isPending}
-        >
+        <Button variant="outline" onClick={onClear} disabled={clearing}>
           Sepeti Boşalt
         </Button>
-        <div className="flex flex-col items-end gap-2 sm:flex-row sm:items-center sm:gap-6">
+        <div className="flex flex-col items-end gap-3 sm:flex-row sm:items-end sm:gap-6">
+          {buckets.length > 1 && (
+            <ul className="space-y-0.5 text-xs text-slate-500">
+              {buckets.map(([code, amount]) => (
+                <li key={code} className="flex justify-between gap-3">
+                  <span>{code} ara toplam:</span>
+                  <span className="font-mono">{formatMoney(amount, code)}</span>
+                </li>
+              ))}
+            </ul>
+          )}
           <div className="flex items-center gap-2 text-lg">
             <span>Toplam:</span>
-            <ConvertedPrice
-              amount={cart.subtotal}
-              currency={cart.currency}
-              className="text-lg font-bold text-slate-900 items-end"
-            />
+            <CartGrandTotal buckets={buckets} target={target} />
           </div>
-          <Link href="/checkout">
-            <Button>Ödemeye Geç</Button>
+          <Link
+            href="/checkout"
+            className={!cart.isUniformCurrency ? 'pointer-events-none' : ''}
+            aria-disabled={!cart.isUniformCurrency}
+          >
+            <Button disabled={!cart.isUniformCurrency}>Ödemeye Geç</Button>
           </Link>
         </div>
       </div>
     </div>
+  );
+}
+
+/**
+ * Her bucket'ın display currency karşılığını topla. Tek bucket varsa
+ * direk ConvertedPrice kullanır (animasyon + "≈ orijinal" gösterimi
+ * için). Mixed'de her bucket için ayrı useExchangeRate çağırır;
+ * TanStack dedup yapar.
+ */
+function CartGrandTotal({
+  buckets,
+  target,
+}: {
+  buckets: Array<[CurrencyCode, number]>;
+  target: CurrencyCode;
+}) {
+  if (buckets.length === 0) {
+    return (
+      <span className="text-lg font-bold text-slate-900">
+        {formatMoney(0, target)}
+      </span>
+    );
+  }
+  if (buckets.length === 1) {
+    const [code, amount] = buckets[0]!;
+    return (
+      <ConvertedPrice
+        amount={amount}
+        currency={code}
+        className="text-lg font-bold text-slate-900 items-end"
+      />
+    );
+  }
+  return <MultiBucketTotal buckets={buckets} target={target} />;
+}
+
+function MultiBucketTotal({
+  buckets,
+  target,
+}: {
+  buckets: Array<[CurrencyCode, number]>;
+  target: CurrencyCode;
+}) {
+  // useQueries hooks-rules uyumlu (tek hook çağrısı, dinamik array içi).
+  // Her bucket için (base→target) kuru fetch eder; aynı target ise rate=1.
+  const rates = useQueries({
+    queries: buckets.map(([code]) => ({
+      queryKey: EXCHANGE_RATE_QUERY_KEY(code, target),
+      queryFn: async (): Promise<number> => {
+        if (code === target) return 1;
+        try {
+          const r = await cf<ApiResponse<{ rate: number }>>(
+            `/api/currencies/${code}/${target}`,
+          );
+          return r.data.rate;
+        } catch {
+          // Inverse fallback (TRY/USD biliniyorsa USD/TRY = 1/rate)
+          const inv = await cf<ApiResponse<{ rate: number }>>(
+            `/api/currencies/${target}/${code}`,
+          );
+          return inv.data.rate === 0 ? 1 : 1 / inv.data.rate;
+        }
+      },
+      staleTime: 5 * 60 * 1000,
+      retry: false,
+    })),
+  });
+
+  const allReady = rates.every((r) => r.data !== undefined);
+  if (!allReady) {
+    return <span className="text-lg font-bold text-slate-400">…</span>;
+  }
+  const total = buckets.reduce((sum, [, amount], i) => {
+    const rate = rates[i]?.data ?? 1;
+    return sum + amount * rate;
+  }, 0);
+  return (
+    <span className="text-lg font-bold text-slate-900">
+      {formatMoney(total, target)}
+    </span>
   );
 }

@@ -33,7 +33,7 @@ describe('Cart aggregate', function () {
         $cart = makeCart();
         $productId = Uuid::uuid4()->toString();
 
-        $cart->addItem($productId, 2, new Money(50.0, Currency::TRY));
+        $cart->addItem($productId, 'Demo Product', 'TEST-SKU', 2, new Money(50.0, Currency::TRY));
 
         expect($cart->itemCount())->toBe(1)
             ->and($cart->totalQuantity())->toBe(2)
@@ -44,8 +44,8 @@ describe('Cart aggregate', function () {
         $cart = makeCart();
         $productId = Uuid::uuid4()->toString();
 
-        $cart->addItem($productId, 2, new Money(50.0, Currency::TRY));
-        $cart->addItem($productId, 3, new Money(50.0, Currency::TRY));
+        $cart->addItem($productId, 'Demo Product', 'TEST-SKU', 2, new Money(50.0, Currency::TRY));
+        $cart->addItem($productId, 'Demo Product', 'TEST-SKU', 3, new Money(50.0, Currency::TRY));
 
         expect($cart->itemCount())->toBe(1)
             ->and($cart->totalQuantity())->toBe(5)
@@ -55,7 +55,7 @@ describe('Cart aggregate', function () {
     it('updateItemQuantity changes a known item', function () {
         $cart = makeCart();
         $productId = Uuid::uuid4()->toString();
-        $item = $cart->addItem($productId, 2, new Money(50.0, Currency::TRY));
+        $item = $cart->addItem($productId, 'Demo Product', 'TEST-SKU', 2, new Money(50.0, Currency::TRY));
 
         $cart->updateItemQuantity($item->getId(), 5);
 
@@ -69,8 +69,8 @@ describe('Cart aggregate', function () {
 
     it('removeItem drops the matching line', function () {
         $cart = makeCart();
-        $a = $cart->addItem(Uuid::uuid4()->toString(), 1, new Money(10.0, Currency::TRY));
-        $b = $cart->addItem(Uuid::uuid4()->toString(), 2, new Money(20.0, Currency::TRY));
+        $a = $cart->addItem(Uuid::uuid4()->toString(), 'Demo Product', 'TEST-SKU', 1, new Money(10.0, Currency::TRY));
+        $b = $cart->addItem(Uuid::uuid4()->toString(), 'Demo Product', 'TEST-SKU', 2, new Money(20.0, Currency::TRY));
 
         $cart->removeItem($a->getId());
 
@@ -85,8 +85,8 @@ describe('Cart aggregate', function () {
 
     it('clear empties the cart', function () {
         $cart = makeCart();
-        $cart->addItem(Uuid::uuid4()->toString(), 1, new Money(10.0, Currency::TRY));
-        $cart->addItem(Uuid::uuid4()->toString(), 2, new Money(20.0, Currency::TRY));
+        $cart->addItem(Uuid::uuid4()->toString(), 'Demo Product', 'TEST-SKU', 1, new Money(10.0, Currency::TRY));
+        $cart->addItem(Uuid::uuid4()->toString(), 'Demo Product', 'TEST-SKU', 2, new Money(20.0, Currency::TRY));
 
         $cart->clear();
 
@@ -95,7 +95,7 @@ describe('Cart aggregate', function () {
 
     it('markAsConverted flips status and stamps the order id', function () {
         $cart = makeCart();
-        $cart->addItem(Uuid::uuid4()->toString(), 1, new Money(10.0, Currency::TRY));
+        $cart->addItem(Uuid::uuid4()->toString(), 'Demo Product', 'TEST-SKU', 1, new Money(10.0, Currency::TRY));
         $orderId = OrderId::generate();
 
         $cart->markAsConverted($orderId);
@@ -107,7 +107,7 @@ describe('Cart aggregate', function () {
 
     it('markAsConverted on a non-active cart throws LogicException', function () {
         $cart = makeCart();
-        $cart->addItem(Uuid::uuid4()->toString(), 1, new Money(10.0, Currency::TRY));
+        $cart->addItem(Uuid::uuid4()->toString(), 'Demo Product', 'TEST-SKU', 1, new Money(10.0, Currency::TRY));
         $cart->markAsConverted(OrderId::generate());
 
         $cart->markAsConverted(OrderId::generate());
@@ -115,16 +115,16 @@ describe('Cart aggregate', function () {
 
     it('mutating a converted cart throws', function () {
         $cart = makeCart();
-        $cart->addItem(Uuid::uuid4()->toString(), 1, new Money(10.0, Currency::TRY));
+        $cart->addItem(Uuid::uuid4()->toString(), 'Demo Product', 'TEST-SKU', 1, new Money(10.0, Currency::TRY));
         $cart->markAsConverted(OrderId::generate());
 
-        $cart->addItem(Uuid::uuid4()->toString(), 1, new Money(10.0, Currency::TRY));
+        $cart->addItem(Uuid::uuid4()->toString(), 'Demo Product', 'TEST-SKU', 1, new Money(10.0, Currency::TRY));
     })->throws(LogicException::class);
 
     it('subtotal sums lineTotal across items in the same currency', function () {
         $cart = makeCart();
-        $cart->addItem(Uuid::uuid4()->toString(), 2, new Money(10.0, Currency::TRY)); // 20
-        $cart->addItem(Uuid::uuid4()->toString(), 3, new Money(15.50, Currency::TRY)); // 46.50
+        $cart->addItem(Uuid::uuid4()->toString(), 'Demo Product', 'TEST-SKU', 2, new Money(10.0, Currency::TRY)); // 20
+        $cart->addItem(Uuid::uuid4()->toString(), 'Demo Product', 'TEST-SKU', 3, new Money(15.50, Currency::TRY)); // 46.50
 
         expect($cart->subtotal()->amount)->toBe(66.50)
             ->and($cart->subtotal()->currency)->toBe(Currency::TRY);

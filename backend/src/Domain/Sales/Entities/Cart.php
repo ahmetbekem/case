@@ -98,31 +98,74 @@ final class Cart extends AbstractEntity
     }
 
     /**
-     * Sum of all line totals — assumes every item shares the same
-     * currency (enforced by addItem). Returns Money(0, TRY) for empty.
+     * "Primary" subtotal — yalnızca ilk item'ın currency'sindeki line total'ları
+     * toplar. Mixed currency cart'larda eksik bilgi verir; tam dökümle
+     * çalışacak caller subtotalsByCurrency() veya isUniformCurrency()
+     * kontrol etsin. Boş sepette Money(0, TRY).
+     *
+     * Geri-uyumluluk için bu method tutuldu (CartDTO içinden çağrılıyor +
+     * tek-currency cart'larda hâlâ doğru sonuç).
      */
     public function subtotal(): Money
     {
         if ($this->items === []) {
             return new Money(0.0, Currency::TRY);
         }
-        $currency = $this->items[0]->getUnitPriceSnapshot()->currency;
+        $primary = $this->items[0]->getUnitPriceSnapshot()->currency;
         $sum = 0.0;
         foreach ($this->items as $item) {
-            if ($item->getUnitPriceSnapshot()->currency !== $currency) {
-                throw new \LogicException('Cart contains mixed currencies — invariant broken');
+            if ($item->getUnitPriceSnapshot()->currency === $primary) {
+                $sum += $item->lineTotal()->amount;
             }
-            $sum += $item->lineTotal()->amount;
         }
-        return new Money(round($sum, 2), $currency);
+        return new Money(round($sum, 2), $primary);
+    }
+
+    /**
+     * Para birimi başına subtotal — mixed cart'ı tam dökümlü temsil eder.
+     * Frontend her bucket'ı display currency'e ayrı ayrı çevirip toplayabilir.
+     *
+     * @return array<string, float>  Currency code → subtotal (yuvarlanmış)
+     */
+    public function subtotalsByCurrency(): array
+    {
+        $buckets = [];
+        foreach ($this->items as $item) {
+            $code = $item->getUnitPriceSnapshot()->currency->value;
+            $buckets[$code] = ($buckets[$code] ?? 0.0) + $item->lineTotal()->amount;
+        }
+        foreach ($buckets as $code => $amount) {
+            $buckets[$code] = round($amount, 2);
+        }
+        return $buckets;
+    }
+
+    /**
+     * Tek currency'li sepet mi? PlaceOrder şu an yalnızca uniform sepetleri
+     * kabul ediyor (handler'da kontrol). Frontend de checkout butonunu
+     * buna göre disable eder.
+     */
+    public function isUniformCurrency(): bool
+    {
+        return count($this->subtotalsByCurrency()) <= 1;
     }
 
     /**
      * Add a product to the cart. If the product is already present, the
      * existing line's quantity is incremented (uniq_cart_items_cart_product).
+     *
+     * NOT: Mixed currency artık reddedilmiyor — sepet dump'ı taşıyabilir
+     * ama checkout aşamasında PlaceOrderHandler "uniform currency" kuralı
+     * uygular. Bu sayede "USD ürünü TRY sepete ekle, sonra TRY ürünleri
+     * çıkarıp sade USD checkout" akışı mümkün.
      */
-    public function addItem(string $productId, int $quantity, Money $unitPrice): CartItem
-    {
+    public function addItem(
+        string $productId,
+        string $productName,
+        string $productSku,
+        int $quantity,
+        Money $unitPrice,
+    ): CartItem {
         $this->assertActive();
 
         $existing = $this->findItemByProduct($productId);
@@ -136,6 +179,8 @@ final class Cart extends AbstractEntity
             id: CartItemId::generate(),
             cartId: $this->id,
             productId: $productId,
+            productNameSnapshot: $productName,
+            productSkuSnapshot: $productSku,
             quantity: $quantity,
             unitPriceSnapshot: $unitPrice,
         );

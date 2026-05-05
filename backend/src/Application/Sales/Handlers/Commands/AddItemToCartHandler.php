@@ -60,6 +60,8 @@ final class AddItemToCartHandler extends AbstractCommandHandler
 
         $cart->addItem(
             productId: $product->getId()->value(),
+            productName: $product->getName(),
+            productSku: $product->getSku(),
             quantity: $command->quantity,
             unitPrice: $product->getPrice(),
         );

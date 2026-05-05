@@ -16,6 +16,8 @@ final class CartItem extends AbstractEntity
         private readonly CartItemId $id,
         private readonly CartId $cartId,
         private readonly string $productId,
+        private readonly string $productNameSnapshot,
+        private readonly string $productSkuSnapshot,
         private int $quantity,
         private readonly Money $unitPriceSnapshot,
         \DateTimeImmutable $createdAt = new \DateTimeImmutable(),
@@ -41,6 +43,16 @@ final class CartItem extends AbstractEntity
     public function getProductId(): string
     {
         return $this->productId;
+    }
+
+    public function getProductNameSnapshot(): string
+    {
+        return $this->productNameSnapshot;
+    }
+
+    public function getProductSkuSnapshot(): string
+    {
+        return $this->productSkuSnapshot;
     }
 
     public function getQuantity(): int
@@ -85,6 +97,8 @@ final class CartItem extends AbstractEntity
             'id' => $this->id->value(),
             'cartId' => $this->cartId->value(),
             'productId' => $this->productId,
+            'productNameSnapshot' => $this->productNameSnapshot,
+            'productSkuSnapshot' => $this->productSkuSnapshot,
             'quantity' => $this->quantity,
             'unitPriceSnapshot' => $this->unitPriceSnapshot->amount,
             'currencySnapshot' => $this->unitPriceSnapshot->currency->value,
@@ -103,6 +117,8 @@ final class CartItem extends AbstractEntity
             id: CartItemId::fromString((string) $data['id']),
             cartId: CartId::fromString((string) $data['cartId']),
             productId: (string) $data['productId'],
+            productNameSnapshot: (string) $data['productNameSnapshot'],
+            productSkuSnapshot: (string) $data['productSkuSnapshot'],
             quantity: (int) $data['quantity'],
             unitPriceSnapshot: new Money(
                 (float) $data['unitPriceSnapshot'],

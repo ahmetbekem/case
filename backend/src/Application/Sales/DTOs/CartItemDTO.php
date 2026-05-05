@@ -11,10 +11,12 @@ use OpenApi\Attributes as OA;
 #[OA\Schema(
     schema: 'CartItemDTO',
     title: 'Cart Item',
-    description: 'Sepetteki tek satır — fiyat ekleme anındaki snapshot.',
+    description: 'Sepetteki tek satır — fiyat + ürün adı/SKU ekleme anındaki snapshot.',
     properties: [
         new OA\Property(property: 'id', type: 'string', format: 'uuid'),
         new OA\Property(property: 'productId', type: 'string', format: 'uuid'),
+        new OA\Property(property: 'productName', type: 'string', description: 'Ekleme anındaki ürün adı (snapshot)'),
+        new OA\Property(property: 'productSku', type: 'string', description: 'Ekleme anındaki SKU (snapshot)'),
         new OA\Property(property: 'quantity', type: 'integer', example: 2),
         new OA\Property(property: 'unitPrice', type: 'number', format: 'float', example: 100.00),
         new OA\Property(property: 'currency', type: 'string', enum: ['TRY', 'USD', 'EUR']),
@@ -29,6 +31,8 @@ final readonly class CartItemDTO extends AbstractOutputDTO
     public function __construct(
         public string $id,
         public string $productId,
+        public string $productName,
+        public string $productSku,
         public int $quantity,
         public float $unitPrice,
         public string $currency,
@@ -43,6 +47,8 @@ final readonly class CartItemDTO extends AbstractOutputDTO
         return new self(
             id: $item->getId()->value(),
             productId: $item->getProductId(),
+            productName: $item->getProductNameSnapshot(),
+            productSku: $item->getProductSkuSnapshot(),
             quantity: $item->getQuantity(),
             unitPrice: $item->getUnitPriceSnapshot()->amount,
             currency: $item->getUnitPriceSnapshot()->currency->value,
