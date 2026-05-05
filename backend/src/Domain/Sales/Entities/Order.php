@@ -60,8 +60,6 @@ final class Order extends AbstractEntity
         $this->updatedAt = $updatedAt;
     }
 
-    // ─── Getters ────────────────────────────────────────────────
-
     public function getId(): OrderId
     {
         return $this->id;
@@ -140,8 +138,6 @@ final class Order extends AbstractEntity
         return count($this->items);
     }
 
-    // ─── Behaviour ──────────────────────────────────────────────
-
     public function cancel(string $reason): void
     {
         if (!$this->status->isPending()) {
@@ -189,8 +185,6 @@ final class Order extends AbstractEntity
     {
         $this->assertCanBeViewedBy($viewerId, $viewerRole);
     }
-
-    // ─── Serialisation ──────────────────────────────────────────
 
     /**
      * @return array<string, mixed>

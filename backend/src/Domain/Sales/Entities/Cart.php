@@ -45,8 +45,6 @@ final class Cart extends AbstractEntity
         $this->updatedAt = $updatedAt;
     }
 
-    // ─── Getters ────────────────────────────────────────────────
-
     public function getId(): CartId
     {
         return $this->id;
@@ -118,8 +116,6 @@ final class Cart extends AbstractEntity
         }
         return new Money(round($sum, 2), $currency);
     }
-
-    // ─── Behaviour ──────────────────────────────────────────────
 
     /**
      * Add a product to the cart. If the product is already present, the
@@ -203,8 +199,6 @@ final class Cart extends AbstractEntity
         $this->markAsUpdated();
     }
 
-    // ─── Internal ───────────────────────────────────────────────
-
     private function findItemByProduct(string $productId): ?CartItem
     {
         foreach ($this->items as $item) {
@@ -231,8 +225,6 @@ final class Cart extends AbstractEntity
             throw new \LogicException("Cart is not active (status: {$this->status})");
         }
     }
-
-    // ─── Serialisation ──────────────────────────────────────────
 
     /**
      * @return array<string, mixed>

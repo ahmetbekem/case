@@ -58,7 +58,6 @@ final class EloquentCartRepository extends AbstractEloquentRepository implements
 
     public function save(Cart $cart): void
     {
-        // 1. Upsert the cart row
         CartModel::query()->updateOrInsert(
             ['id' => $cart->getId()->value()],
             [
@@ -71,7 +70,7 @@ final class EloquentCartRepository extends AbstractEloquentRepository implements
             ],
         );
 
-        // 2. Reconcile items — delete rows missing from the aggregate
+        // Reconcile items — delete rows missing from the aggregate
         $existingIds = CartItemModel::query()
             ->where('cart_id', $cart->getId()->value())
             ->pluck('id')
@@ -85,7 +84,6 @@ final class EloquentCartRepository extends AbstractEloquentRepository implements
             CartItemModel::query()->whereIn('id', $toDelete)->delete();
         }
 
-        // 3. Upsert each surviving item
         foreach ($cart->getItems() as $item) {
             CartItemModel::query()->updateOrInsert(
                 ['id' => $item->getId()->value()],
