@@ -80,8 +80,6 @@ final class RefreshToken extends AbstractEntity
         return ['token' => $token, 'plaintext' => $plaintext];
     }
 
-    // ─── Getters ────────────────────────────────────────────────
-
     public function getId(): RefreshTokenId
     {
         return $this->id;
@@ -132,8 +130,6 @@ final class RefreshToken extends AbstractEntity
         return $this->ipAddress;
     }
 
-    // ─── Predicates ─────────────────────────────────────────────
-
     public function isExpired(): bool
     {
         return $this->expiresAt < new \DateTimeImmutable();
@@ -158,8 +154,6 @@ final class RefreshToken extends AbstractEntity
 
         return true;
     }
-
-    // ─── Behaviour ──────────────────────────────────────────────
 
     public function markAsRotated(RefreshTokenId $newTokenId): void
     {
@@ -190,8 +184,6 @@ final class RefreshToken extends AbstractEntity
         $this->revokeReason = $reason;
         $this->markAsUpdated();
     }
-
-    // ─── Serialisation ──────────────────────────────────────────
 
     /**
      * @return array<string, mixed>

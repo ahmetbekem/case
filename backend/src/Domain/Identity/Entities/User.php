@@ -30,8 +30,6 @@ final class User extends AbstractEntity
         $this->updatedAt = $updatedAt;
     }
 
-    // ─── Getters ────────────────────────────────────────────────
-
     public function getId(): UserId
     {
         return $this->id;
@@ -81,8 +79,6 @@ final class User extends AbstractEntity
     {
         return $this->lastLoginIp;
     }
-
-    // ─── Behaviour ──────────────────────────────────────────────
 
     public function changePassword(HashedPassword $password): void
     {
@@ -136,8 +132,6 @@ final class User extends AbstractEntity
         $this->role = UserRole::CUSTOMER;
         $this->markAsUpdated();
     }
-
-    // ─── Serialisation ──────────────────────────────────────────
 
     /**
      * Public-facing array form. **Excludes** passwordHash. The Mapper

@@ -92,7 +92,7 @@ final class LoginUserHandler extends AbstractCommandHandler
             throw InvalidCredentialsException::forInactiveAccount();
         }
 
-        // ✅ Authenticated — issue access + refresh tokens
+        // Authenticated — issue access + refresh tokens
         $accessToken = $this->jwtIssuer->issue($user);
 
         $refreshResult = RefreshToken::generate(

@@ -102,7 +102,7 @@ final class RefreshTokenHandler extends AbstractCommandHandler
             throw InvalidRefreshTokenException::notFound();
         }
 
-        // ⚠️ REPLAY DETECTION — most critical security path in this module.
+        // REPLAY DETECTION — most critical security path in this module.
         // A token whose isRevoked() is true (past grace) being presented again
         // is overwhelmingly likely to be theft, not a legitimate retry.
         if ($token->isRevoked()) {
@@ -142,7 +142,7 @@ final class RefreshTokenHandler extends AbstractCommandHandler
             throw InvalidRefreshTokenException::notFound();
         }
 
-        // ✅ Valid — mint new tokens within the SAME family
+        // Valid — mint new tokens within the SAME family
         $newAccessToken = $this->jwtIssuer->issue($user);
         $newRefreshResult = RefreshToken::generate(
             userId: $user->getId(),
