@@ -1,0 +1,213 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Dehasoft API",
+        "description": "Dehasoft Test Projesi — basit e-ticaret API. Tüm public istekler Next.js BFF üzerinden geçer; direkt backend erişimi X-Proxy-Secret header doğrulaması ile reddedilir (ProxyOriginMiddleware).",
+        "contact": {
+            "name": "Ahmet Bekem",
+            "email": "ahmet@example.com"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8000/api/v1",
+            "description": "Local development (docker compose)"
+        },
+        {
+            "url": "https://api.example.com/api/v1",
+            "description": "Production"
+        }
+    ],
+    "paths": {
+        "/up": {
+            "get": {
+                "tags": [
+                    "System"
+                ],
+                "summary": "Healthcheck",
+                "description": "Laravel built-in /up endpoint. Auth gerekmez. Compose healthcheck ve dış monitoring tarafından kullanılır.",
+                "operationId": "41abdabe347e24c572e384d6ce9dd3be",
+                "responses": {
+                    "200": {
+                        "description": "Servis ayakta"
+                    },
+                    "503": {
+                        "description": "Servis sağlıksız"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "PaginationMeta": {
+                "description": "Sayfalama meta verisi — listeleme cevaplarında `meta` altında döner.",
+                "properties": {
+                    "currentPage": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "pageSize": {
+                        "type": "integer",
+                        "example": 20
+                    },
+                    "total": {
+                        "type": "integer",
+                        "example": 150
+                    },
+                    "totalPages": {
+                        "type": "integer",
+                        "example": 8
+                    }
+                },
+                "type": "object"
+            },
+            "ValidationError": {
+                "description": "Laravel default 422 cevabı — validation kuralları başarısız.",
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "The given data was invalid."
+                    },
+                    "errors": {
+                        "type": "object",
+                        "example": {
+                            "email": [
+                                "Email is required."
+                            ]
+                        },
+                        "additionalProperties": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "UnauthorizedError": {
+                "description": "Auth gerekli ama eksik/geçersiz token.",
+                "properties": {
+                    "error": {
+                        "properties": {
+                            "code": {
+                                "type": "string",
+                                "example": "UNAUTHORIZED"
+                            },
+                            "message": {
+                                "type": "string",
+                                "example": "Token gerekli veya geçersiz."
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "ForbiddenError": {
+                "description": "Auth var ama bu işlem için yetki (ör. admin rolü) yok.",
+                "properties": {
+                    "error": {
+                        "properties": {
+                            "code": {
+                                "type": "string",
+                                "example": "FORBIDDEN"
+                            },
+                            "message": {
+                                "type": "string",
+                                "example": "Bu işlem için yetkiniz yok."
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "NotFoundError": {
+                "description": "Resource bulunamadı — IDOR pattern gereği yetkisiz erişim de bu cevabı alır.",
+                "properties": {
+                    "error": {
+                        "properties": {
+                            "code": {
+                                "type": "string",
+                                "example": "NOT_FOUND"
+                            },
+                            "message": {
+                                "type": "string",
+                                "example": "Kaynak bulunamadı."
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "ConflictError": {
+                "description": "Business rule ihlali (duplicate SKU, yetersiz stok, sipariş zaten iptal vs.).",
+                "properties": {
+                    "error": {
+                        "properties": {
+                            "code": {
+                                "type": "string",
+                                "example": "CONFLICT"
+                            },
+                            "message": {
+                                "type": "string"
+                            },
+                            "context": {
+                                "description": "Opsiyonel debug bilgisi.",
+                                "type": "object",
+                                "additionalProperties": {
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "RateLimitError": {
+                "description": "Rate limit aşıldı — Retry-After response header'ında saniye olarak döner.",
+                "properties": {
+                    "error": {
+                        "properties": {
+                            "code": {
+                                "type": "string",
+                                "example": "RATE_LIMIT_EXCEEDED"
+                            },
+                            "message": {
+                                "type": "string",
+                                "example": "Çok fazla istek. Lütfen bekleyin."
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "description": "JWT bearer token — `POST /auth/login` cevabındaki accessToken.",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
+            },
+            "cookieAuth": {
+                "type": "apiKey",
+                "description": "httpOnly cookie — login sonrası tarayıcı otomatik gönderir; BFF proxy üzerinden tek yönlü kullanılır.",
+                "name": "access_token",
+                "in": "cookie"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "System",
+            "description": "Healthcheck ve alt-yapı endpoint'leri"
+        }
+    ]
+}
