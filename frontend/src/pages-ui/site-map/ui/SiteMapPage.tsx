@@ -188,13 +188,33 @@ export function SiteMapPage() {
           Test Hesapları
         </h3>
         <p className="mb-4 text-sm text-slate-600">
-          Hazır seeder yok — manuel hesap aç, ardından admin yapmak için PostgreSQL&apos;de
-          rolü güncelle:
+          <code className="rounded bg-slate-200 px-1 py-0.5 text-xs">
+            php artisan db:seed
+          </code>{' '}
+          ile yüklenir. Tekrar çalıştırılabilir (idempotent — şifre yenilenir).
         </p>
-        <pre className="overflow-x-auto rounded-md bg-slate-900 p-3 text-xs text-slate-100">
-{`docker exec dehasoft-postgres psql -U dehasoft -d testproject \\
-  -c "UPDATE identity.users SET role = 'admin' WHERE email = '<your-email>';"`}
-        </pre>
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <div className="rounded-md border border-rose-200 bg-rose-50 p-4 text-sm">
+            <p className="mb-1 inline-flex items-center rounded-full bg-rose-100 px-2 py-0.5 text-xs font-medium text-rose-900 ring-1 ring-inset ring-rose-300">
+              admin
+            </p>
+            <p className="font-mono text-slate-900">admin@dehasoft.test</p>
+            <p className="font-mono text-slate-700">Admin123!</p>
+            <p className="mt-2 text-xs text-slate-600">
+              Tüm sayfalar + /admin/products
+            </p>
+          </div>
+          <div className="rounded-md border border-sky-200 bg-sky-50 p-4 text-sm">
+            <p className="mb-1 inline-flex items-center rounded-full bg-sky-100 px-2 py-0.5 text-xs font-medium text-sky-900 ring-1 ring-inset ring-sky-300">
+              customer
+            </p>
+            <p className="font-mono text-slate-900">customer@dehasoft.test</p>
+            <p className="font-mono text-slate-700">Customer123!</p>
+            <p className="mt-2 text-xs text-slate-600">
+              Sepet + sipariş + checkout
+            </p>
+          </div>
+        </div>
       </section>
     </div>
   );

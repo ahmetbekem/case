@@ -327,16 +327,24 @@ Tam shadcn init yapılmadı — `cn.ts` helper + manual `Button`, `Input`, `Labe
 
 ### Test Hesapları
 
-> **⚠️ Seeder eksik:** `backend/database/seeders/DatabaseSeeder.php` Laravel default'u
-> tutuyor (`App\Models\User`'ı seed etmeye çalışıyor — bu proje `Domain\Identity\Entities\User`
-> kullanıyor). Çalıştırılırsa fail eder. **Demo admin/customer hesabı YOK.**
->
-> Manuel oluşturmak için: `/register` ile yeni hesap aç, ardından PostgreSQL'de
-> rolü güncelle:
-> ```bash
-> docker exec dehasoft-postgres psql -U dehasoft -d testproject \
->   -c "UPDATE identity.users SET role = 'admin' WHERE email = 'youremail@x.com';"
-> ```
+`backend/database/seeders/UserSeeder.php` ile yüklenir:
+
+```bash
+# Container'dan
+docker exec dehasoft-backend php artisan db:seed --force
+
+# veya host'tan (faker dev-deps gerektirir)
+cd backend && php artisan db:seed --force
+```
+
+| Rol | Email | Şifre | Erişim |
+|-----|-------|-------|--------|
+| **admin** | `admin@dehasoft.test` | `Admin123!` | Tüm sayfalar + `/admin/products` |
+| **customer** | `customer@dehasoft.test` | `Customer123!` | `/cart`, `/checkout`, `/orders` |
+
+Idempotent — tekrar çalıştırılınca aynı email'lerin şifresini günceller, yeni kayıt yaratmaz.
+
+> **Not:** `UserFactory.php` silindi (Faker dev-only, prod container'da yok ve auto-discovery hata veriyordu). Faker tabanlı yeni factory gerekirse: `composer require --dev fakerphp/faker` + image rebuild.
 
 ### URL'ler (sistem ayaktayken)
 
@@ -360,6 +368,5 @@ Tam shadcn init yapılmadı — `cn.ts` helper + manual `Button`, `Input`, `Labe
 | Login `returnUrl` | Auth-required action'lardan login'e yönlenip geri dönmek imkansız | 2-3 saat |
 | `/profile` sayfası | User kendi bilgilerini güncelleyemiyor | 2 saat |
 | Admin dashboard (`/admin`) | Admin'e ilk açılış sayfası yok | 2-3 saat (backend stats endpoint da yok — +backend) |
-| Seeder | Test hesapları manuel açılmak zorunda | 30 dk |
 | `/admin/orders` ayrı route | Admin'in tüm siparişleri görme deneyimi `?adminScope=1` toggle ile karışık | 2 saat |
 | `/admin/users` + backend admin user CRUD | Kullanıcı pasifleştirme/aktif yok | 1 gün (backend + frontend) |

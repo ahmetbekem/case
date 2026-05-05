@@ -228,11 +228,14 @@ Tüm sayfa-route-endpoint haritası: [`docs/FRONTEND_GUIDE.md`](docs/FRONTEND_GU
 
 ### Test Hesapları
 
-> **⚠️ Demo seeder yok.** `/register` ile manuel hesap aç; admin yapmak için PostgreSQL'de:
-> ```bash
-> docker exec dehasoft-postgres psql -U dehasoft -d testproject \
->   -c "UPDATE identity.users SET role = 'admin' WHERE email = '<your-email>';"
-> ```
+`php artisan db:seed` sonrası iki demo hesap hazır:
+
+| Rol | Email | Şifre |
+|-----|-------|-------|
+| admin | `admin@dehasoft.test` | `Admin123!` |
+| customer | `customer@dehasoft.test` | `Customer123!` |
+
+`UserSeeder` idempotent — tekrar çalıştırılınca aynı email'lerin şifresini günceller.
 
 ---
 
