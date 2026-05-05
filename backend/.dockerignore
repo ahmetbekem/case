@@ -1,0 +1,36 @@
+# Local env files — never bake secrets into the image
+.env
+.env.local
+.env.testing
+
+# Already-installed deps — composer install runs inside the builder stage
+vendor/
+node_modules/
+
+# VCS + IDE noise
+.git/
+.gitignore
+.gitattributes
+.idea/
+.vscode/
+
+# Test artefacts
+.phpunit.cache/
+.phpunit.result.cache
+tests/storage/
+
+# OS noise
+.DS_Store
+Thumbs.db
+
+# Storage runtime files (regenerated on container start)
+storage/logs/*
+!storage/logs/.gitkeep
+storage/framework/cache/data/*
+storage/framework/sessions/*
+storage/framework/views/*
+storage/framework/testing/*
+bootstrap/cache/*.php
+
+# README — not needed in image
+README.md

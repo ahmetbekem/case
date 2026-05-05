@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Infrastructure\Shared\Abstracts;
 
 use Domain\Shared\Abstracts\AbstractMapper;
+use Domain\Shared\Contracts\EntityInterface;
 use Domain\Shared\Contracts\ValueObjectInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -14,7 +15,7 @@ use Illuminate\Database\Eloquent\Model;
  * declare which model class to query and how to construct their VO id from a
  * raw string; everything else (mapper access, base query) lives here.
  *
- * @template TEntity of \Domain\Shared\Contracts\EntityInterface
+ * @template TEntity of EntityInterface
  * @template TId of ValueObjectInterface
  * @template TModel of Model
  */
