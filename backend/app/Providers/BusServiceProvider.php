@@ -32,6 +32,24 @@ use Application\Identity\Handlers\Commands\RefreshTokenHandler;
 use Application\Identity\Handlers\Commands\RegisterUserHandler;
 use Application\Identity\Handlers\Queries\GetCurrentUserHandler;
 use Application\Identity\Queries\GetCurrentUserQuery;
+use Application\Sales\Commands\AddItemToCartCommand;
+use Application\Sales\Commands\CancelOrderCommand;
+use Application\Sales\Commands\ClearCartCommand;
+use Application\Sales\Commands\PlaceOrderCommand;
+use Application\Sales\Commands\RemoveCartItemCommand;
+use Application\Sales\Commands\UpdateCartItemQuantityCommand;
+use Application\Sales\Handlers\Commands\AddItemToCartHandler;
+use Application\Sales\Handlers\Commands\CancelOrderHandler;
+use Application\Sales\Handlers\Commands\ClearCartHandler;
+use Application\Sales\Handlers\Commands\PlaceOrderHandler;
+use Application\Sales\Handlers\Commands\RemoveCartItemHandler;
+use Application\Sales\Handlers\Commands\UpdateCartItemQuantityHandler;
+use Application\Sales\Handlers\Queries\GetCartHandler;
+use Application\Sales\Handlers\Queries\GetOrderHandler;
+use Application\Sales\Handlers\Queries\ListUserOrdersHandler;
+use Application\Sales\Queries\GetCartQuery;
+use Application\Sales\Queries\GetOrderQuery;
+use Application\Sales\Queries\ListUserOrdersQuery;
 use Application\Shared\Bus\CommandBus;
 use Application\Shared\Bus\QueryBus;
 use Application\Shared\Contracts\CommandBusInterface;
@@ -61,6 +79,14 @@ final class BusServiceProvider extends ServiceProvider
 
         // ─── Currency ───
         SyncCurrencyRatesCommand::class => SyncCurrencyRatesHandler::class,
+
+        // ─── Sales ───
+        AddItemToCartCommand::class            => AddItemToCartHandler::class,
+        UpdateCartItemQuantityCommand::class   => UpdateCartItemQuantityHandler::class,
+        RemoveCartItemCommand::class           => RemoveCartItemHandler::class,
+        ClearCartCommand::class                => ClearCartHandler::class,
+        PlaceOrderCommand::class               => PlaceOrderHandler::class,
+        CancelOrderCommand::class              => CancelOrderHandler::class,
     ];
 
     /**
@@ -77,6 +103,11 @@ final class BusServiceProvider extends ServiceProvider
         // ─── Currency ───
         GetExchangeRateQuery::class           => GetExchangeRateHandler::class,
         ListSupportedCurrenciesQuery::class   => ListSupportedCurrenciesHandler::class,
+
+        // ─── Sales ───
+        GetCartQuery::class             => GetCartHandler::class,
+        GetOrderQuery::class            => GetOrderHandler::class,
+        ListUserOrdersQuery::class      => ListUserOrdersHandler::class,
     ];
 
     public function register(): void

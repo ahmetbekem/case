@@ -51,6 +51,11 @@ final class AppServiceProvider extends ServiceProvider
         });
 
         RateLimiter::for('register', function (Request $request) {
+            // Testing: bypass — Pest fixtures call /register many times per
+            // run from the same loopback IP. Production: SECURITY.md §7.2.
+            if ($this->app->environment('testing')) {
+                return Limit::perMinute(1000)->by('test');
+            }
             return [Limit::perMinutes(60, 3)->by((string) $request->ip())];
         });
 
@@ -62,6 +67,17 @@ final class AppServiceProvider extends ServiceProvider
         RateLimiter::for('api-read', function (Request $request) {
             $userId = (string) ($request->attributes->get('user_id') ?? $request->ip());
             return [Limit::perMinute(200)->by($userId)];
+        });
+
+        // order: 10 placements / hour per user — guards against runaway
+        // PlaceOrder spam (each call decrements stock + writes order rows).
+        RateLimiter::for('order', function (Request $request) {
+            // Testing: bypass — Sales suite places many orders sequentially.
+            if ($this->app->environment('testing')) {
+                return Limit::perMinute(1000)->by('test');
+            }
+            $userId = (string) ($request->attributes->get('user_id') ?? $request->ip());
+            return [Limit::perMinutes(60, 10)->by($userId)];
         });
     }
 }

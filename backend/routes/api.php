@@ -21,5 +21,5 @@ Route::prefix('v1')->group(function () {
     require __DIR__ . '/api/identity.php';
     require __DIR__ . '/api/catalog.php';
     require __DIR__ . '/api/currency.php';
-    // require __DIR__ . '/api/sales.php';     // TASK 0.11
+    require __DIR__ . '/api/sales.php';
 });

@@ -14,6 +14,8 @@ use Domain\Identity\Contracts\JwtIssuerInterface;
 use Domain\Identity\Contracts\PasswordHasherInterface;
 use Domain\Identity\Contracts\RefreshTokenRepositoryInterface;
 use Domain\Identity\Contracts\UserRepositoryInterface;
+use Domain\Sales\Contracts\CartRepositoryInterface;
+use Domain\Sales\Contracts\OrderRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
 use Infrastructure\Catalog\Repositories\EloquentProductRepository;
 use Infrastructure\Currency\Providers\FrankfurterApiProvider;
@@ -23,6 +25,8 @@ use Infrastructure\Identity\Repositories\EloquentUserRepository;
 use Infrastructure\Identity\Services\BcryptPasswordHasher;
 use Infrastructure\Identity\Services\HmacJwtIssuer;
 use Infrastructure\Identity\Services\RedisJwtBlacklist;
+use Infrastructure\Sales\Repositories\EloquentCartRepository;
+use Infrastructure\Sales\Repositories\EloquentOrderRepository;
 use Infrastructure\Shared\Persistence\EloquentTransaction;
 
 final class RepositoryServiceProvider extends ServiceProvider
@@ -51,6 +55,10 @@ final class RepositoryServiceProvider extends ServiceProvider
         // CurrencyConverter is a stateless final readonly service — Container
         // can autowire it directly; we list it for explicitness.
         CurrencyConverter::class               => CurrencyConverter::class,
+
+        // ─── Sales Repositories ───
+        CartRepositoryInterface::class         => EloquentCartRepository::class,
+        OrderRepositoryInterface::class        => EloquentOrderRepository::class,
 
         // ─── Cross-cutting infrastructure ───
         TransactionInterface::class            => EloquentTransaction::class,
