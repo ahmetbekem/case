@@ -16,6 +16,12 @@ use Application\Catalog\Handlers\Queries\GetProductHandler;
 use Application\Catalog\Handlers\Queries\ListProductsHandler;
 use Application\Catalog\Queries\GetProductQuery;
 use Application\Catalog\Queries\ListProductsQuery;
+use Application\Currency\Commands\SyncCurrencyRatesCommand;
+use Application\Currency\Handlers\Commands\SyncCurrencyRatesHandler;
+use Application\Currency\Handlers\Queries\GetExchangeRateHandler;
+use Application\Currency\Handlers\Queries\ListSupportedCurrenciesHandler;
+use Application\Currency\Queries\GetExchangeRateQuery;
+use Application\Currency\Queries\ListSupportedCurrenciesQuery;
 use Application\Identity\Commands\LoginUserCommand;
 use Application\Identity\Commands\LogoutUserCommand;
 use Application\Identity\Commands\RefreshTokenCommand;
@@ -52,6 +58,9 @@ final class BusServiceProvider extends ServiceProvider
         UpdateProductCommand::class => UpdateProductHandler::class,
         DeleteProductCommand::class => DeleteProductHandler::class,
         AdjustStockCommand::class   => AdjustStockHandler::class,
+
+        // ─── Currency ───
+        SyncCurrencyRatesCommand::class => SyncCurrencyRatesHandler::class,
     ];
 
     /**
@@ -64,6 +73,10 @@ final class BusServiceProvider extends ServiceProvider
         // ─── Catalog ───
         GetProductQuery::class     => GetProductHandler::class,
         ListProductsQuery::class   => ListProductsHandler::class,
+
+        // ─── Currency ───
+        GetExchangeRateQuery::class           => GetExchangeRateHandler::class,
+        ListSupportedCurrenciesQuery::class   => ListSupportedCurrenciesHandler::class,
     ];
 
     public function register(): void

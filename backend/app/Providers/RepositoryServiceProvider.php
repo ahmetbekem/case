@@ -6,6 +6,9 @@ namespace App\Providers;
 
 use Application\Shared\Contracts\TransactionInterface;
 use Domain\Catalog\Contracts\ProductRepositoryInterface;
+use Domain\Currency\Contracts\ExchangeRateProviderInterface;
+use Domain\Currency\Contracts\ExchangeRateRepositoryInterface;
+use Domain\Currency\Services\CurrencyConverter;
 use Domain\Identity\Contracts\JwtBlacklistInterface;
 use Domain\Identity\Contracts\JwtIssuerInterface;
 use Domain\Identity\Contracts\PasswordHasherInterface;
@@ -13,6 +16,8 @@ use Domain\Identity\Contracts\RefreshTokenRepositoryInterface;
 use Domain\Identity\Contracts\UserRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
 use Infrastructure\Catalog\Repositories\EloquentProductRepository;
+use Infrastructure\Currency\Providers\FrankfurterApiProvider;
+use Infrastructure\Currency\Repositories\EloquentExchangeRateRepository;
 use Infrastructure\Identity\Repositories\EloquentRefreshTokenRepository;
 use Infrastructure\Identity\Repositories\EloquentUserRepository;
 use Infrastructure\Identity\Services\BcryptPasswordHasher;
@@ -39,6 +44,13 @@ final class RepositoryServiceProvider extends ServiceProvider
 
         // ─── Catalog Repositories ───
         ProductRepositoryInterface::class      => EloquentProductRepository::class,
+
+        // ─── Currency Repositories + Providers + Domain Services ───
+        ExchangeRateRepositoryInterface::class => EloquentExchangeRateRepository::class,
+        ExchangeRateProviderInterface::class   => FrankfurterApiProvider::class,
+        // CurrencyConverter is a stateless final readonly service — Container
+        // can autowire it directly; we list it for explicitness.
+        CurrencyConverter::class               => CurrencyConverter::class,
 
         // ─── Cross-cutting infrastructure ───
         TransactionInterface::class            => EloquentTransaction::class,

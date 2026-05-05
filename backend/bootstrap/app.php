@@ -12,6 +12,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
+use Infrastructure\Currency\Console\SyncCurrencyRatesArtisanCommand;
 use Infrastructure\Logging\Access\AccessLogMiddleware;
 use Infrastructure\Logging\Console\ReplayAuditFallbackCommand;
 use Presentation\Identity\Middleware\JwtAuthMiddleware;
@@ -29,6 +30,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withCommands([
         ReplayAuditFallbackCommand::class,
+        SyncCurrencyRatesArtisanCommand::class,
     ])
     ->withMiddleware(function (Middleware $middleware) {
         // Global API stack — runs on every /api/* request, in order.
