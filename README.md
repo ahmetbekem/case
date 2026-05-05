@@ -207,6 +207,35 @@ Detaylı strateji ve annotation pattern'leri için [`docs/API_DOCUMENTATION.md`]
 
 ---
 
+## Frontend Routes
+
+Tüm sayfa-route-endpoint haritası: [`docs/FRONTEND_GUIDE.md`](docs/FRONTEND_GUIDE.md)
+
+**Canlı site haritası:** http://localhost:3030/site-map (kart'lı görsel rehber, doc ile birebir senkron)
+
+### Hızlı Erişim
+
+| Servis | URL |
+|---|---|
+| Anasayfa | http://localhost:3030 (⚠️ scaffold placeholder) |
+| Site Haritası | http://localhost:3030/site-map |
+| Ürünler | http://localhost:3030/products |
+| Login | http://localhost:3030/login |
+| API Docs (Swagger) | http://localhost:8000/api/documentation |
+| OpenAPI JSON | http://localhost:8000/docs |
+| Kibana | http://localhost:5601 |
+| RabbitMQ UI | http://localhost:15672 (admin/admin) |
+
+### Test Hesapları
+
+> **⚠️ Demo seeder yok.** `/register` ile manuel hesap aç; admin yapmak için PostgreSQL'de:
+> ```bash
+> docker exec dehasoft-postgres psql -U dehasoft -d testproject \
+>   -c "UPDATE identity.users SET role = 'admin' WHERE email = '<your-email>';"
+> ```
+
+---
+
 ## CI/CD
 
 `.github/workflows/`:

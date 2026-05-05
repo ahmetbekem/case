@@ -1,3 +1,4 @@
+import { Footer } from '@/widgets/footer';
 import { Header } from '@/widgets/header';
 import { AdminProductsPage } from '@/pages-ui/admin-products';
 
@@ -18,6 +19,7 @@ export default function Page() {
       <main className="flex-1">
         <AdminProductsPage />
       </main>
+      <Footer />
     </>
   );
 }
