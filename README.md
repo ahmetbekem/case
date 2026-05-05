@@ -181,7 +181,7 @@ npm run typecheck && npm run lint && npm run build
 | Kaynak | URL |
 |---|---|
 | Swagger UI | http://localhost:8000/api/documentation |
-| OpenAPI 3.0 JSON | http://localhost:8000/docs/api-docs.json |
+| OpenAPI 3.0 JSON | http://localhost:8000/docs |
 | Postman Collection | [`docs/postman/dehasoft.postman_collection.json`](docs/postman/dehasoft.postman_collection.json) |
 | Postman Environment | [`docs/postman/dehasoft.postman_environment.json`](docs/postman/dehasoft.postman_environment.json) |
 
