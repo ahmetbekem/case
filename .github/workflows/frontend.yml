@@ -1,0 +1,61 @@
+name: frontend
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'frontend/**'
+      - 'scripts/check-backend-leak.sh'
+      - '.github/workflows/frontend.yml'
+  pull_request:
+    paths:
+      - 'frontend/**'
+      - 'scripts/check-backend-leak.sh'
+      - '.github/workflows/frontend.yml'
+
+jobs:
+  build:
+    name: Lint + Build + Leak Gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Build
+        # Build-time env: BFF leak gate'in dummy değerlerle de yakalayabilmesi
+        # için bilinçli olarak fake/sentinel veriyoruz; gerçek prod secret'ları
+        # asla CI ortamına girmemeli.
+        env:
+          LARAVEL_API_URL: http://backend.invalid/api/v1
+          BACKEND_PROXY_SECRET: ci-dummy-secret-do-not-use-in-prod
+          NODE_ENV: production
+          NEXT_PUBLIC_APP_NAME: Dehasoft
+          NEXT_PUBLIC_DEFAULT_CURRENCY: TRY
+        run: pnpm build
+
+      - name: Backend leak check
+        # .next/static/*.js içinde server-only secret veya backend URL var mı?
+        run: bash ../scripts/check-backend-leak.sh

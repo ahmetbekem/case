@@ -1,0 +1,92 @@
+name: backend
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/backend.yml'
+  pull_request:
+    paths:
+      - 'backend/**'
+      - '.github/workflows/backend.yml'
+
+jobs:
+  test:
+    name: Pest (PHP 8.4 + PostgreSQL 15 + Redis 7)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_DB: testproject_test
+          POSTGRES_USER: dehasoft
+          POSTGRES_PASSWORD: dehasoft_pass
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U dehasoft -d testproject_test"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    defaults:
+      run:
+        working-directory: backend
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP 8.4
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring, pdo, pdo_pgsql, pgsql, redis, bcmath, intl, sockets, xml
+          coverage: none
+          tools: composer:v2
+          ini-values: error_reporting=E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED
+
+      - name: Composer cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.composer/cache
+          key: composer-${{ runner.os }}-${{ hashFiles('backend/composer.lock', 'backend/composer.json') }}
+          restore-keys: composer-${{ runner.os }}-
+
+      - name: Install dependencies
+        run: composer install --no-interaction --no-progress --prefer-dist
+
+      - name: Prepare app key + JWT secret
+        run: |
+          cp .env.example .env || true
+          php artisan key:generate --ansi --force
+          php -r 'echo "JWT_SECRET=" . bin2hex(random_bytes(32)) . PHP_EOL;' >> .env
+
+      - name: Run migrations (test DB)
+        env:
+          DB_CONNECTION: pgsql
+          DB_HOST: 127.0.0.1
+          DB_PORT: '5432'
+          DB_DATABASE: testproject_test
+          DB_USERNAME: dehasoft
+          DB_PASSWORD: dehasoft_pass
+          APP_ENV: testing
+        run: php artisan migrate --force --no-interaction
+
+      - name: Run Pest test suite
+        env:
+          DB_HOST: 127.0.0.1
+          REDIS_HOST: 127.0.0.1
+        run: vendor/bin/pest --colors=always --no-coverage
