@@ -220,23 +220,37 @@ services:
     networks:
       - dehasoft-net
 
-  # TODO TASK 0.14: enable frontend after Dockerfile lands
-  # frontend:
-  #   build:
-  #     context: ./frontend
-  #     dockerfile: Dockerfile
-  #   container_name: dehasoft-frontend
-  #   restart: unless-stopped
-  #   environment:
-  #     LARAVEL_API_URL: http://backend:9000/api/v1
-  #     BACKEND_PROXY_SECRET: ${BACKEND_PROXY_SECRET}
-  #     NODE_ENV: ${NODE_ENV:-development}
-  #   ports:
-  #     - "${FRONTEND_PORT:-3000}:3000"
-  #   depends_on:
-  #     - backend
-  #   networks:
-  #     - dehasoft-net
+  # ─────────────────────────────────────────────────────────────
+  # Frontend (Next.js 16 standalone) — BFF + UI
+  # ─────────────────────────────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: dehasoft-frontend
+    restart: unless-stopped
+    environment:
+      # Internal Docker DNS — backend container exposes port 80 (nginx).
+      # NEVER prefixed with NEXT_PUBLIC_ — would leak to the browser bundle.
+      LARAVEL_API_URL: http://backend/api/v1
+      BACKEND_PROXY_SECRET: ${BACKEND_PROXY_SECRET}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      NODE_ENV: ${NODE_ENV:-production}
+      NEXT_PUBLIC_APP_NAME: Dehasoft
+      NEXT_PUBLIC_DEFAULT_CURRENCY: TRY
+    ports:
+      - "${FRONTEND_PORT:-3000}:3000"
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:3000/", "-o", "/dev/null"]
+      interval: 30s
+      timeout: 5s
+      start_period: 20s
+      retries: 3
+    networks:
+      - dehasoft-net
 
   # TODO TASK 0.17: enable log-service after Dockerfile lands
   # log-service:

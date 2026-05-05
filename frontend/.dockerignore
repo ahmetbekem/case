@@ -1,0 +1,30 @@
+# Build output / dev artefacts
+node_modules/
+.next/
+out/
+build/
+dist/
+
+# Local env (secrets injected by compose at runtime)
+.env
+.env.local
+.env.*.local
+
+# VCS + IDE
+.git/
+.gitignore
+.gitattributes
+.idea/
+.vscode/
+
+# Test + tooling
+coverage/
+.nyc_output/
+.eslintcache
+
+# OS noise
+.DS_Store
+Thumbs.db
+
+# Don't bake README into the runtime image
+README.md
