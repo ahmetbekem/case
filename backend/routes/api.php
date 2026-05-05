@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Route;
 // here so the effective path is /api/v1/...
 Route::prefix('v1')->group(function () {
     require __DIR__ . '/api/identity.php';
-    // require __DIR__ . '/api/catalog.php';   // TASK 0.10
+    require __DIR__ . '/api/catalog.php';
     // require __DIR__ . '/api/sales.php';     // TASK 0.11
     // require __DIR__ . '/api/currency.php';  // TASK 0.12
 });

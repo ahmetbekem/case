@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace App\Providers;
 
 use Application\Shared\Contracts\TransactionInterface;
+use Domain\Catalog\Contracts\ProductRepositoryInterface;
 use Domain\Identity\Contracts\JwtBlacklistInterface;
 use Domain\Identity\Contracts\JwtIssuerInterface;
 use Domain\Identity\Contracts\PasswordHasherInterface;
 use Domain\Identity\Contracts\RefreshTokenRepositoryInterface;
 use Domain\Identity\Contracts\UserRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
+use Infrastructure\Catalog\Repositories\EloquentProductRepository;
 use Infrastructure\Identity\Repositories\EloquentRefreshTokenRepository;
 use Infrastructure\Identity\Repositories\EloquentUserRepository;
 use Infrastructure\Identity\Services\BcryptPasswordHasher;
@@ -34,6 +36,9 @@ final class RepositoryServiceProvider extends ServiceProvider
         // ─── Identity Repositories ───
         UserRepositoryInterface::class         => EloquentUserRepository::class,
         RefreshTokenRepositoryInterface::class => EloquentRefreshTokenRepository::class,
+
+        // ─── Catalog Repositories ───
+        ProductRepositoryInterface::class      => EloquentProductRepository::class,
 
         // ─── Cross-cutting infrastructure ───
         TransactionInterface::class            => EloquentTransaction::class,

@@ -4,6 +4,18 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use Application\Catalog\Commands\AdjustStockCommand;
+use Application\Catalog\Commands\CreateProductCommand;
+use Application\Catalog\Commands\DeleteProductCommand;
+use Application\Catalog\Commands\UpdateProductCommand;
+use Application\Catalog\Handlers\Commands\AdjustStockHandler;
+use Application\Catalog\Handlers\Commands\CreateProductHandler;
+use Application\Catalog\Handlers\Commands\DeleteProductHandler;
+use Application\Catalog\Handlers\Commands\UpdateProductHandler;
+use Application\Catalog\Handlers\Queries\GetProductHandler;
+use Application\Catalog\Handlers\Queries\ListProductsHandler;
+use Application\Catalog\Queries\GetProductQuery;
+use Application\Catalog\Queries\ListProductsQuery;
 use Application\Identity\Commands\LoginUserCommand;
 use Application\Identity\Commands\LogoutUserCommand;
 use Application\Identity\Commands\RefreshTokenCommand;
@@ -34,6 +46,12 @@ final class BusServiceProvider extends ServiceProvider
         LoginUserCommand::class    => LoginUserHandler::class,
         RefreshTokenCommand::class => RefreshTokenHandler::class,
         LogoutUserCommand::class   => LogoutUserHandler::class,
+
+        // ─── Catalog ───
+        CreateProductCommand::class => CreateProductHandler::class,
+        UpdateProductCommand::class => UpdateProductHandler::class,
+        DeleteProductCommand::class => DeleteProductHandler::class,
+        AdjustStockCommand::class   => AdjustStockHandler::class,
     ];
 
     /**
@@ -42,6 +60,10 @@ final class BusServiceProvider extends ServiceProvider
     protected array $queryHandlers = [
         // ─── Identity ───
         GetCurrentUserQuery::class => GetCurrentUserHandler::class,
+
+        // ─── Catalog ───
+        GetProductQuery::class     => GetProductHandler::class,
+        ListProductsQuery::class   => ListProductsHandler::class,
     ];
 
     public function register(): void
