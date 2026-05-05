@@ -172,6 +172,41 @@ npm run typecheck && npm run lint && npm run build
 
 ---
 
+## API Documentation
+
+İnteraktif Swagger UI + indirilebilir Postman collection.
+
+### Linkler (sistem ayaktayken)
+
+| Kaynak | URL |
+|---|---|
+| Swagger UI | http://localhost:8000/api/documentation |
+| OpenAPI 3.0 JSON | http://localhost:8000/docs/api-docs.json |
+| Postman Collection | [`docs/postman/dehasoft.postman_collection.json`](docs/postman/dehasoft.postman_collection.json) |
+| Postman Environment | [`docs/postman/dehasoft.postman_environment.json`](docs/postman/dehasoft.postman_environment.json) |
+
+**Swagger UI:** Authorize butonu → `bearerAuth` (Bearer JWT) veya
+`cookieAuth` (access_token cookie). Try-it-out ile login → token persist
+edilir → authenticated endpoint'ler doğrudan çalışır (`L5_SWAGGER_UI_PERSIST_AUTHORIZATION=true`).
+
+**Postman:** Collection + Environment'i import et. POST /auth/login
+tetiklendiğinde `Tests` script'i `accessToken` ve `refreshToken`'ı
+otomatik environment'a yazar — sonraki request'ler authenticated.
+
+### Yenileme
+
+```bash
+# OpenAPI spec — backend annotations değişince
+docker compose exec backend php artisan l5-swagger:generate
+
+# Postman collection — OpenAPI spec değişince
+bash scripts/generate-postman-collection.sh
+```
+
+Detaylı strateji ve annotation pattern'leri için [`docs/API_DOCUMENTATION.md`](docs/API_DOCUMENTATION.md).
+
+---
+
 ## CI/CD
 
 `.github/workflows/`:
@@ -179,6 +214,7 @@ npm run typecheck && npm run lint && npm run build
 - **backend.yml** — PHP 8.4 + PostgreSQL 15 + Redis 7 service container, Pest suite
 - **frontend.yml** — Node 20 + pnpm 9, lint + build + leak gate
 - **log-service.yml** — Node 20 + npm, typecheck + lint + build
+- **api-docs.yml** — annotations değişince OpenAPI + Postman regen + auto-commit
 
 Path-filter ile sadece ilgili klasör değişince tetiklenir.
 

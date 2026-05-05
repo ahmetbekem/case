@@ -31,4 +31,30 @@ php artisan migrate
 php artisan migrate:fresh --seed
 ```
 
-Detay: `../docs/CODING_STANDARDS.md`, `../docs/PROJECT_STRUCTURE.md`
+## API Documentation
+
+OpenAPI 3.0 + Swagger UI L5-Swagger üzerinden. Annotation'lar
+`src/Presentation/**/Controllers/*.php` (endpoint) ve
+`src/Application/**/DTOs/*.php` + `src/Presentation/**/Requests/*.php`
+(Schema) altında PHP 8 attributes formatında.
+
+```bash
+# OpenAPI spec yenile (annotations değişince)
+php artisan l5-swagger:generate
+# → storage/api-docs/api-docs.json güncellenir
+
+# Postman collection yenile (root'tan)
+cd .. && bash scripts/generate-postman-collection.sh
+# → docs/postman/dehasoft.postman_collection.json
+```
+
+Development env'de `L5_SWAGGER_GENERATE_ALWAYS=true` her request'te
+otomatik regenerate eder, manuel komut gereksizdir.
+
+**Eklemek için:** Yeni endpoint annotation pattern'i için
+`../docs/API_DOCUMENTATION.md §4.2` örneklerine bak. Yeni DTO Schema'sı
+için `§5.1` örneği var. Endpoint'in response'una `ref` ile ortak
+schema'lara (ValidationError/UnauthorizedError/...) bağlanmayı unutma.
+
+Detay: `../docs/CODING_STANDARDS.md`, `../docs/PROJECT_STRUCTURE.md`,
+`../docs/API_DOCUMENTATION.md`
