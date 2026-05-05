@@ -530,6 +530,121 @@
                 ]
             }
         },
+        "/currencies": {
+            "get": {
+                "tags": [
+                    "Currency"
+                ],
+                "summary": "Desteklenen para birimleri",
+                "description": "Sabit liste — Currency enum'undan türetilmiş code+symbol çiftleri. Public; auth gerekmez. throttle:api-read profili.",
+                "operationId": "2e5949dc677acf51beca5f856f54d05a",
+                "responses": {
+                    "200": {
+                        "description": "Para birimi listesi",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/SupportedCurrencyDTO"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "429": {
+                        "description": "Rate limit exceeded",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RateLimitError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/currencies/{base}/{target}": {
+            "get": {
+                "tags": [
+                    "Currency"
+                ],
+                "summary": "Tek kur",
+                "description": "base → target arasındaki güncel kuru getirir. Redis cache'ten okur, cache miss'te Frankfurter API'den çeker (TASK 0.10 scheduler 6 saatte bir refresh'ler). base == target için identity (rate=1.0, provider=\"identity\") döner. Public; auth gerekmez.",
+                "operationId": "86e0a4c3c40dc77f35dca87cd64082fe",
+                "parameters": [
+                    {
+                        "name": "base",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "TRY",
+                                "USD",
+                                "EUR"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "target",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "TRY",
+                                "USD",
+                                "EUR"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Exchange rate",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/ExchangeRateDTO"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Geçersiz para birimi kodu veya kur bulunamadı",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundError"
+                                }
+                            }
+                        }
+                    },
+                    "429": {
+                        "description": "Rate limit exceeded",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RateLimitError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/auth/register": {
             "post": {
                 "tags": [
@@ -1598,6 +1713,72 @@
                 },
                 "type": "object"
             },
+            "ExchangeRateDTO": {
+                "title": "Exchange Rate",
+                "description": "İki para birimi arasındaki dönüşüm kuru. Frankfurter API'den Redis cache'e çekilir; identity case için provider=\"identity\" döner (rate=1.0, base==target).",
+                "properties": {
+                    "base": {
+                        "type": "string",
+                        "example": "TRY",
+                        "enum": [
+                            "TRY",
+                            "USD",
+                            "EUR"
+                        ]
+                    },
+                    "target": {
+                        "type": "string",
+                        "example": "USD",
+                        "enum": [
+                            "TRY",
+                            "USD",
+                            "EUR"
+                        ]
+                    },
+                    "rate": {
+                        "description": "1 base = N target",
+                        "type": "number",
+                        "format": "float",
+                        "example": 0.0307
+                    },
+                    "rateDate": {
+                        "description": "Kurun ait olduğu tarih (Y-m-d)",
+                        "type": "string",
+                        "format": "date",
+                        "example": "2026-05-05"
+                    },
+                    "fetchedAt": {
+                        "description": "Kurun cache'e yazılma anı",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "provider": {
+                        "type": "string",
+                        "example": "frankfurter"
+                    }
+                },
+                "type": "object"
+            },
+            "SupportedCurrencyDTO": {
+                "title": "Supported Currency",
+                "description": "GET /currencies cevap satırı — Currency enum'undan türeyen sabit liste.",
+                "properties": {
+                    "code": {
+                        "type": "string",
+                        "example": "TRY",
+                        "enum": [
+                            "TRY",
+                            "USD",
+                            "EUR"
+                        ]
+                    },
+                    "symbol": {
+                        "type": "string",
+                        "example": "₺"
+                    }
+                },
+                "type": "object"
+            },
             "AuthTokenPairDTO": {
                 "title": "Token Pair",
                 "description": "Refresh cevabı — yeni access+refresh çifti, user payload yok.",
@@ -2386,6 +2567,10 @@
         {
             "name": "Orders",
             "description": "Sipariş oluşturma ve takip"
+        },
+        {
+            "name": "Currency",
+            "description": "Public döviz kurları"
         },
         {
             "name": "System",
