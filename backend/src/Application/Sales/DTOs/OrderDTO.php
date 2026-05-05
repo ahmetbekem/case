@@ -6,7 +6,35 @@ namespace Application\Sales\DTOs;
 
 use Application\Shared\Abstracts\AbstractOutputDTO;
 use Domain\Sales\Entities\Order;
+use OpenApi\Attributes as OA;
 
+#[OA\Schema(
+    schema: 'OrderDTO',
+    title: 'Order (aggregate)',
+    description: 'Sipariş aggregate — base currency\'de subtotal/total tutar + '
+        . 'sipariş anında dondurulmuş display currency dönüşümü (snapshot).',
+    properties: [
+        new OA\Property(property: 'id', type: 'string', format: 'uuid'),
+        new OA\Property(property: 'orderNumber', type: 'string', example: 'ORD-2026-000123', description: 'İnsan okunur sipariş numarası'),
+        new OA\Property(property: 'userId', type: 'string', format: 'uuid'),
+        new OA\Property(property: 'status', type: 'string', enum: ['pending', 'completed', 'cancelled']),
+        new OA\Property(property: 'subtotal', type: 'number', format: 'float'),
+        new OA\Property(property: 'total', type: 'number', format: 'float'),
+        new OA\Property(property: 'currency', type: 'string', enum: ['TRY', 'USD', 'EUR'], description: 'Sipariş base currency'),
+        new OA\Property(property: 'displayCurrency', type: 'string', enum: ['TRY', 'USD', 'EUR']),
+        new OA\Property(property: 'displayTotal', type: 'number', format: 'float'),
+        new OA\Property(property: 'exchangeRateSnapshot', type: 'number', format: 'float', example: 32.5430),
+        new OA\Property(property: 'notes', type: 'string', nullable: true, maxLength: 5000),
+        new OA\Property(property: 'items', type: 'array', items: new OA\Items(ref: '#/components/schemas/OrderItemDTO')),
+        new OA\Property(property: 'itemCount', type: 'integer'),
+        new OA\Property(property: 'cancelledAt', type: 'string', format: 'date-time', nullable: true),
+        new OA\Property(property: 'cancelledReason', type: 'string', nullable: true),
+        new OA\Property(property: 'completedAt', type: 'string', format: 'date-time', nullable: true),
+        new OA\Property(property: 'createdAt', type: 'string', format: 'date-time'),
+        new OA\Property(property: 'updatedAt', type: 'string', format: 'date-time', nullable: true),
+    ],
+    type: 'object',
+)]
 final readonly class OrderDTO extends AbstractOutputDTO
 {
     /**

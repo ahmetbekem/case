@@ -6,7 +6,24 @@ namespace Application\Sales\DTOs;
 
 use Application\Shared\Abstracts\AbstractOutputDTO;
 use Domain\Sales\Entities\CartItem;
+use OpenApi\Attributes as OA;
 
+#[OA\Schema(
+    schema: 'CartItemDTO',
+    title: 'Cart Item',
+    description: 'Sepetteki tek satır — fiyat ekleme anındaki snapshot.',
+    properties: [
+        new OA\Property(property: 'id', type: 'string', format: 'uuid'),
+        new OA\Property(property: 'productId', type: 'string', format: 'uuid'),
+        new OA\Property(property: 'quantity', type: 'integer', example: 2),
+        new OA\Property(property: 'unitPrice', type: 'number', format: 'float', example: 100.00),
+        new OA\Property(property: 'currency', type: 'string', enum: ['TRY', 'USD', 'EUR']),
+        new OA\Property(property: 'lineTotal', type: 'number', format: 'float', example: 200.00),
+        new OA\Property(property: 'createdAt', type: 'string', format: 'date-time'),
+        new OA\Property(property: 'updatedAt', type: 'string', format: 'date-time', nullable: true),
+    ],
+    type: 'object',
+)]
 final readonly class CartItemDTO extends AbstractOutputDTO
 {
     public function __construct(

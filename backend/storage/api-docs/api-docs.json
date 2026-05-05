@@ -839,6 +839,684 @@
                 ]
             }
         },
+        "/sales/cart": {
+            "get": {
+                "tags": [
+                    "Cart"
+                ],
+                "summary": "Kullanıcı sepeti",
+                "description": "Aktif sepeti getirir. Henüz ürün eklenmemişse boş bir sepet döner.",
+                "operationId": "c73a01b6dfb0aa6f2f957e8fbc28beaf",
+                "responses": {
+                    "200": {
+                        "description": "Sepet",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/CartDTO"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Auth gerekli",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Cart"
+                ],
+                "summary": "Sepeti tamamen boşalt",
+                "description": "Tüm satırları siler ama sepetin kendisi (kayıt) kalır.",
+                "operationId": "6130ca74d3d2b42f3edf4a541d39f1fe",
+                "responses": {
+                    "200": {
+                        "description": "Sepet boşaltıldı",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/CartDTO"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Auth gerekli",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/sales/cart/items": {
+            "post": {
+                "tags": [
+                    "Cart"
+                ],
+                "summary": "Sepete ürün ekle",
+                "description": "Aynı productId zaten sepetteyse quantity'leri toplar; fiyat snapshot'ı ilk ekleme anındaki kalır.",
+                "operationId": "e8b28c1fbf7be3ddd1a4272d3be87524",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AddCartItemRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Sepet güncel",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/CartDTO"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Auth gerekli",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedError"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Ürün bulunamadı",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundError"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Yetersiz stok / pasif ürün",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ConflictError"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/sales/cart/items/{itemId}": {
+            "delete": {
+                "tags": [
+                    "Cart"
+                ],
+                "summary": "Sepet kaleminden tek ürünü çıkar",
+                "operationId": "3dd2a4f7795e780297de1159cd99699d",
+                "parameters": [
+                    {
+                        "name": "itemId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Sepet güncel",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/CartDTO"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Auth gerekli",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedError"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Sepet kalemi bulunamadı",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "Cart"
+                ],
+                "summary": "Sepet kaleminin quantity'sini güncelle",
+                "description": "quantity 0 olamaz — kaldırmak için DELETE endpoint'ini kullan.",
+                "operationId": "46573d4bdeccfaf017c107c43e16513c",
+                "parameters": [
+                    {
+                        "name": "itemId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateCartItemRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Sepet güncel",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/CartDTO"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Auth gerekli",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedError"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Sepet kalemi bulunamadı (IDOR korumalı 404)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundError"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Yetersiz stok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ConflictError"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/sales/orders": {
+            "get": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Sipariş listesi (kullanıcı kendi)",
+                "description": "Default kullanıcı kendi siparişlerini görür. Admin kullanıcı `adminScope=1` query param ile tüm kullanıcıların siparişlerini listeleyebilir; aksi takdirde admin de yalnızca kendi siparişlerini görür.",
+                "operationId": "4caa37101cf4e6b1f2f2da5a123e66da",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1,
+                            "minimum": 1
+                        }
+                    },
+                    {
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 20,
+                            "minimum": 1
+                        }
+                    },
+                    {
+                        "name": "adminScope",
+                        "in": "query",
+                        "description": "Admin'e özel — true geçerse tüm siparişleri listeler",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean",
+                            "default": false
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Sayfalanmış sipariş listesi",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/OrderDTO"
+                                            }
+                                        },
+                                        "meta": {
+                                            "$ref": "#/components/schemas/PaginationMeta"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Auth gerekli",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedError"
+                                }
+                            }
+                        }
+                    },
+                    "429": {
+                        "description": "Rate limit exceeded",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RateLimitError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Sepetten sipariş oluştur",
+                "description": "Aktif sepetteki tüm kalemleri yeni bir sipariş olarak dondurur. Sepet \"converted\" statüsüne geçer; ürün stokları atomic olarak düşürülür. Boş sepette 409 döner. throttle:order rate limit profili.",
+                "operationId": "2947c736be5694ec818d9bb69f0a59a9",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PlaceOrderRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Sipariş oluşturuldu",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/OrderDTO"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Order placed"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Auth gerekli",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedError"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Boş sepet / yetersiz stok / pasif ürün",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ConflictError"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    },
+                    "429": {
+                        "description": "Rate limit exceeded",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RateLimitError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/sales/orders/{id}": {
+            "get": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Sipariş detay",
+                "description": "Customer rolü yalnızca kendi siparişini görür. Sahibi olmadığı siparişe erişim **404** döner (IDOR pattern, anti-enumeration). Admin rolü tüm siparişleri görüntüleyebilir.",
+                "operationId": "bff94ed684500525904f0427e84937fa",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Sipariş",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/OrderDTO"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Auth gerekli",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedError"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Sipariş bulunamadı (yetki yoksa da bu döner)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/sales/orders/{id}/cancel": {
+            "post": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Sipariş iptal",
+                "description": "Yalnızca pending siparişler iptal edilebilir. Customer kendi siparişini, admin tüm siparişleri iptal edebilir. Sahibi olmayan customer'a 404 döner (IDOR pattern). Stoklar geri yazılır.",
+                "operationId": "8c086bc5be9c83444959129813b2df3f",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CancelOrderRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Sipariş iptal edildi",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/OrderDTO"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Order cancelled"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Auth gerekli",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedError"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Sipariş bulunamadı",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundError"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Sipariş zaten iptal/tamamlanmış",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ConflictError"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error (reason eksik/kısa)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/up": {
             "get": {
                 "tags": [
@@ -1023,6 +1701,260 @@
                 },
                 "type": "object"
             },
+            "CartDTO": {
+                "title": "Cart (aggregate)",
+                "description": "Kullanıcının aktif sepeti — Cart aggregate root'unun dış dünya temsili.",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "userId": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "status": {
+                        "description": "Sipariş'e dönüşmüş sepet \"converted\" olur",
+                        "type": "string",
+                        "enum": [
+                            "active",
+                            "converted"
+                        ]
+                    },
+                    "convertedToOrderId": {
+                        "type": "string",
+                        "format": "uuid",
+                        "nullable": true
+                    },
+                    "items": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/CartItemDTO"
+                        }
+                    },
+                    "itemCount": {
+                        "description": "Distinct kalem sayısı",
+                        "type": "integer"
+                    },
+                    "totalQuantity": {
+                        "description": "Tüm kalemlerin quantity toplamı",
+                        "type": "integer"
+                    },
+                    "subtotal": {
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "currency": {
+                        "type": "string",
+                        "enum": [
+                            "TRY",
+                            "USD",
+                            "EUR"
+                        ]
+                    },
+                    "createdAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "CartItemDTO": {
+                "title": "Cart Item",
+                "description": "Sepetteki tek satır — fiyat ekleme anındaki snapshot.",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "productId": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "quantity": {
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "unitPrice": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 100
+                    },
+                    "currency": {
+                        "type": "string",
+                        "enum": [
+                            "TRY",
+                            "USD",
+                            "EUR"
+                        ]
+                    },
+                    "lineTotal": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 200
+                    },
+                    "createdAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "OrderDTO": {
+                "title": "Order (aggregate)",
+                "description": "Sipariş aggregate — base currency'de subtotal/total tutar + sipariş anında dondurulmuş display currency dönüşümü (snapshot).",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "orderNumber": {
+                        "description": "İnsan okunur sipariş numarası",
+                        "type": "string",
+                        "example": "ORD-2026-000123"
+                    },
+                    "userId": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "status": {
+                        "type": "string",
+                        "enum": [
+                            "pending",
+                            "completed",
+                            "cancelled"
+                        ]
+                    },
+                    "subtotal": {
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "total": {
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "currency": {
+                        "description": "Sipariş base currency",
+                        "type": "string",
+                        "enum": [
+                            "TRY",
+                            "USD",
+                            "EUR"
+                        ]
+                    },
+                    "displayCurrency": {
+                        "type": "string",
+                        "enum": [
+                            "TRY",
+                            "USD",
+                            "EUR"
+                        ]
+                    },
+                    "displayTotal": {
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "exchangeRateSnapshot": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 32.543
+                    },
+                    "notes": {
+                        "type": "string",
+                        "nullable": true,
+                        "maxLength": 5000
+                    },
+                    "items": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/OrderItemDTO"
+                        }
+                    },
+                    "itemCount": {
+                        "type": "integer"
+                    },
+                    "cancelledAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
+                    },
+                    "cancelledReason": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "completedAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
+                    },
+                    "createdAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "OrderItemDTO": {
+                "title": "Order Item",
+                "description": "Sipariş satırı — productName/SKU snapshot'ı sipariş anındaki değer; ürün sonradan değişse bile burada dondurulmuş kalır.",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "productId": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "productName": {
+                        "description": "Snapshot — sipariş anındaki ad",
+                        "type": "string"
+                    },
+                    "productSku": {
+                        "description": "Snapshot — sipariş anındaki SKU",
+                        "type": "string"
+                    },
+                    "quantity": {
+                        "type": "integer"
+                    },
+                    "unitPrice": {
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "currency": {
+                        "type": "string",
+                        "enum": [
+                            "TRY",
+                            "USD",
+                            "EUR"
+                        ]
+                    },
+                    "lineTotal": {
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "createdAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
             "CreateProductRequest": {
                 "required": [
                     "sku",
@@ -1195,6 +2127,78 @@
                         "example": "Ali Veli",
                         "maxLength": 255,
                         "minLength": 2
+                    }
+                },
+                "type": "object"
+            },
+            "AddCartItemRequest": {
+                "required": [
+                    "productId",
+                    "quantity"
+                ],
+                "properties": {
+                    "productId": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "quantity": {
+                        "type": "integer",
+                        "example": 2,
+                        "maximum": 1000000,
+                        "minimum": 1
+                    }
+                },
+                "type": "object"
+            },
+            "CancelOrderRequest": {
+                "description": "Sipariş iptali — yalnızca pending statüsündeki siparişlere uygulanır.",
+                "required": [
+                    "reason"
+                ],
+                "properties": {
+                    "reason": {
+                        "type": "string",
+                        "example": "Yanlış adrese gönderim",
+                        "maxLength": 500,
+                        "minLength": 3
+                    }
+                },
+                "type": "object"
+            },
+            "PlaceOrderRequest": {
+                "required": [
+                    "displayCurrency"
+                ],
+                "properties": {
+                    "displayCurrency": {
+                        "description": "Siparişin görüntü para birimi — kur snapshot'ı sipariş anında dondurulur",
+                        "type": "string",
+                        "example": "TRY",
+                        "enum": [
+                            "TRY",
+                            "USD",
+                            "EUR"
+                        ]
+                    },
+                    "notes": {
+                        "type": "string",
+                        "nullable": true,
+                        "maxLength": 5000
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateCartItemRequest": {
+                "description": "Sepet kaleminin yeni quantity'si — 0 göndermek istemiyorsan DELETE kullan.",
+                "required": [
+                    "quantity"
+                ],
+                "properties": {
+                    "quantity": {
+                        "type": "integer",
+                        "example": 3,
+                        "maximum": 1000000,
+                        "minimum": 1
                     }
                 },
                 "type": "object"
@@ -1374,6 +2378,14 @@
         {
             "name": "Catalog (Admin)",
             "description": "Admin-only ürün yönetimi"
+        },
+        {
+            "name": "Cart",
+            "description": "Sepet işlemleri (kullanıcı kendi sepeti)"
+        },
+        {
+            "name": "Orders",
+            "description": "Sipariş oluşturma ve takip"
         },
         {
             "name": "System",

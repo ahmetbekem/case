@@ -6,7 +6,27 @@ namespace Application\Sales\DTOs;
 
 use Application\Shared\Abstracts\AbstractOutputDTO;
 use Domain\Sales\Entities\Cart;
+use OpenApi\Attributes as OA;
 
+#[OA\Schema(
+    schema: 'CartDTO',
+    title: 'Cart (aggregate)',
+    description: 'Kullanıcının aktif sepeti — Cart aggregate root\'unun dış dünya temsili.',
+    properties: [
+        new OA\Property(property: 'id', type: 'string', format: 'uuid'),
+        new OA\Property(property: 'userId', type: 'string', format: 'uuid'),
+        new OA\Property(property: 'status', type: 'string', enum: ['active', 'converted'], description: 'Sipariş\'e dönüşmüş sepet "converted" olur'),
+        new OA\Property(property: 'convertedToOrderId', type: 'string', format: 'uuid', nullable: true),
+        new OA\Property(property: 'items', type: 'array', items: new OA\Items(ref: '#/components/schemas/CartItemDTO')),
+        new OA\Property(property: 'itemCount', type: 'integer', description: 'Distinct kalem sayısı'),
+        new OA\Property(property: 'totalQuantity', type: 'integer', description: 'Tüm kalemlerin quantity toplamı'),
+        new OA\Property(property: 'subtotal', type: 'number', format: 'float'),
+        new OA\Property(property: 'currency', type: 'string', enum: ['TRY', 'USD', 'EUR']),
+        new OA\Property(property: 'createdAt', type: 'string', format: 'date-time'),
+        new OA\Property(property: 'updatedAt', type: 'string', format: 'date-time', nullable: true),
+    ],
+    type: 'object',
+)]
 final readonly class CartDTO extends AbstractOutputDTO
 {
     /**

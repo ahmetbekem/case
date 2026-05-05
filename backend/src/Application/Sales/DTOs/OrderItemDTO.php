@@ -6,7 +6,26 @@ namespace Application\Sales\DTOs;
 
 use Application\Shared\Abstracts\AbstractOutputDTO;
 use Domain\Sales\Entities\OrderItem;
+use OpenApi\Attributes as OA;
 
+#[OA\Schema(
+    schema: 'OrderItemDTO',
+    title: 'Order Item',
+    description: 'Sipariş satırı — productName/SKU snapshot\'ı sipariş anındaki '
+        . 'değer; ürün sonradan değişse bile burada dondurulmuş kalır.',
+    properties: [
+        new OA\Property(property: 'id', type: 'string', format: 'uuid'),
+        new OA\Property(property: 'productId', type: 'string', format: 'uuid'),
+        new OA\Property(property: 'productName', type: 'string', description: 'Snapshot — sipariş anındaki ad'),
+        new OA\Property(property: 'productSku', type: 'string', description: 'Snapshot — sipariş anındaki SKU'),
+        new OA\Property(property: 'quantity', type: 'integer'),
+        new OA\Property(property: 'unitPrice', type: 'number', format: 'float'),
+        new OA\Property(property: 'currency', type: 'string', enum: ['TRY', 'USD', 'EUR']),
+        new OA\Property(property: 'lineTotal', type: 'number', format: 'float'),
+        new OA\Property(property: 'createdAt', type: 'string', format: 'date-time'),
+    ],
+    type: 'object',
+)]
 final readonly class OrderItemDTO extends AbstractOutputDTO
 {
     public function __construct(
