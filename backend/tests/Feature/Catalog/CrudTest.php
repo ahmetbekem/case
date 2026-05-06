@@ -44,7 +44,6 @@ describe('Catalog CRUD — admin happy paths', function () {
                 'name' => 'Brand New',
                 'description' => 'Description here',
                 'price' => 199.99,
-                'currency' => 'TRY',
                 'stock' => 50,
             ],
             authHeaders($admin['accessToken']),
@@ -54,7 +53,8 @@ describe('Catalog CRUD — admin happy paths', function () {
             ->and($response->json('data.name'))->toBe('Brand New')
             ->and($response->json('data.stock'))->toBe(50)
             ->and($response->json('data.price'))->toBe(199.99)
-            ->and($response->json('data.currency'))->toBe('TRY')
+            ->and($response->json('data.baseCurrency'))->toBe('TRY')
+            ->and($response->json('data.currency'))->toBe('TRY')   // legacy alias (dual-emit)
             ->and($response->json('data.isActive'))->toBeTrue();
     });
 
@@ -67,7 +67,6 @@ describe('Catalog CRUD — admin happy paths', function () {
                 'sku' => 'UPD-CRUD-001',
                 'name' => 'Old Name',
                 'price' => 100.00,
-                'currency' => 'TRY',
                 'stock' => 20,
             ],
             authHeaders($admin['accessToken']),
@@ -97,7 +96,6 @@ describe('Catalog CRUD — admin happy paths', function () {
                 'sku' => 'DEL-CRUD-001',
                 'name' => 'To Be Deleted',
                 'price' => 50.00,
-                'currency' => 'TRY',
                 'stock' => 1,
             ],
             authHeaders($admin['accessToken']),
@@ -114,7 +112,7 @@ describe('Catalog CRUD — admin happy paths', function () {
         $admin = loginAsAdmin();
         $id = $this->postJson(
             '/api/v1/catalog/products',
-            ['sku' => 'STK-001', 'name' => 'Stock Test', 'price' => 10, 'currency' => 'TRY', 'stock' => 10],
+            ['sku' => 'STK-001', 'name' => 'Stock Test', 'price' => 10, 'stock' => 10],
             authHeaders($admin['accessToken']),
         )->assertCreated()->json('data.id');
 
@@ -131,7 +129,7 @@ describe('Catalog CRUD — admin happy paths', function () {
         $admin = loginAsAdmin();
         $id = $this->postJson(
             '/api/v1/catalog/products',
-            ['sku' => 'STK-002', 'name' => 'Tiny', 'price' => 10, 'currency' => 'TRY', 'stock' => 3],
+            ['sku' => 'STK-002', 'name' => 'Tiny', 'price' => 10, 'stock' => 3],
             authHeaders($admin['accessToken']),
         )->assertCreated()->json('data.id');
 
@@ -147,7 +145,7 @@ describe('Catalog CRUD — authorization', function () {
 
         $this->postJson(
             '/api/v1/catalog/products',
-            ['sku' => 'CUS-001', 'name' => 'Customer Try', 'price' => 100, 'currency' => 'TRY', 'stock' => 10],
+            ['sku' => 'CUS-001', 'name' => 'Customer Try', 'price' => 100, 'stock' => 10],
             authHeaders($customer['accessToken']),
         )->assertStatus(403)
           ->assertJsonPath('error.code', 'ROLE_DENIED');
@@ -158,7 +156,6 @@ describe('Catalog CRUD — authorization', function () {
             'sku' => 'ANON-001',
             'name' => 'Anon',
             'price' => 100,
-            'currency' => 'TRY',
             'stock' => 10,
         ])->assertStatus(401);
     });
@@ -167,7 +164,7 @@ describe('Catalog CRUD — authorization', function () {
         $admin = loginAsAdmin();
         $this->postJson(
             '/api/v1/catalog/products',
-            ['sku' => 'PUB-001', 'name' => 'Public', 'price' => 10, 'currency' => 'TRY', 'stock' => 5],
+            ['sku' => 'PUB-001', 'name' => 'Public', 'price' => 10, 'stock' => 5],
             authHeaders($admin['accessToken']),
         )->assertCreated();
 
@@ -183,7 +180,7 @@ describe('Catalog CRUD — validation + uniqueness', function () {
         // so they actually exercise the regex /^[A-Z0-9\-]+$/.
         $this->postJson(
             '/api/v1/catalog/products',
-            ['sku' => 'BAD SKU', 'name' => 'Valid Name', 'price' => 1, 'currency' => 'TRY', 'stock' => 1],
+            ['sku' => 'BAD SKU', 'name' => 'Valid Name', 'price' => 1, 'stock' => 1],
             authHeaders($admin['accessToken']),
         )->assertStatus(422)
           ->assertJsonValidationErrors(['sku']);
@@ -191,7 +188,7 @@ describe('Catalog CRUD — validation + uniqueness', function () {
 
     it('rejects duplicate SKU with 409 DUPLICATE_SKU', function () {
         $admin = loginAsAdmin();
-        $payload = ['sku' => 'DUP-001', 'name' => 'Dup Name', 'price' => 1, 'currency' => 'TRY', 'stock' => 1];
+        $payload = ['sku' => 'DUP-001', 'name' => 'Dup Name', 'price' => 1, 'stock' => 1];
 
         $this->postJson('/api/v1/catalog/products', $payload, authHeaders($admin['accessToken']))->assertCreated();
         $this->postJson('/api/v1/catalog/products', $payload, authHeaders($admin['accessToken']))
