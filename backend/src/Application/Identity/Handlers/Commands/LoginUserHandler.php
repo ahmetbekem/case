@@ -7,7 +7,9 @@ namespace Application\Identity\Handlers\Commands;
 use Application\Identity\Commands\LoginUserCommand;
 use Application\Identity\DTOs\TokenIssueResultDTO;
 use Application\Identity\DTOs\UserDTO;
+use Application\Sales\Commands\MergeGuestCartCommand;
 use Application\Shared\Abstracts\AbstractCommandHandler;
+use Application\Shared\Contracts\CommandBusInterface;
 use Application\Shared\Contracts\CommandInterface;
 use Application\Shared\Contracts\TransactionInterface;
 use Domain\Identity\Contracts\JwtIssuerInterface;
@@ -30,6 +32,7 @@ final class LoginUserHandler extends AbstractCommandHandler
         private readonly PasswordHasherInterface $passwordHasher,
         private readonly JwtIssuerInterface $jwtIssuer,
         private readonly AuditLoggerInterface $auditLogger,
+        private readonly CommandBusInterface $commandBus,
         TransactionInterface $transaction,
         LoggerInterface $logger,
     ) {
@@ -117,11 +120,35 @@ final class LoginUserHandler extends AbstractCommandHandler
             userAgent: $command->userAgent,
         ));
 
+        // ADR-017 — guest cart merge tetikleme. Login başarılı olduktan
+        // sonra; merge fail olsa bile login response'u dönmeli.
+        $cartMerged = false;
+        if ($command->guestSessionId !== null) {
+            try {
+                $this->commandBus->dispatch(new MergeGuestCartCommand(
+                    userId: $user->getId()->value(),
+                    guestSessionId: $command->guestSessionId,
+                    correlationId: $command->getCorrelationId(),
+                    userIp: $command->getUserIp(),
+                ));
+                $cartMerged = true;
+            } catch (\Throwable $e) {
+                $this->logger->error('Cart merge failed during login', [
+                    'userId' => $user->getId()->value(),
+                    'guestSessionId' => $command->guestSessionId,
+                    'correlationId' => $command->getCorrelationId(),
+                    'exception' => $e::class,
+                    'message' => $e->getMessage(),
+                ]);
+            }
+        }
+
         return new TokenIssueResultDTO(
             user: UserDTO::fromEntity($user),
             accessToken: $accessToken->jwt,
             accessTokenExpiresIn: $accessToken->expiresInSeconds(),
             refreshToken: $refreshResult['plaintext'],
+            cartMerged: $cartMerged,
         );
     }
 
