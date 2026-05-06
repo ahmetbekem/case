@@ -45,7 +45,9 @@ final readonly class CartDTO extends AbstractOutputDTO
      */
     public function __construct(
         public string $id,
-        public string $userId,
+        public ?string $userId,
+        public ?string $guestSessionId,
+        public bool $isGuest,
         public string $status,
         public ?string $convertedToOrderId,
         public array $items,
@@ -64,7 +66,9 @@ final readonly class CartDTO extends AbstractOutputDTO
     {
         return new self(
             id: $cart->getId()->value(),
-            userId: $cart->getUserId()->value(),
+            userId: $cart->getUserId()?->value(),
+            guestSessionId: $cart->getGuestSessionId()?->value(),
+            isGuest: $cart->isGuest(),
             status: $cart->getStatus(),
             convertedToOrderId: $cart->getConvertedToOrderId()?->value(),
             items: CartItemDTO::collection($cart->getItems()),

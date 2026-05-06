@@ -7,6 +7,7 @@ namespace Domain\Sales\Entities;
 use Domain\Sales\Exceptions\CartItemNotFoundException;
 use Domain\Sales\ValueObjects\CartId;
 use Domain\Sales\ValueObjects\CartItemId;
+use Domain\Sales\ValueObjects\GuestSessionId;
 use Domain\Sales\ValueObjects\OrderId;
 use Domain\Shared\Abstracts\AbstractEntity;
 use Domain\Shared\ValueObjects\Currency;
@@ -18,12 +19,19 @@ use Domain\Shared\ValueObjects\UserId;
  * updateItemQuantity / removeItem / clear all mutate items through the
  * aggregate so domain invariants stay enforceable from one place
  * (one-product-per-cart, positive quantity, status transitions).
+ *
+ * ADR-017: Cart artık ya bir kullanıcıya ya da bir guest session'a aittir
+ * (XOR). Domain invariant olarak validateOwnership içinde, DB-side
+ * chk_carts_owner CHECK constraint'i ile garantilenir.
  */
 final class Cart extends AbstractEntity
 {
     public const string STATUS_ACTIVE = 'active';
     public const string STATUS_CONVERTED = 'converted';
     public const string STATUS_ABANDONED = 'abandoned';
+
+    /** Guest cart cookie TTL — DB cleanup job'u expires_at <= now() taraması yapar. */
+    public const int GUEST_CART_TTL_DAYS = 30;
 
     /** @var array<int, CartItem> */
     private array $items;
@@ -33,16 +41,50 @@ final class Cart extends AbstractEntity
      */
     public function __construct(
         private readonly CartId $id,
-        private readonly UserId $userId,
+        private readonly ?UserId $userId = null,
+        private readonly ?GuestSessionId $guestSessionId = null,
         private string $status = self::STATUS_ACTIVE,
+        private ?\DateTimeImmutable $expiresAt = null,
         private ?OrderId $convertedToOrderId = null,
         array $items = [],
         \DateTimeImmutable $createdAt = new \DateTimeImmutable(),
         ?\DateTimeImmutable $updatedAt = null,
     ) {
+        $this->validateOwnership();
         $this->items = array_values($items);
         $this->createdAt = $createdAt;
         $this->updatedAt = $updatedAt;
+    }
+
+    /**
+     * XOR: cart MUTLAKA bir owner'a sahip olmalı, ama hem user hem guest
+     * olamaz. DB constraint'i de aynı kuralı uyguluyor.
+     */
+    private function validateOwnership(): void
+    {
+        if ($this->userId === null && $this->guestSessionId === null) {
+            throw new \InvalidArgumentException('Cart must have either userId or guestSessionId');
+        }
+        if ($this->userId !== null && $this->guestSessionId !== null) {
+            throw new \InvalidArgumentException('Cart cannot have both userId and guestSessionId');
+        }
+    }
+
+    public static function createForUser(UserId $userId): self
+    {
+        return new self(
+            id: CartId::generate(),
+            userId: $userId,
+        );
+    }
+
+    public static function createForGuest(GuestSessionId $sessionId): self
+    {
+        return new self(
+            id: CartId::generate(),
+            guestSessionId: $sessionId,
+            expiresAt: new \DateTimeImmutable('+' . self::GUEST_CART_TTL_DAYS . ' days'),
+        );
     }
 
     public function getId(): CartId
@@ -50,9 +92,14 @@ final class Cart extends AbstractEntity
         return $this->id;
     }
 
-    public function getUserId(): UserId
+    public function getUserId(): ?UserId
     {
         return $this->userId;
+    }
+
+    public function getGuestSessionId(): ?GuestSessionId
+    {
+        return $this->guestSessionId;
     }
 
     public function getStatus(): string
@@ -60,9 +107,30 @@ final class Cart extends AbstractEntity
         return $this->status;
     }
 
+    public function getExpiresAt(): ?\DateTimeImmutable
+    {
+        return $this->expiresAt;
+    }
+
     public function getConvertedToOrderId(): ?OrderId
     {
         return $this->convertedToOrderId;
+    }
+
+    public function isGuest(): bool
+    {
+        return $this->guestSessionId !== null;
+    }
+
+    public function isUser(): bool
+    {
+        return $this->userId !== null;
+    }
+
+    public function isExpired(): bool
+    {
+        return $this->expiresAt !== null
+            && $this->expiresAt < new \DateTimeImmutable();
     }
 
     /**
@@ -278,8 +346,11 @@ final class Cart extends AbstractEntity
     {
         return [
             'id' => $this->id->value(),
-            'userId' => $this->userId->value(),
+            'userId' => $this->userId?->value(),
+            'guestSessionId' => $this->guestSessionId?->value(),
+            'isGuest' => $this->isGuest(),
             'status' => $this->status,
+            'expiresAt' => $this->expiresAt?->format(\DateTimeInterface::ATOM),
             'convertedToOrderId' => $this->convertedToOrderId?->value(),
             'items' => array_map(fn (CartItem $i) => $i->toArray(), $this->items),
             'itemCount' => $this->itemCount(),
@@ -299,14 +370,24 @@ final class Cart extends AbstractEntity
     {
         return new self(
             id: CartId::fromString((string) $data['id']),
-            userId: UserId::fromString((string) $data['userId']),
+            userId: isset($data['userId']) && $data['userId'] !== null
+                ? UserId::fromString((string) $data['userId'])
+                : null,
+            guestSessionId: isset($data['guestSessionId']) && $data['guestSessionId'] !== null
+                ? GuestSessionId::fromString((string) $data['guestSessionId'])
+                : null,
             status: (string) ($data['status'] ?? self::STATUS_ACTIVE),
-            convertedToOrderId: isset($data['convertedToOrderId'])
+            expiresAt: isset($data['expiresAt']) && $data['expiresAt'] !== null
+                ? self::parseTimestamp($data['expiresAt'])
+                : null,
+            convertedToOrderId: isset($data['convertedToOrderId']) && $data['convertedToOrderId'] !== null
                 ? OrderId::fromString((string) $data['convertedToOrderId'])
                 : null,
             items: $items ?? [],
             createdAt: self::parseTimestamp($data['createdAt']),
-            updatedAt: isset($data['updatedAt']) ? self::parseTimestamp($data['updatedAt']) : null,
+            updatedAt: isset($data['updatedAt']) && $data['updatedAt'] !== null
+                ? self::parseTimestamp($data['updatedAt'])
+                : null,
         );
     }
 }

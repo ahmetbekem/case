@@ -20,5 +20,6 @@ final class CartModel extends BaseModel
     protected $casts = [
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
+        'expires_at' => 'datetime',
     ];
 }
