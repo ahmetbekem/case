@@ -95,12 +95,16 @@ final class PlaceOrderHandler extends AbstractCommandHandler
             );
         }
 
-        $rateMap = $this->loadRateMap();
+        // Order base currency = cart'ın uniform currency'si (ilk item).
+        // System base_currency hardcode değil — eski mixed verili
+        // ürünlerle de doğru çalışsın diye cart-level alıyoruz.
+        // ADIM 6 alignment migration sonrası bu zaten system base'e eşit olacak.
+        $baseCurrency = $cart->subtotal()->currency;
+        $rateMap = $this->loadRateMap($baseCurrency);
 
         $orderId = OrderId::generate();
         $orderItems = [];
         $subtotalAmount = 0.0;
-        $baseCurrency = Currency::TRY;
 
         foreach ($cart->getItems() as $cartItem) {
             $product = $this->productRepository->findById(
@@ -182,14 +186,14 @@ final class PlaceOrderHandler extends AbstractCommandHandler
     }
 
     /**
-     * Build the in-memory rate table CurrencyConverter expects:
-     * { "TRY-USD" => ExchangeRate, "TRY-EUR" => ExchangeRate }.
+     * Build the in-memory rate table CurrencyConverter expects.
+     * Base parameter dinamik — cart'ın currency'sine göre değişir.
      *
      * @return array<string, ExchangeRate>
      */
-    private function loadRateMap(): array
+    private function loadRateMap(Currency $base): array
     {
-        $rates = $this->exchangeRateRepository->loadAllLatest(Currency::TRY);
+        $rates = $this->exchangeRateRepository->loadAllLatest($base);
         $map = [];
         foreach ($rates as $rate) {
             $map[$rate->pairKey()] = $rate;
