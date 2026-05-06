@@ -27,6 +27,7 @@ final class AppServiceProvider extends ServiceProvider
             database_path('migrations/catalog'),
             database_path('migrations/currency'),
             database_path('migrations/sales'),
+            database_path('migrations/system'),
         ]);
 
         $this->registerRateLimiters();

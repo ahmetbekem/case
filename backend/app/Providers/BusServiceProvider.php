@@ -54,6 +54,12 @@ use Application\Shared\Bus\CommandBus;
 use Application\Shared\Bus\QueryBus;
 use Application\Shared\Contracts\CommandBusInterface;
 use Application\Shared\Contracts\QueryBusInterface;
+use Application\System\Commands\UpdateSettingCommand;
+use Application\System\Handlers\Commands\UpdateSettingHandler;
+use Application\System\Handlers\Queries\GetAllSettingsHandler;
+use Application\System\Handlers\Queries\GetSettingHandler;
+use Application\System\Queries\GetAllSettingsQuery;
+use Application\System\Queries\GetSettingQuery;
 use Illuminate\Support\ServiceProvider;
 
 final class BusServiceProvider extends ServiceProvider
@@ -83,6 +89,8 @@ final class BusServiceProvider extends ServiceProvider
         ClearCartCommand::class                => ClearCartHandler::class,
         PlaceOrderCommand::class               => PlaceOrderHandler::class,
         CancelOrderCommand::class              => CancelOrderHandler::class,
+
+        UpdateSettingCommand::class            => UpdateSettingHandler::class,
     ];
 
     /**
@@ -100,6 +108,9 @@ final class BusServiceProvider extends ServiceProvider
         GetCartQuery::class             => GetCartHandler::class,
         GetOrderQuery::class            => GetOrderHandler::class,
         ListUserOrdersQuery::class      => ListUserOrdersHandler::class,
+
+        GetSettingQuery::class          => GetSettingHandler::class,
+        GetAllSettingsQuery::class      => GetAllSettingsHandler::class,
     ];
 
     public function register(): void

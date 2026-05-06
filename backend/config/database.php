@@ -97,7 +97,7 @@ return [
             // $table = 'identity.users', Postgres falls back to whichever
             // schema in this list contains a matching unqualified name.
             // Migrations always use schema-qualified names regardless.
-            'search_path' => 'public,identity,catalog,sales,currency',
+            'search_path' => 'public,identity,catalog,sales,currency,system',
             'sslmode' => 'prefer',
         ],
 

@@ -16,6 +16,8 @@ use Domain\Identity\Contracts\RefreshTokenRepositoryInterface;
 use Domain\Identity\Contracts\UserRepositoryInterface;
 use Domain\Sales\Contracts\CartRepositoryInterface;
 use Domain\Sales\Contracts\OrderRepositoryInterface;
+use Domain\System\Contracts\SettingRepositoryInterface;
+use Illuminate\Contracts\Cache\Repository as CacheRepository;
 use Illuminate\Support\ServiceProvider;
 use Infrastructure\Catalog\Repositories\EloquentProductRepository;
 use Infrastructure\Currency\Providers\FrankfurterApiProvider;
@@ -28,6 +30,9 @@ use Infrastructure\Identity\Services\RedisJwtBlacklist;
 use Infrastructure\Sales\Repositories\EloquentCartRepository;
 use Infrastructure\Sales\Repositories\EloquentOrderRepository;
 use Infrastructure\Shared\Persistence\EloquentTransaction;
+use Infrastructure\System\Mappers\SettingMapper;
+use Infrastructure\System\Repositories\CachedSettingRepository;
+use Infrastructure\System\Repositories\EloquentSettingRepository;
 
 final class RepositoryServiceProvider extends ServiceProvider
 {
@@ -63,6 +68,15 @@ final class RepositoryServiceProvider extends ServiceProvider
 
     public function register(): void
     {
+        // SettingRepository — Eloquent + Redis cache decorator (5 dk TTL).
+        // Test env'de cache=array driver, prod'da redis.
+        $this->app->singleton(SettingRepositoryInterface::class, function ($app) {
+            return new CachedSettingRepository(
+                inner: new EloquentSettingRepository($app->make(SettingMapper::class)),
+                cache: $app->make(CacheRepository::class),
+            );
+        });
+
         // Identity services with config-driven construction
         $this->app->singleton(PasswordHasherInterface::class, function () {
             return new BcryptPasswordHasher(
