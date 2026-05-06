@@ -15,3 +15,11 @@ Schedule::command('currency:sync-rates')
     ->dailyAt('06:00')
     ->withoutOverlapping()
     ->onOneServer();
+
+// ADR-017 — Süresi geçmiş guest cart'ları her gece siler. 03:00 trafik
+// düşük; cleanup CASCADE ile cart_items'ı da temizler. Lock ile
+// concurrent run engellenir, multi-server'da yalnızca bir node alır.
+Schedule::command('sales:clean-guest-carts')
+    ->dailyAt('03:00')
+    ->withoutOverlapping()
+    ->onOneServer();

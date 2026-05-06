@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 use Infrastructure\Currency\Console\SyncCurrencyRatesArtisanCommand;
 use Infrastructure\Logging\Access\AccessLogMiddleware;
 use Infrastructure\Logging\Console\ReplayAuditFallbackCommand;
+use Infrastructure\Sales\Console\CleanExpiredGuestCartsCommand;
 use Presentation\Identity\Middleware\JwtAuthMiddleware;
 use Presentation\Identity\Middleware\OptionalJwtMiddleware;
 use Presentation\Sales\Middleware\GuestSessionMiddleware;
@@ -33,6 +34,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withCommands([
         ReplayAuditFallbackCommand::class,
         SyncCurrencyRatesArtisanCommand::class,
+        CleanExpiredGuestCartsCommand::class,
     ])
     ->withMiddleware(function (Middleware $middleware) {
         // Global API stack — runs on every /api/* request, in order.
