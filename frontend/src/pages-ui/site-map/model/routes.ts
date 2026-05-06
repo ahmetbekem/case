@@ -131,13 +131,25 @@ export const SECTIONS: ReadonlyArray<RouteSection> = [
       {
         path: '/admin/products',
         title: 'Ürün Yönetimi',
-        description: 'Inline create + delete + stock +/- adjust.',
+        description: 'Inline create + edit + delete + stock +/- adjust. Para birimi seçici yok (ADR-016 single base currency).',
         access: 'admin',
         endpoints: [
           'GET /api/catalog/products',
           'POST /api/catalog/products',
+          'PATCH /api/catalog/products/{id}',
           'DELETE /api/catalog/products/{id}',
           'POST /api/catalog/products/{id}/stock',
+        ],
+      },
+      {
+        path: '/admin/settings',
+        title: 'Sistem Ayarları',
+        description:
+          'base_currency, supported_currencies, default_display_currency, site_name. Kategoriye göre gruplama, inline edit. Backend Redis cache 5 dk TTL.',
+        access: 'admin',
+        endpoints: [
+          'GET /api/admin/system/settings',
+          'PATCH /api/admin/system/settings/{key}',
         ],
       },
       {

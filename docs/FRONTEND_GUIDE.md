@@ -27,7 +27,8 @@ ayrıca işaretlenmiştir.
 | `/checkout` | `app/(shop)/checkout/page.tsx` | Required | customer | `POST /api/sales/orders` | Display currency seç + notes + sipariş onayla |
 | `/orders` | `app/(shop)/orders/page.tsx` | Required | customer / admin | `GET /api/sales/orders` | Siparişlerim — admin için `?adminScope=1` toggle |
 | `/orders/[id]` | `app/(shop)/orders/[id]/page.tsx` | Required | customer / admin | `GET /api/sales/orders/{id}`, `POST /api/sales/orders/{id}/cancel` | Sipariş detay + iptal formu (pending guard) |
-| `/admin/products` | `app/(admin)/admin/products/page.tsx` | Required | admin | `GET /api/catalog/products`, `POST /api/catalog/products`, `DELETE /api/catalog/products/{id}`, `POST /api/catalog/products/{id}/stock` | Inline create + delete + stock +/- adjust |
+| `/admin/products` | `app/(admin)/admin/products/page.tsx` | Required | admin | `GET /api/catalog/products`, `POST /api/catalog/products`, `PATCH /api/catalog/products/{id}`, `DELETE /api/catalog/products/{id}`, `POST /api/catalog/products/{id}/stock` | Inline create + edit + delete + stock +/- adjust (currency seçici yok — ADR-016) |
+| `/admin/settings` | `app/(admin)/admin/settings/page.tsx` | Required | admin | `GET /api/admin/system/settings`, `PATCH /api/admin/system/settings/{key}` | base_currency + supported_currencies + default_display_currency + site_name (kategoriye göre gruplama, inline edit) |
 
 ### Henüz Implement Edilmemiş (Strategy'de Planlandı, Yok)
 
