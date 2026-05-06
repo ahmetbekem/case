@@ -1,12 +1,22 @@
 'use client';
 
-import { LogIn, LogOut, ShoppingCart, UserRound } from 'lucide-react';
+import {
+  ChevronDown,
+  LogIn,
+  LogOut,
+  Settings,
+  ShoppingCart,
+  Store,
+  UserRound,
+} from 'lucide-react';
 import Link from 'next/link';
+import { useEffect, useRef, useState } from 'react';
 
 import { useCart } from '@/entities/cart';
 import { useCurrentUser } from '@/entities/user';
 import { useLogoutMutation } from '@/features/auth-logout';
 import { CurrencySwitcher } from '@/features/currency-switch';
+import { cn } from '@/shared/lib/cn';
 import { Button } from '@/shared/ui';
 
 export function Header() {
@@ -51,14 +61,7 @@ export function Header() {
               >
                 Siparişler
               </Link>
-              {user.role === 'admin' && (
-                <Link
-                  href="/admin/products"
-                  className="rounded-md px-2 py-1 text-sm font-medium text-slate-900 hover:bg-slate-100"
-                >
-                  Admin
-                </Link>
-              )}
+              {user.role === 'admin' && <AdminMenu />}
               <Button
                 variant="ghost"
                 size="sm"
@@ -81,5 +84,89 @@ export function Header() {
         </nav>
       </div>
     </header>
+  );
+}
+
+interface AdminMenuItem {
+  href: string;
+  label: string;
+  icon: typeof Settings;
+}
+
+const ADMIN_ITEMS: ReadonlyArray<AdminMenuItem> = [
+  { href: '/admin/products', label: 'Ürün Yönetimi', icon: Store },
+  { href: '/admin/settings', label: 'Sistem Ayarları', icon: Settings },
+];
+
+/**
+ * Click-toggle dropdown — outside-click + Escape ile kapanır.
+ * shadcn DropdownMenu kullanmadık (radix pull bağımlılığı taşımamak
+ * için); minimal native state yeterli.
+ */
+function AdminMenu() {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+
+    function onDocClick(event: MouseEvent) {
+      if (ref.current !== null && !ref.current.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    }
+    function onKey(event: KeyboardEvent) {
+      if (event.key === 'Escape') setOpen(false);
+    }
+
+    document.addEventListener('mousedown', onDocClick);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('mousedown', onDocClick);
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [open]);
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        aria-haspopup="menu"
+        aria-expanded={open}
+        className={cn(
+          'inline-flex items-center gap-1 rounded-md px-2 py-1 text-sm font-medium text-slate-900 hover:bg-slate-100',
+          open && 'bg-slate-100',
+        )}
+      >
+        Admin
+        <ChevronDown
+          className={cn(
+            'h-3.5 w-3.5 transition-transform',
+            open && 'rotate-180',
+          )}
+        />
+      </button>
+
+      {open && (
+        <div
+          role="menu"
+          className="absolute right-0 top-full z-30 mt-1 w-56 overflow-hidden rounded-md border border-slate-200 bg-white shadow-lg"
+        >
+          {ADMIN_ITEMS.map(({ href, label, icon: Icon }) => (
+            <Link
+              key={href}
+              href={href}
+              role="menuitem"
+              onClick={() => setOpen(false)}
+              className="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 hover:bg-slate-100"
+            >
+              <Icon className="h-4 w-4 text-slate-500" />
+              {label}
+            </Link>
+          ))}
+        </div>
+      )}
+    </div>
   );
 }
