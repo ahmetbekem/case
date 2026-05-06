@@ -1649,15 +1649,214 @@
                     }
                 }
             }
+        },
+        "/admin/system/settings": {
+            "get": {
+                "tags": [
+                    "System (Admin)"
+                ],
+                "summary": "Tüm sistem ayarları (admin)",
+                "description": "is_public ayrımı yapmadan tüm settings listesi.",
+                "operationId": "1bdefd08c745a3f3cb071b15678549e3",
+                "responses": {
+                    "200": {
+                        "description": "Tüm ayarlar",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/SettingDTO"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Auth gerekli",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedError"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Admin değil",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/admin/system/settings/{key}": {
+            "patch": {
+                "tags": [
+                    "System (Admin)"
+                ],
+                "summary": "Ayar değeri güncelle",
+                "description": "Yeni ayar yaratmaz — yalnızca mevcut key'in value'sunu günceller. Cache otomatik invalidate edilir; sonraki public/admin GET fresh okur. audit log: system.setting_update (oldValue + newValue).",
+                "operationId": "4a5d0942f29eb4ea217cce963dc2f0a1",
+                "parameters": [
+                    {
+                        "name": "key",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "base_currency"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateSettingRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Güncel ayar",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/SettingDTO"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Setting updated"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Auth gerekli",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedError"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Admin değil",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenError"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Ayar bulunamadı",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundError"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/system/settings/public": {
+            "get": {
+                "tags": [
+                    "System"
+                ],
+                "summary": "Public sistem ayarları",
+                "description": "is_public=true ayarlar — base_currency, supported_currencies vb. Auth gerekmez; frontend boot anında çağırır.",
+                "operationId": "1752a2e58723d6e43c0510c4ee1d932d",
+                "responses": {
+                    "200": {
+                        "description": "Public ayar listesi",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/SettingDTO"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "429": {
+                        "description": "Rate limit exceeded",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RateLimitError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "components": {
         "schemas": {
             "ProductDTO": {
                 "title": "Product",
-                "description": "Ürün kaydı — fiyat, ürünün kendi base currency'sinde döner. Frontend tarafı görüntü dönüşümünü Currency modülünden ayrıca alır.",
+                "description": "Ürün kaydı — basePrice/baseCurrency kanonik DB tutarı; displayPrice/displayCurrency/exchangeRate yalnızca query'de displayCurrency=X verilmişse dolu olur. price+currency legacy alias (basePrice ile aynı değer).",
                 "properties": {
                     "id": {
+                        "description": "Product output payload.\n\nTek base currency mimarisinde (ADR-016):\n  - basePrice + baseCurrency: ürünün DB'deki \"kanonik\" tutarı\n  - displayPrice + displayCurrency + exchangeRate: query parametresine\n    göre runtime conversion sonucu (yalnızca farklı currency talep\n    edilmişse dolu, aksi halde null)\n\nGeriye uyumluluk için `price` ve `currency` alanları KORUNDU —\nbasePrice ile aynı değeri taşırlar; mevcut frontend client'ları\nkırılmasın diye. ADIM 8'de frontend basePrice/baseCurrency'e geçince\nbu alanlar deprecate olabilir.",
                         "type": "string",
                         "format": "uuid",
                         "example": "550e8400-e29b-41d4-a716-446655440000"
@@ -1674,14 +1873,50 @@
                         "type": "string",
                         "nullable": true
                     },
-                    "price": {
+                    "basePrice": {
+                        "description": "DB'deki kanonik tutar",
                         "type": "number",
                         "format": "float",
                         "example": 1000
                     },
-                    "currency": {
+                    "baseCurrency": {
                         "type": "string",
                         "example": "TRY",
+                        "enum": [
+                            "TRY",
+                            "USD",
+                            "EUR"
+                        ]
+                    },
+                    "displayPrice": {
+                        "description": "displayCurrency=X verildiyse çevrilmiş tutar",
+                        "type": "number",
+                        "format": "float",
+                        "nullable": true
+                    },
+                    "displayCurrency": {
+                        "type": "string",
+                        "nullable": true,
+                        "enum": [
+                            "TRY",
+                            "USD",
+                            "EUR"
+                        ]
+                    },
+                    "exchangeRate": {
+                        "description": "base→display kuru (1.0 ise base==display veya kur yoksa)",
+                        "type": "number",
+                        "format": "float",
+                        "nullable": true
+                    },
+                    "price": {
+                        "description": "[Legacy] basePrice ile aynı",
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "currency": {
+                        "description": "[Legacy] baseCurrency ile aynı",
+                        "type": "string",
                         "enum": [
                             "TRY",
                             "USD",
@@ -1697,7 +1932,6 @@
                         "example": true
                     },
                     "createdBy": {
-                        "description": "Oluşturan admin ID",
                         "type": "string",
                         "format": "uuid"
                     },
@@ -1884,7 +2118,7 @@
             },
             "CartDTO": {
                 "title": "Cart (aggregate)",
-                "description": "Kullanıcının aktif sepeti — Cart aggregate root'unun dış dünya temsili.",
+                "description": "Kullanıcının aktif sepeti — Cart aggregate root'unun dış dünya temsili. Mixed currency destekli: subtotalsByCurrency her para birimi için ayrı bucket; subtotal + currency yalnızca uniform sepetlerde anlamlıdır (ilk item'ın currency'si).",
                 "properties": {
                     "id": {
                         "type": "string",
@@ -1922,6 +2156,7 @@
                         "type": "integer"
                     },
                     "subtotal": {
+                        "description": "Primary (ilk item) currency'sindeki line total'lar toplamı",
                         "type": "number",
                         "format": "float"
                     },
@@ -1932,6 +2167,22 @@
                             "USD",
                             "EUR"
                         ]
+                    },
+                    "subtotalsByCurrency": {
+                        "description": "Her para birimi için ayrı subtotal — mixed cart'larda UI tarafından tek display currency'e dönüştürülür.",
+                        "type": "object",
+                        "example": {
+                            "TRY": 758,
+                            "USD": 89.9
+                        },
+                        "additionalProperties": {
+                            "type": "number",
+                            "format": "float"
+                        }
+                    },
+                    "isUniformCurrency": {
+                        "description": "true ise checkout aktif edilebilir; false ise PlaceOrder reddeder",
+                        "type": "boolean"
                     },
                     "createdAt": {
                         "type": "string",
@@ -1947,7 +2198,7 @@
             },
             "CartItemDTO": {
                 "title": "Cart Item",
-                "description": "Sepetteki tek satır — fiyat ekleme anındaki snapshot.",
+                "description": "Sepetteki tek satır — fiyat + ürün adı/SKU ekleme anındaki snapshot.",
                 "properties": {
                     "id": {
                         "type": "string",
@@ -1956,6 +2207,14 @@
                     "productId": {
                         "type": "string",
                         "format": "uuid"
+                    },
+                    "productName": {
+                        "description": "Ekleme anındaki ürün adı (snapshot)",
+                        "type": "string"
+                    },
+                    "productSku": {
+                        "description": "Ekleme anındaki SKU (snapshot)",
+                        "type": "string"
                     },
                     "quantity": {
                         "type": "integer",
@@ -2136,6 +2395,46 @@
                 },
                 "type": "object"
             },
+            "SettingDTO": {
+                "title": "System Setting",
+                "description": "Tek bir sistem ayarı. value her zaman string; type alanı caller'a parse hint verir.",
+                "properties": {
+                    "key": {
+                        "type": "string",
+                        "example": "base_currency"
+                    },
+                    "value": {
+                        "description": "Raw stringified değer (json type ise JSON-encoded)",
+                        "type": "string"
+                    },
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "string",
+                            "number",
+                            "boolean",
+                            "json"
+                        ]
+                    },
+                    "category": {
+                        "type": "string",
+                        "example": "currency"
+                    },
+                    "description": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "isPublic": {
+                        "type": "boolean"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
             "CreateProductRequest": {
                 "required": [
                     "sku",
@@ -2168,15 +2467,6 @@
                         "example": 1000,
                         "maximum": 999999.99,
                         "minimum": 0
-                    },
-                    "currency": {
-                        "type": "string",
-                        "default": "TRY",
-                        "enum": [
-                            "TRY",
-                            "USD",
-                            "EUR"
-                        ]
                     },
                     "stock": {
                         "type": "integer",
@@ -2233,14 +2523,6 @@
                         "format": "float",
                         "maximum": 999999.99,
                         "minimum": 0
-                    },
-                    "currency": {
-                        "type": "string",
-                        "enum": [
-                            "TRY",
-                            "USD",
-                            "EUR"
-                        ]
                     },
                     "isActive": {
                         "type": "boolean"
@@ -2530,6 +2812,20 @@
                     }
                 },
                 "type": "object"
+            },
+            "UpdateSettingRequest": {
+                "description": "Ayar değer güncellemesi — yalnızca value alanı; key path param.",
+                "required": [
+                    "value"
+                ],
+                "properties": {
+                    "value": {
+                        "description": "Raw stringified değer (json type ise JSON string)",
+                        "type": "string",
+                        "maxLength": 5000
+                    }
+                },
+                "type": "object"
             }
         },
         "securitySchemes": {
@@ -2574,7 +2870,11 @@
         },
         {
             "name": "System",
-            "description": "Healthcheck ve alt-yapı endpoint'leri"
+            "description": "Healthcheck, public settings ve alt-yapı endpoint'leri"
+        },
+        {
+            "name": "System (Admin)",
+            "description": "Admin-only sistem ayarları yönetimi (base_currency vb.)"
         }
     ]
 }

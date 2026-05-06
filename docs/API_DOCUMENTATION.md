@@ -767,9 +767,19 @@ Endpoint inventory — her birinin annotation'u olmalı. **Bu liste TASK 0.10-0.
 
 | Method | Path | Summary | Auth |
 |--------|------|---------|------|
-| GET | `/health` | Health check | Public, no proxy guard |
+| GET | `/up` | Health check (Laravel built-in) | Public, no proxy guard |
+| GET | `/system/settings/public` | Public sistem ayarları (base_currency, supported_currencies, default_display_currency, site_name) | Public |
 
-**Toplam endpoint sayısı: ~38**
+### 8.11 System (Admin)
+
+ADR-016 single base currency mimarisinde admin'in base_currency, supported_currencies vb. değiştirmesi için. Backend Redis cache 5dk TTL — save sonrası invalidate.
+
+| Method | Path | Summary | Auth |
+|--------|------|---------|------|
+| GET | `/admin/system/settings` | Tüm ayarlar (is_public ayrımı yok) | Admin |
+| PATCH | `/admin/system/settings/{key}` | Tek ayar value güncelleme (audit log: oldValue + newValue) | Admin |
+
+**Toplam endpoint sayısı (gerçek implementasyon):** Identity 5 + Catalog 6 + Sales 9 + Currency 2 + System 2 + System Admin 2 = **26 endpoint** (doc'taki 38 hedefi admin user CRUD + admin currency + admin order complete eksikleri ile uzlaşmadı).
 
 ---
 

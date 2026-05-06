@@ -55,7 +55,8 @@ use OpenApi\Attributes as OA;
 #[OA\Tag(name: 'Orders (Admin)', description: 'Admin sipariş yönetimi + dashboard')]
 #[OA\Tag(name: 'Currency', description: 'Public döviz kurları')]
 #[OA\Tag(name: 'Currency (Admin)', description: 'Admin sync + tarihsel kur verisi')]
-#[OA\Tag(name: 'System', description: 'Healthcheck ve alt-yapı endpoint\'leri')]
+#[OA\Tag(name: 'System', description: 'Healthcheck, public settings ve alt-yapı endpoint\'leri')]
+#[OA\Tag(name: 'System (Admin)', description: 'Admin-only sistem ayarları yönetimi (base_currency vb.)')]
 final class ApiDocumentation
 {
     /**
