@@ -127,6 +127,10 @@ async function forwardResponse(response: Response): Promise<NextResponse> {
   if (contentType !== null) responseHeaders.set('content-type', contentType);
   const correlationId = response.headers.get('x-correlation-id');
   if (correlationId !== null) responseHeaders.set('x-correlation-id', correlationId);
+  // BFF cevapları her zaman fresh olmalı — özellikle cart/orders gibi
+  // user-specific dynamic data. Browser cache'i devreden çıkar; mutation
+  // sonrası veya hard refresh sonrası eski payload kalmasın.
+  responseHeaders.set('cache-control', 'no-store, max-age=0');
 
   return new NextResponse(body === '' ? null : body, {
     status: response.status,
