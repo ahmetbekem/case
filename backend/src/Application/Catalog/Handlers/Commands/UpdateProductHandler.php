@@ -14,7 +14,6 @@ use Domain\Catalog\Exceptions\ProductNotFoundException;
 use Domain\Catalog\ValueObjects\ProductId;
 use Domain\Logging\Contracts\AuditLoggerInterface;
 use Domain\Logging\ValueObjects\AuditEvent;
-use Domain\Shared\ValueObjects\Currency;
 use Domain\Shared\ValueObjects\Money;
 use Psr\Log\LoggerInterface;
 
@@ -59,15 +58,14 @@ final class UpdateProductHandler extends AbstractCommandHandler
             $product->changeDescription($command->description);
             $changes['description'] = $command->description;
         }
-        if ($command->price !== null || $command->currency !== null) {
+        if ($command->price !== null) {
+            // Currency değişmez — base_currency system setting'inden geliyor
+            // (ADR-016). Mevcut entity currency'sini koru.
             $product->changePrice(new Money(
-                amount: $command->price ?? $product->getPrice()->amount,
-                currency: $command->currency !== null
-                    ? Currency::from($command->currency)
-                    : $product->getPrice()->currency,
+                amount: $command->price,
+                currency: $product->getPrice()->currency,
             ));
             $changes['price'] = $product->getPrice()->amount;
-            $changes['currency'] = $product->getPrice()->currency->value;
         }
         if ($command->isActive !== null) {
             $command->isActive ? $product->activate() : $product->deactivate();

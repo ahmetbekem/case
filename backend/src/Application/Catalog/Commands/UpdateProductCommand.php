@@ -20,7 +20,6 @@ final readonly class UpdateProductCommand extends AbstractCommand
         public ?string $name = null,
         public ?string $description = null,
         public ?float $price = null,
-        public ?string $currency = null,
         public ?bool $isActive = null,
     ) {
         parent::__construct($userId, $correlationId, $userIp);

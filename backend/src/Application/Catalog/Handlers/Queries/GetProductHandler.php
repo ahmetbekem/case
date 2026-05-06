@@ -11,12 +11,18 @@ use Application\Shared\Contracts\QueryInterface;
 use Domain\Catalog\Contracts\ProductRepositoryInterface;
 use Domain\Catalog\Exceptions\ProductNotFoundException;
 use Domain\Catalog\ValueObjects\ProductId;
+use Domain\Currency\Contracts\ExchangeRateRepositoryInterface;
+use Domain\Shared\ValueObjects\Currency;
+use Domain\Shared\ValueObjects\Money;
+use Domain\System\Services\SettingResolver;
 use Psr\Log\LoggerInterface;
 
 final class GetProductHandler extends AbstractQueryHandler
 {
     public function __construct(
         private readonly ProductRepositoryInterface $productRepository,
+        private readonly ExchangeRateRepositoryInterface $exchangeRateRepository,
+        private readonly SettingResolver $settingResolver,
         LoggerInterface $logger,
     ) {
         parent::__construct($logger);
@@ -40,6 +46,26 @@ final class GetProductHandler extends AbstractQueryHandler
             throw ProductNotFoundException::withId($query->productId);
         }
 
-        return ProductDTO::fromEntity($product);
+        $display = $query->displayCurrency !== null
+            ? (Currency::tryFrom($query->displayCurrency) ?? $this->settingResolver->getDefaultDisplayCurrency())
+            : $this->settingResolver->getDefaultDisplayCurrency();
+
+        // Ürünün kendi currency'sinden display'e çevir — list handler ile
+        // aynı mantık. System base_currency yalnızca yeni create default'u.
+        $productCurrency = $product->getPrice()->currency;
+        if ($productCurrency === $display) {
+            return ProductDTO::fromEntity($product);
+        }
+
+        $rate = $this->exchangeRateRepository->findLatest($productCurrency, $display);
+        if ($rate === null) {
+            return ProductDTO::fromEntity($product);
+        }
+
+        $displayMoney = new Money(
+            round($product->getPrice()->amount * $rate->getRate(), 2),
+            $display,
+        );
+        return ProductDTO::fromEntityWithDisplay($product, $displayMoney, $rate->getRate());
     }
 }

@@ -12,6 +12,7 @@ final readonly class GetProductQuery extends AbstractQuery
         string $userId,
         string $correlationId,
         public string $productId,
+        public ?string $displayCurrency = null,
     ) {
         parent::__construct($userId, $correlationId);
     }

@@ -9,6 +9,10 @@ use Application\Catalog\Queries\ListProductsQuery;
 use Application\Shared\Abstracts\AbstractQueryHandler;
 use Application\Shared\Contracts\QueryInterface;
 use Domain\Catalog\Contracts\ProductRepositoryInterface;
+use Domain\Currency\Contracts\ExchangeRateRepositoryInterface;
+use Domain\Shared\ValueObjects\Currency;
+use Domain\Shared\ValueObjects\Money;
+use Domain\System\Services\SettingResolver;
 use Psr\Log\LoggerInterface;
 
 final class ListProductsHandler extends AbstractQueryHandler
@@ -17,6 +21,8 @@ final class ListProductsHandler extends AbstractQueryHandler
 
     public function __construct(
         private readonly ProductRepositoryInterface $productRepository,
+        private readonly ExchangeRateRepositoryInterface $exchangeRateRepository,
+        private readonly SettingResolver $settingResolver,
         LoggerInterface $logger,
     ) {
         parent::__construct($logger);
@@ -48,8 +54,10 @@ final class ListProductsHandler extends AbstractQueryHandler
             activeOnly: $query->activeOnly,
         );
 
+        $items = $this->buildItems($products, $query->displayCurrency);
+
         return [
-            'items' => ProductDTO::collection($products),
+            'items' => $items,
             'meta' => [
                 'page' => $page,
                 'pageSize' => $pageSize,
@@ -57,5 +65,53 @@ final class ListProductsHandler extends AbstractQueryHandler
                 'totalPages' => $total === 0 ? 0 : (int) ceil($total / $pageSize),
             ],
         ];
+    }
+
+    /**
+     * Her ürün, kendi currency'sinden display'e dönüştürülür. System
+     * base_currency yalnızca yeni ürün create default'u — mevcut
+     * ürünler kendi currency snapshot'larını taşır (ADIM 6 alignment
+     * migration'ına kadar mixed olabilir).
+     *
+     * Aynı currency veya kur yoksa: display alanları null (UI legacy
+     * price+currency'e veya inverse rate'e düşer).
+     *
+     * Per-currency rate cache — N farklı currency için en fazla N
+     * findLatest çağrısı.
+     *
+     * @param array<int, \Domain\Catalog\Entities\Product> $products
+     * @return array<int, ProductDTO>
+     */
+    private function buildItems(array $products, ?string $displayCurrencyParam): array
+    {
+        $display = $displayCurrencyParam !== null
+            ? (Currency::tryFrom($displayCurrencyParam) ?? $this->settingResolver->getDefaultDisplayCurrency())
+            : $this->settingResolver->getDefaultDisplayCurrency();
+
+        $rateCache = [];
+        $dtos = [];
+        foreach ($products as $product) {
+            $productCurrency = $product->getPrice()->currency;
+            if ($productCurrency === $display) {
+                $dtos[] = ProductDTO::fromEntity($product);
+                continue;
+            }
+            $cacheKey = $productCurrency->value;
+            if (!array_key_exists($cacheKey, $rateCache)) {
+                $rate = $this->exchangeRateRepository->findLatest($productCurrency, $display);
+                $rateCache[$cacheKey] = $rate?->getRate();
+            }
+            $rateValue = $rateCache[$cacheKey];
+            if ($rateValue === null) {
+                $dtos[] = ProductDTO::fromEntity($product);
+                continue;
+            }
+            $displayMoney = new Money(
+                round($product->getPrice()->amount * $rateValue, 2),
+                $display,
+            );
+            $dtos[] = ProductDTO::fromEntityWithDisplay($product, $displayMoney, $rateValue);
+        }
+        return $dtos;
     }
 }

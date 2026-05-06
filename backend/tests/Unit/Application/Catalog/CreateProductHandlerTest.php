@@ -9,6 +9,10 @@ use Application\Shared\Contracts\TransactionInterface;
 use Domain\Catalog\Contracts\ProductRepositoryInterface;
 use Domain\Catalog\Exceptions\DuplicateSkuException;
 use Domain\Logging\Contracts\AuditLoggerInterface;
+use Domain\Shared\ValueObjects\Currency;
+use Domain\System\Contracts\SettingRepositoryInterface;
+use Domain\System\Entities\Setting;
+use Domain\System\Services\SettingResolver;
 use Psr\Log\NullLogger;
 
 beforeEach(function () {
@@ -17,8 +21,16 @@ beforeEach(function () {
     $this->transaction = Mockery::mock(TransactionInterface::class);
     $this->transaction->shouldReceive('run')->andReturnUsing(fn ($cb) => $cb());
 
+    // SettingResolver — gerçek class, mock repository ile besle
+    $settingRepo = Mockery::mock(SettingRepositoryInterface::class);
+    $settingRepo->shouldReceive('findByKey')
+        ->with('base_currency')
+        ->andReturn(Setting::create('base_currency', 'TRY'));
+    $this->settingResolver = new SettingResolver($settingRepo);
+
     $this->handler = new CreateProductHandler(
         $this->repo,
+        $this->settingResolver,
         $this->audit,
         $this->transaction,
         new NullLogger(),
@@ -35,7 +47,6 @@ function makeCreateCmd(string $sku = 'NEW-001'): CreateProductCommand
         name: 'New Product',
         description: 'Desc',
         price: 199.99,
-        currency: 'TRY',
         stock: 50,
     );
 }

@@ -51,6 +51,7 @@ final class ProductController extends AbstractApiController
     )]
     public function index(ListProductsRequest $request): JsonResponse
     {
+        $displayCurrencyParam = $request->input('displayCurrency');
         $query = new ListProductsQuery(
             userId: $this->getUserId($request),
             correlationId: $this->getCorrelationId($request),
@@ -58,6 +59,9 @@ final class ProductController extends AbstractApiController
             pageSize: (int) $request->input('pageSize', 20),
             search: $request->input('search'),
             activeOnly: $request->boolean('activeOnly', true),
+            displayCurrency: is_string($displayCurrencyParam) && $displayCurrencyParam !== ''
+                ? strtoupper($displayCurrencyParam)
+                : null,
         );
 
         $result = $this->queryBus->ask($query);
@@ -92,10 +96,14 @@ final class ProductController extends AbstractApiController
     )]
     public function show(Request $request, string $id): JsonResponse
     {
+        $displayCurrencyParam = $request->input('displayCurrency');
         $query = new GetProductQuery(
             userId: $this->getUserId($request),
             correlationId: $this->getCorrelationId($request),
             productId: $id,
+            displayCurrency: is_string($displayCurrencyParam) && $displayCurrencyParam !== ''
+                ? strtoupper($displayCurrencyParam)
+                : null,
         );
 
         return $this->success($this->queryBus->ask($query));
@@ -138,7 +146,6 @@ final class ProductController extends AbstractApiController
             name: (string) $request->validated('name'),
             description: $request->validated('description'),
             price: (float) $request->validated('price'),
-            currency: (string) $request->validated('currency', 'TRY'),
             stock: (int) $request->validated('stock'),
         );
 
@@ -190,7 +197,6 @@ final class ProductController extends AbstractApiController
             name: $request->validated('name'),
             description: $request->has('description') ? $request->validated('description') : null,
             price: $request->validated('price') !== null ? (float) $request->validated('price') : null,
-            currency: $request->validated('currency'),
             isActive: $request->has('isActive') ? (bool) $request->validated('isActive') : null,
         );
 

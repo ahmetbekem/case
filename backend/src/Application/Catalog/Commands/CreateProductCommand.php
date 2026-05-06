@@ -16,7 +16,6 @@ final readonly class CreateProductCommand extends AbstractCommand
         public string $name,
         public ?string $description,
         public float $price,
-        public string $currency,
         public int $stock,
     ) {
         parent::__construct($userId, $correlationId, $userIp);

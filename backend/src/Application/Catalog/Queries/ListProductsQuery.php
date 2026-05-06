@@ -15,6 +15,8 @@ final readonly class ListProductsQuery extends AbstractQuery
         public int $pageSize = 20,
         public ?string $search = null,
         public bool $activeOnly = true,
+        /** TRY/USD/EUR — null ise system default_display_currency kullanılır */
+        public ?string $displayCurrency = null,
     ) {
         parent::__construct($userId, $correlationId);
     }

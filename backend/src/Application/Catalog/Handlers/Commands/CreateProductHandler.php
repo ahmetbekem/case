@@ -15,15 +15,16 @@ use Domain\Catalog\Exceptions\DuplicateSkuException;
 use Domain\Catalog\ValueObjects\ProductId;
 use Domain\Logging\Contracts\AuditLoggerInterface;
 use Domain\Logging\ValueObjects\AuditEvent;
-use Domain\Shared\ValueObjects\Currency;
 use Domain\Shared\ValueObjects\Money;
 use Domain\Shared\ValueObjects\UserId;
+use Domain\System\Services\SettingResolver;
 use Psr\Log\LoggerInterface;
 
 final class CreateProductHandler extends AbstractCommandHandler
 {
     public function __construct(
         private readonly ProductRepositoryInterface $productRepository,
+        private readonly SettingResolver $settingResolver,
         private readonly AuditLoggerInterface $auditLogger,
         TransactionInterface $transaction,
         LoggerInterface $logger,
@@ -47,12 +48,16 @@ final class CreateProductHandler extends AbstractCommandHandler
             throw DuplicateSkuException::withSku($command->sku);
         }
 
+        // Currency artık system setting'ten geliyor — admin form'da seçilmiyor
+        // (ADR-016 single base currency).
+        $baseCurrency = $this->settingResolver->getBaseCurrency();
+
         $product = new Product(
             id: ProductId::generate(),
             sku: $command->sku,
             name: $command->name,
             description: $command->description,
-            price: new Money($command->price, Currency::from($command->currency)),
+            price: new Money($command->price, $baseCurrency),
             stock: $command->stock,
             isActive: true,
             createdBy: UserId::fromString($command->getUserId()),
@@ -71,7 +76,7 @@ final class CreateProductHandler extends AbstractCommandHandler
             metadata: [
                 'sku' => $command->sku,
                 'price' => $command->price,
-                'currency' => $command->currency,
+                'currency' => $baseCurrency->value,
                 'stock' => $command->stock,
             ],
         ));
