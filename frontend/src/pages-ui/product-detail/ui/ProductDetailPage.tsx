@@ -2,10 +2,10 @@
 
 import Link from 'next/link';
 
-import { ConvertedPrice } from '@/entities/currency';
 import { useProduct } from '@/entities/product';
 import { AddToCartButton } from '@/features/cart-add-item';
 import { ClientApiError } from '@/shared/api/client';
+import { formatMoney } from '@/shared/lib/format';
 import { Button, Card, CardContent, CardHeader, CardTitle } from '@/shared/ui';
 
 interface ProductDetailPageProps {
@@ -49,13 +49,22 @@ export function ProductDetailPage({ id }: ProductDetailPageProps) {
           {product.description !== null && (
             <p className="text-sm text-slate-700">{product.description}</p>
           )}
-          <ConvertedPrice
-            amount={product.price}
-            currency={product.currency}
-            className="text-3xl font-bold text-slate-900 items-start"
-            originalClassName="text-sm"
-          />
-          <div />{/* layout boşluk koruyucusu — ConvertedPrice inline-flex */}
+          <div>
+            <p className="text-3xl font-bold text-slate-900">
+              {product.displayPrice !== null && product.displayCurrency !== null
+                ? formatMoney(product.displayPrice, product.displayCurrency)
+                : formatMoney(product.basePrice, product.baseCurrency)}
+            </p>
+            {product.displayPrice !== null
+              && product.displayCurrency !== product.baseCurrency && (
+                <p className="text-sm text-slate-500">
+                  Base: {formatMoney(product.basePrice, product.baseCurrency)}
+                  {product.exchangeRate !== null && (
+                    <span> · kur {product.exchangeRate.toFixed(4)}</span>
+                  )}
+                </p>
+              )}
+          </div>
           <p
             className={
               product.stock > 0

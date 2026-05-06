@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 
-import { ConvertedPrice } from '@/entities/currency';
+import { formatMoney } from '@/shared/lib/format';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/shared/ui';
 
 import type { Product } from '../model/types';
@@ -13,6 +13,15 @@ interface ProductCardProps {
   action?: React.ReactNode;
 }
 
+/**
+ * Backend conversion-aware fiyat gösterimi (ADR-016).
+ * - displayPrice dolu (header currency != baseCurrency) → display fiyat
+ *   üstte, alt satırda küçük gri "Base: X TRY" referansı.
+ * - displayPrice null (identity / kur yoksa) → basePrice tek satır.
+ *
+ * Backend zaten doğru kuru uyguladığı için frontend'de ConvertedPrice
+ * (UI-side conversion) kullanmıyoruz — çift conversion riskinden kaçın.
+ */
 export function ProductCard({ product, action }: ProductCardProps) {
   const inStock = product.stock > 0;
 
@@ -33,12 +42,18 @@ export function ProductCard({ product, action }: ProductCardProps) {
             {product.description}
           </p>
         )}
-        <div className="flex items-end justify-between gap-2">
-          <ConvertedPrice
-            amount={product.price}
-            currency={product.currency}
-            className="text-lg font-semibold text-slate-900 items-start"
-          />
+        <div>
+          <p className="text-lg font-semibold text-slate-900">
+            {product.displayPrice !== null && product.displayCurrency !== null
+              ? formatMoney(product.displayPrice, product.displayCurrency)
+              : formatMoney(product.basePrice, product.baseCurrency)}
+          </p>
+          {product.displayPrice !== null
+            && product.displayCurrency !== product.baseCurrency && (
+              <p className="text-xs text-slate-500">
+                Base: {formatMoney(product.basePrice, product.baseCurrency)}
+              </p>
+            )}
         </div>
         <p
           className={

@@ -4,11 +4,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Check, Pencil, Trash2, X } from 'lucide-react';
 import { useState } from 'react';
 
-import {
-  PRODUCT_LIST_QUERY_KEY,
-  useProductList,
-  type Product,
-} from '@/entities/product';
+import { useProductList, type Product } from '@/entities/product';
 import { useCurrentUser } from '@/entities/user';
 import { ClientApiError, clientFetch } from '@/shared/api/client';
 import { cn } from '@/shared/lib/cn';
@@ -29,7 +25,6 @@ interface CreateProductValues {
   name: string;
   description: string;
   price: string;
-  currency: string;
   stock: string;
 }
 
@@ -37,7 +32,6 @@ interface EditValues {
   name: string;
   description: string;
   price: string;
-  currency: string;
   isActive: boolean;
 }
 
@@ -46,16 +40,17 @@ const initialCreate: CreateProductValues = {
   name: '',
   description: '',
   price: '',
-  currency: 'TRY',
   stock: '',
 };
+
+// Currency selector ADR-016 ile kaldırıldı — system base_currency
+// (default TRY) backend tarafında otomatik atanır.
 
 function toEditValues(p: Product): EditValues {
   return {
     name: p.name,
     description: p.description ?? '',
-    price: String(p.price),
-    currency: p.currency,
+    price: String(p.basePrice),
     isActive: p.isActive,
   };
 }
@@ -82,14 +77,14 @@ export function AdminProductsPage() {
           name: input.name.trim(),
           description: input.description.trim() === '' ? null : input.description.trim(),
           price: Number(input.price),
-          currency: input.currency,
           stock: Number(input.stock),
         },
       }),
     onSuccess: () => {
       setValues(initialCreate);
       queryClient.invalidateQueries({
-        queryKey: PRODUCT_LIST_QUERY_KEY(params),
+        queryKey: ['product', 'list'],
+        exact: false,
       });
     },
   });
@@ -115,9 +110,8 @@ export function AdminProductsPage() {
       if (newDesc !== original.description) payload.description = newDesc;
 
       const numericPrice = Number(values.price);
-      if (numericPrice !== original.price) payload.price = numericPrice;
+      if (numericPrice !== original.basePrice) payload.price = numericPrice;
 
-      if (values.currency !== original.currency) payload.currency = values.currency;
       if (values.isActive !== original.isActive) payload.isActive = values.isActive;
 
       if (Object.keys(payload).length === 0) {
@@ -132,7 +126,8 @@ export function AdminProductsPage() {
       setEditingId(null);
       setEditValues(null);
       queryClient.invalidateQueries({
-        queryKey: PRODUCT_LIST_QUERY_KEY(params),
+        queryKey: ['product', 'list'],
+        exact: false,
       });
     },
   });
@@ -142,7 +137,8 @@ export function AdminProductsPage() {
       clientFetch(`/api/catalog/products/${productId}`, { method: 'DELETE' }),
     onSuccess: () =>
       queryClient.invalidateQueries({
-        queryKey: PRODUCT_LIST_QUERY_KEY(params),
+        queryKey: ['product', 'list'],
+        exact: false,
       }),
   });
 
@@ -154,7 +150,8 @@ export function AdminProductsPage() {
       }),
     onSuccess: () =>
       queryClient.invalidateQueries({
-        queryKey: PRODUCT_LIST_QUERY_KEY(params),
+        queryKey: ['product', 'list'],
+        exact: false,
       }),
   });
 
@@ -244,21 +241,6 @@ export function AdminProductsPage() {
                 onChange={(e) => setValues((v) => ({ ...v, price: e.target.value }))}
                 required
               />
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="currency">Para</Label>
-              <select
-                id="currency"
-                value={values.currency}
-                onChange={(e) =>
-                  setValues((v) => ({ ...v, currency: e.target.value }))
-                }
-                className="flex h-10 w-full rounded-md border border-slate-300 bg-white px-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900"
-              >
-                <option value="TRY">TRY</option>
-                <option value="USD">USD</option>
-                <option value="EUR">EUR</option>
-              </select>
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="stock">Stok</Label>
@@ -357,30 +339,6 @@ export function AdminProductsPage() {
                         required
                       />
                     </div>
-                    <div className="space-y-1">
-                      <Label
-                        htmlFor={`currency-${product.id}`}
-                        className="text-xs"
-                      >
-                        Para
-                      </Label>
-                      <select
-                        id={`currency-${product.id}`}
-                        value={editValues.currency}
-                        onChange={(e) =>
-                          setEditValues((v) =>
-                            v === null
-                              ? v
-                              : { ...v, currency: e.target.value },
-                          )
-                        }
-                        className="flex h-10 w-full rounded-md border border-slate-300 bg-white px-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900"
-                      >
-                        <option value="TRY">TRY</option>
-                        <option value="USD">USD</option>
-                        <option value="EUR">EUR</option>
-                      </select>
-                    </div>
                     <div className="space-y-1 sm:col-span-6">
                       <Label
                         htmlFor={`description-${product.id}`}
@@ -464,7 +422,7 @@ export function AdminProductsPage() {
                     </p>
                     <p className="text-xs text-slate-500">
                       {product.sku} ·{' '}
-                      {formatMoney(product.price, product.currency)}
+                      {formatMoney(product.basePrice, product.baseCurrency)}
                       {!product.isActive && (
                         <span className="ml-2 inline-flex items-center rounded-full bg-slate-200 px-1.5 py-0.5 text-[10px] font-medium text-slate-700">
                           pasif
