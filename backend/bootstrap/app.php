@@ -16,6 +16,8 @@ use Infrastructure\Currency\Console\SyncCurrencyRatesArtisanCommand;
 use Infrastructure\Logging\Access\AccessLogMiddleware;
 use Infrastructure\Logging\Console\ReplayAuditFallbackCommand;
 use Presentation\Identity\Middleware\JwtAuthMiddleware;
+use Presentation\Identity\Middleware\OptionalJwtMiddleware;
+use Presentation\Sales\Middleware\GuestSessionMiddleware;
 use Presentation\Shared\Middleware\CorrelationIdMiddleware;
 use Presentation\Shared\Middleware\CsrfOriginMiddleware;
 use Presentation\Shared\Middleware\ProxyOriginMiddleware;
@@ -49,8 +51,10 @@ return Application::configure(basePath: dirname(__DIR__))
 
         // Route-level aliases (used as middleware('jwt.auth'), middleware('role:admin'))
         $middleware->alias([
-            'jwt.auth' => JwtAuthMiddleware::class,
-            'role'     => RoleMiddleware::class,
+            'jwt.auth'      => JwtAuthMiddleware::class,
+            'optional.jwt'  => OptionalJwtMiddleware::class,
+            'guest.session' => GuestSessionMiddleware::class,
+            'role'          => RoleMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
