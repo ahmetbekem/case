@@ -13,7 +13,7 @@ use Domain\Logging\Contracts\AuditLoggerInterface;
 use Domain\Logging\ValueObjects\AuditEvent;
 use Domain\Sales\Contracts\CartRepositoryInterface;
 use Domain\Sales\Entities\Cart;
-use Domain\Sales\ValueObjects\CartId;
+use Domain\Sales\ValueObjects\GuestSessionId;
 use Domain\Shared\ValueObjects\UserId;
 use Psr\Log\LoggerInterface;
 
@@ -37,32 +37,44 @@ final class ClearCartHandler extends AbstractCommandHandler
     {
         assert($command instanceof ClearCartCommand);
 
-        $userId = UserId::fromString($command->getUserId());
-        $cart = $this->cartRepository->findActiveCartForUser($userId);
+        $cart = $this->resolveCart($command);
 
         // Idempotent — if there's no active cart, treat the request as
         // already-empty and return a fresh DTO so callers don't have to
         // special-case the missing-cart scenario.
         if ($cart === null) {
-            return CartDTO::fromEntity(new Cart(
-                id: CartId::generate(),
-                userId: $userId,
-            ));
+            $empty = $command->isGuest()
+                ? Cart::createForGuest(GuestSessionId::fromString((string) $command->guestSessionId))
+                : Cart::createForUser(UserId::fromString($command->getUserId()));
+            return CartDTO::fromEntity($empty);
         }
 
         $cart->clear();
         $this->cartRepository->save($cart);
 
         $this->auditLogger->log(new AuditEvent(
-            actor: 'userId:' . $command->getUserId(),
+            actor: $command->getUserId(),
             actorIp: $command->getUserIp(),
             action: 'sales.cart_clear',
             resource: 'cart:' . $cart->getId()->value(),
             module: 'sales',
             result: 'success',
             correlationId: $command->getCorrelationId(),
+            metadata: ['isGuest' => $command->isGuest()],
         ));
 
         return CartDTO::fromEntity($cart);
+    }
+
+    private function resolveCart(ClearCartCommand $command): ?Cart
+    {
+        if ($command->isGuest()) {
+            return $this->cartRepository->findActiveCartForGuestSession(
+                GuestSessionId::fromString((string) $command->guestSessionId)
+            );
+        }
+        return $this->cartRepository->findActiveCartForUser(
+            UserId::fromString($command->getUserId())
+        );
     }
 }

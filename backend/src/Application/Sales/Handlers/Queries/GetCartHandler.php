@@ -10,7 +10,7 @@ use Application\Shared\Abstracts\AbstractQueryHandler;
 use Application\Shared\Contracts\QueryInterface;
 use Domain\Sales\Contracts\CartRepositoryInterface;
 use Domain\Sales\Entities\Cart;
-use Domain\Sales\ValueObjects\CartId;
+use Domain\Sales\ValueObjects\GuestSessionId;
 use Domain\Shared\ValueObjects\UserId;
 use Psr\Log\LoggerInterface;
 
@@ -32,13 +32,20 @@ final class GetCartHandler extends AbstractQueryHandler
     {
         assert($query instanceof GetCartQuery);
 
-        $userId = UserId::fromString($query->getUserId());
-        $cart = $this->cartRepository->findActiveCartForUser($userId);
+        $cart = $query->isGuest()
+            ? $this->cartRepository->findActiveCartForGuestSession(
+                GuestSessionId::fromString((string) $query->guestSessionId)
+            )
+            : $this->cartRepository->findActiveCartForUser(
+                UserId::fromString($query->getUserId())
+            );
 
-        // GET /cart on a fresh user returns an empty cart instead of 404 —
-        // simpler client UX (no special-case "first time" branch).
+        // GET /cart on a fresh user/guest returns an empty cart instead
+        // of 404 — simpler client UX (no special-case "first time" branch).
         if ($cart === null) {
-            $cart = new Cart(id: CartId::generate(), userId: $userId);
+            $cart = $query->isGuest()
+                ? Cart::createForGuest(GuestSessionId::fromString((string) $query->guestSessionId))
+                : Cart::createForUser(UserId::fromString($query->getUserId()));
         }
 
         return CartDTO::fromEntity($cart);

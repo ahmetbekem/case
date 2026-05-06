@@ -41,6 +41,7 @@ final class CartController extends AbstractApiController
     {
         $query = new GetCartQuery(
             userId: $this->getUserId($request),
+            guestSessionId: null,
             correlationId: $this->getCorrelationId($request),
         );
         return $this->success($this->queryBus->ask($query));
@@ -77,6 +78,7 @@ final class CartController extends AbstractApiController
     {
         $command = new AddItemToCartCommand(
             userId: $this->getUserId($request),
+            guestSessionId: null,
             correlationId: $this->getCorrelationId($request),
             userIp: $request->ip() ?? '0.0.0.0',
             productId: (string) $request->validated('productId'),
@@ -118,6 +120,7 @@ final class CartController extends AbstractApiController
     {
         $command = new UpdateCartItemQuantityCommand(
             userId: $this->getUserId($request),
+            guestSessionId: null,
             correlationId: $this->getCorrelationId($request),
             userIp: $request->ip() ?? '0.0.0.0',
             cartItemId: $itemId,
@@ -152,6 +155,7 @@ final class CartController extends AbstractApiController
     {
         $command = new RemoveCartItemCommand(
             userId: $this->getUserId($request),
+            guestSessionId: null,
             correlationId: $this->getCorrelationId($request),
             userIp: $request->ip() ?? '0.0.0.0',
             cartItemId: $itemId,
@@ -182,6 +186,7 @@ final class CartController extends AbstractApiController
     {
         $command = new ClearCartCommand(
             userId: $this->getUserId($request),
+            guestSessionId: null,
             correlationId: $this->getCorrelationId($request),
             userIp: $request->ip() ?? '0.0.0.0',
         );

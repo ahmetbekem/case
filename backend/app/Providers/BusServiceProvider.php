@@ -35,12 +35,14 @@ use Application\Identity\Queries\GetCurrentUserQuery;
 use Application\Sales\Commands\AddItemToCartCommand;
 use Application\Sales\Commands\CancelOrderCommand;
 use Application\Sales\Commands\ClearCartCommand;
+use Application\Sales\Commands\MergeGuestCartCommand;
 use Application\Sales\Commands\PlaceOrderCommand;
 use Application\Sales\Commands\RemoveCartItemCommand;
 use Application\Sales\Commands\UpdateCartItemQuantityCommand;
 use Application\Sales\Handlers\Commands\AddItemToCartHandler;
 use Application\Sales\Handlers\Commands\CancelOrderHandler;
 use Application\Sales\Handlers\Commands\ClearCartHandler;
+use Application\Sales\Handlers\Commands\MergeGuestCartHandler;
 use Application\Sales\Handlers\Commands\PlaceOrderHandler;
 use Application\Sales\Handlers\Commands\RemoveCartItemHandler;
 use Application\Sales\Handlers\Commands\UpdateCartItemQuantityHandler;
@@ -87,6 +89,7 @@ final class BusServiceProvider extends ServiceProvider
         UpdateCartItemQuantityCommand::class   => UpdateCartItemQuantityHandler::class,
         RemoveCartItemCommand::class           => RemoveCartItemHandler::class,
         ClearCartCommand::class                => ClearCartHandler::class,
+        MergeGuestCartCommand::class           => MergeGuestCartHandler::class,
         PlaceOrderCommand::class               => PlaceOrderHandler::class,
         CancelOrderCommand::class              => CancelOrderHandler::class,
 

@@ -16,7 +16,7 @@ use Domain\Logging\Contracts\AuditLoggerInterface;
 use Domain\Logging\ValueObjects\AuditEvent;
 use Domain\Sales\Contracts\CartRepositoryInterface;
 use Domain\Sales\Entities\Cart;
-use Domain\Sales\ValueObjects\CartId;
+use Domain\Sales\ValueObjects\GuestSessionId;
 use Domain\Shared\ValueObjects\UserId;
 use Psr\Log\LoggerInterface;
 
@@ -44,19 +44,15 @@ final class AddItemToCartHandler extends AbstractCommandHandler
     {
         assert($command instanceof AddItemToCartCommand);
 
-        $userId = UserId::fromString($command->getUserId());
         $product = $this->productRepository->findById(ProductId::fromString($command->productId));
-
         if ($product === null) {
             throw ProductNotFoundException::withId($command->productId);
         }
 
-        // Lazy-create the cart on first add — keeps anonymous users
-        // out of the carts table, lets the partial unique index
-        // (uniq_carts_user_active) own the "one active cart per user"
-        // invariant via DB constraint instead of read-then-write race.
-        $cart = $this->cartRepository->findActiveCartForUser($userId)
-            ?? new Cart(id: CartId::generate(), userId: $userId);
+        // Lazy-create cart on first add — partial unique index
+        // (uniq_carts_user_active / uniq_carts_guest_active) owns the
+        // "one active cart" invariant via DB constraint.
+        $cart = $this->resolveCart($command);
 
         $cart->addItem(
             productId: $product->getId()->value(),
@@ -69,7 +65,7 @@ final class AddItemToCartHandler extends AbstractCommandHandler
         $this->cartRepository->save($cart);
 
         $this->auditLogger->log(new AuditEvent(
-            actor: 'userId:' . $command->getUserId(),
+            actor: $command->getUserId(),
             actorIp: $command->getUserIp(),
             action: 'sales.cart_add_item',
             resource: 'cart:' . $cart->getId()->value(),
@@ -79,9 +75,23 @@ final class AddItemToCartHandler extends AbstractCommandHandler
             metadata: [
                 'productId' => $product->getId()->value(),
                 'quantity' => $command->quantity,
+                'isGuest' => $command->isGuest(),
             ],
         ));
 
         return CartDTO::fromEntity($cart);
+    }
+
+    private function resolveCart(AddItemToCartCommand $command): Cart
+    {
+        if ($command->isGuest()) {
+            $sessionId = GuestSessionId::fromString((string) $command->guestSessionId);
+            return $this->cartRepository->findActiveCartForGuestSession($sessionId)
+                ?? Cart::createForGuest($sessionId);
+        }
+
+        $userId = UserId::fromString($command->getUserId());
+        return $this->cartRepository->findActiveCartForUser($userId)
+            ?? Cart::createForUser($userId);
     }
 }
