@@ -153,7 +153,42 @@ describe('Cart endpoints', function () {
           ->assertJsonPath('error.code', 'PRODUCT_NOT_FOUND');
     });
 
-    it('anonymous → 401 on every cart endpoint', function () {
-        $this->getJson('/api/v1/sales/cart')->assertStatus(401);
+    it('ADR-017: anonymous GET /cart returns empty guest cart + sets cookie', function () {
+        $response = $this->getJson('/api/v1/sales/cart')->assertOk();
+
+        expect($response->json('data.items'))->toBeArray()->toBeEmpty()
+            ->and($response->json('data.isGuest'))->toBeTrue()
+            ->and($response->json('data.userId'))->toBeNull()
+            ->and($response->json('data.guestSessionId'))->not->toBeEmpty();
+
+        $response->assertCookie('guest_cart_token');
+    });
+
+    it('ADR-017: same guest cookie returns same cart across requests', function () {
+        $productId = seedProduct('GUEST-PERSIST', 25.0, 10);
+
+        $r1 = $this->postJson('/api/v1/sales/cart/items', [
+            'productId' => $productId,
+            'quantity' => 2,
+        ])->assertOk();
+
+        $sessionId = $r1->json('data.guestSessionId');
+        expect($sessionId)->not->toBeEmpty();
+
+        $r2 = $this->call(
+            method: 'GET',
+            uri: '/api/v1/sales/cart',
+            cookies: ['guest_cart_token' => $sessionId],
+            server: $this->transformHeadersToServerVars(['Accept' => 'application/json']),
+        )->assertOk();
+
+        expect($r2->json('data.itemCount'))->toBe(1)
+            ->and($r2->json('data.totalQuantity'))->toBe(2)
+            ->and($r2->json('data.guestSessionId'))->toBe($sessionId);
+    });
+
+    it('ADR-017: order endpoints still require auth (guest checkout disallowed)', function () {
+        $this->postJson('/api/v1/sales/orders', ['displayCurrency' => 'TRY'])
+            ->assertStatus(401);
     });
 });

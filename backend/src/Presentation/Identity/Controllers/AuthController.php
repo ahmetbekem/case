@@ -15,7 +15,9 @@ use OpenApi\Attributes as OA;
 use Presentation\Identity\Requests\LoginRequest;
 use Presentation\Identity\Requests\RefreshTokenRequest;
 use Presentation\Identity\Requests\RegisterUserRequest;
+use Presentation\Sales\Middleware\GuestSessionMiddleware;
 use Presentation\Shared\Abstracts\AbstractApiController;
+use Symfony\Component\HttpFoundation\Cookie;
 
 /**
  * Auth endpoints. By design these return tokens **in the JSON body**;
@@ -53,6 +55,8 @@ final class AuthController extends AbstractApiController
     )]
     public function register(RegisterUserRequest $request): JsonResponse
     {
+        $guestSessionId = $this->extractGuestSessionId($request);
+
         $command = new RegisterUserCommand(
             userId: 'anonymous',
             correlationId: $this->getCorrelationId($request),
@@ -60,15 +64,18 @@ final class AuthController extends AbstractApiController
             email: (string) $request->validated('email'),
             password: (string) $request->validated('password'),
             fullName: (string) $request->validated('fullName'),
+            guestSessionId: $guestSessionId,
         );
 
         $result = $this->commandBus->dispatch($command);
 
-        return $this->success(
+        $response = $this->success(
             data: $result,
             message: 'Registration successful',
             status: HttpStatus::CREATED,
         );
+
+        return $this->clearGuestCookieIfPresent($response, $guestSessionId);
     }
 
     #[OA\Post(
@@ -98,6 +105,8 @@ final class AuthController extends AbstractApiController
     )]
     public function login(LoginRequest $request): JsonResponse
     {
+        $guestSessionId = $this->extractGuestSessionId($request);
+
         $command = new LoginUserCommand(
             userId: 'anonymous',
             correlationId: $this->getCorrelationId($request),
@@ -105,11 +114,12 @@ final class AuthController extends AbstractApiController
             email: (string) $request->validated('email'),
             password: (string) $request->validated('password'),
             userAgent: $request->userAgent(),
+            guestSessionId: $guestSessionId,
         );
 
         $result = $this->commandBus->dispatch($command);
 
-        return $this->success($result);
+        return $this->clearGuestCookieIfPresent($this->success($result), $guestSessionId);
     }
 
     #[OA\Post(
@@ -191,5 +201,46 @@ final class AuthController extends AbstractApiController
         $this->commandBus->dispatch($command);
 
         return $this->noContent();
+    }
+
+    /**
+     * ADR-017 — Guest cart cookie value, valid UUID v4 değilse null
+     * (bot/spam koruması). Login/register handler bu sinyali alıp
+     * MergeGuestCartCommand'ı tetikler.
+     */
+    private function extractGuestSessionId(Request $request): ?string
+    {
+        $value = $request->cookie(GuestSessionMiddleware::COOKIE_NAME);
+        if (!is_string($value) || $value === '') {
+            return null;
+        }
+        if (!preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i', $value)) {
+            return null;
+        }
+        return $value;
+    }
+
+    /**
+     * Login/register sonrası user mode'a geçildi — guest_cart_token
+     * cookie'si artık taşıdığı bilgi merge ile user_id'ye aktarıldı.
+     * Cookie'yi expire edip browser'dan sildir.
+     */
+    private function clearGuestCookieIfPresent(JsonResponse $response, ?string $guestSessionId): JsonResponse
+    {
+        if ($guestSessionId === null) {
+            return $response;
+        }
+        $response->headers->setCookie(Cookie::create(
+            name: GuestSessionMiddleware::COOKIE_NAME,
+            value: '',
+            expire: 1,
+            path: '/',
+            domain: null,
+            secure: app()->environment() !== 'testing',
+            httpOnly: true,
+            raw: false,
+            sameSite: Cookie::SAMESITE_STRICT,
+        ));
+        return $response;
     }
 }

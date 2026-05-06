@@ -54,7 +54,9 @@ final class GuestSessionMiddleware
             expire: time() + self::COOKIE_MAX_AGE_SECONDS,
             path: '/',
             domain: null,
-            secure: true,
+            // Test ortamı HTTP olduğundan Secure cookie geri
+            // gönderilmiyor — testing dışında her zaman secure.
+            secure: app()->environment() !== 'testing',
             httpOnly: true,
             raw: false,
             sameSite: Cookie::SAMESITE_STRICT,
