@@ -701,6 +701,45 @@ Endpoint inventory — her birinin annotation'u olmalı. **Bu liste TASK 0.10-0.
 | PATCH | `/admin/identity/users/{id}/activate` | Aktifleştir | Admin |
 | PATCH | `/admin/identity/users/{id}/deactivate` | Pasifleştir | Admin |
 
+### 8.2A Identity (Addresses)
+
+ADR-018 — Adres rehberi. Tüm endpoint'ler `jwt.auth` zorunlu;
+IDOR-protected: başka kullanıcının adres ID'sine erişim de 404
+döner (anti-enumeration). Limit: aktif 10 adres / kullanıcı.
+İlk eklenen adres otomatik default delivery + billing olur.
+
+| Method | Path | Summary | Auth |
+|--------|------|---------|------|
+| GET | `/identity/addresses` | Kullanıcı adres listesi | User |
+| POST | `/identity/addresses` | Yeni adres ekle | User |
+| GET | `/identity/addresses/{id}` | Adres detay | User (own) |
+| PUT | `/identity/addresses/{id}` | Adres güncelle | User (own) |
+| DELETE | `/identity/addresses/{id}` | Adres sil (soft) | User (own) |
+| PATCH | `/identity/addresses/{id}/default-delivery` | Varsayılan teslimat ayarla | User (own) |
+| PATCH | `/identity/addresses/{id}/default-billing` | Varsayılan fatura ayarla | User (own) |
+
+**Default re-pick policy:** Default işaretli bir adres silinince, en
+son eklenen aktif adres otomatik default'a promote olur. Hiç
+kalmadıysa default boş kalır (kullanıcı yeni eklemek zorunda).
+
+**Snapshot pattern:** `PlaceOrder` adres seçimi ister
+(`deliveryAddressId` zorunlu). Sipariş anında adres JSONB olarak
+`orders.delivery_address` + `orders.billing_address` kolonlarına
+snapshot'lanır — adres sonradan silinse bile sipariş bilgisi bozulmaz
+(KVKK + audit).
+
+### 8.2B Locations (Public)
+
+ADR-018 — TR il/ilçe statik veri. Auth gerekmez (form dropdown'larından
+çağrılır, login öncesi de erişilebilir). Veri kaynak: turkiyeapi.dev,
+build sırasında transform; offline çalışır, runtime API bağımlılığı
+yok.
+
+| Method | Path | Summary | Auth |
+|--------|------|---------|------|
+| GET | `/locations/cities` | Türkiye il listesi (81 il) | Public |
+| GET | `/locations/cities/{city}/districts` | İl ilçeleri (~973 ilçe toplam) | Public |
+
 ### 8.3 Catalog
 
 | Method | Path | Summary | Auth |
@@ -751,7 +790,13 @@ cart'lar silinir; cart_items FK ON DELETE CASCADE.
 ### 8.6 Sales (Orders)
 
 Cart'tan farklı olarak Orders endpoint'leri **auth zorunlu** (KVKK
-denetim — guest order yok).
+denetim — guest order yok). ADR-018 — `POST /sales/orders` istek
+body'sinde `deliveryAddressId` (zorunlu) + `billingAddressId`
+(opsiyonel, null → delivery ile aynı). Backend adres ownership
+doğrular (IDOR-safe; başka kullanıcının adresi 404), sipariş anında
+JSONB snapshot'a alır. OrderDTO `deliveryAddress` + `billingAddress`
+alanlarını surface eder; orijinal adres silinse bile bu snapshot
+korunur.
 
 | Method | Path | Summary | Auth |
 |--------|------|---------|------|

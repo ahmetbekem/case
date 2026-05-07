@@ -645,6 +645,425 @@
                 }
             }
         },
+        "/identity/addresses": {
+            "get": {
+                "tags": [
+                    "Address"
+                ],
+                "summary": "Kullanıcı adres listesi",
+                "description": "Kullanıcının tüm aktif adresleri (soft-delete'ler hariç). Sıralama: önce default delivery, sonra default billing, en son createdAt DESC.",
+                "operationId": "ef4339e5576e7205f779d3568405bffe",
+                "responses": {
+                    "200": {
+                        "description": "Adres listesi",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/AddressDTO"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Auth gerekli",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Address"
+                ],
+                "summary": "Yeni adres ekle",
+                "description": "Limit: aktif 10 adres / kullanıcı. İlk adres otomatik default delivery + billing. İl/ilçe TurkeyLocationsService'e karşı validate edilir.",
+                "operationId": "6094fa25c7d762d2132394e1b219e1b0",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateAddressRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Adres oluşturuldu",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/AddressDTO"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Address created"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Auth gerekli",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedError"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Adres limiti dolu",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ConflictError"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation veya il/ilçe hatası",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/identity/addresses/{id}": {
+            "get": {
+                "tags": [
+                    "Address"
+                ],
+                "summary": "Adres detay",
+                "description": "IDOR-protected: başka kullanıcının adresi de 404 (anti-enumeration).",
+                "operationId": "86062686c49d6c6d79df4dd2f4181cae",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Adres",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/AddressDTO"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Auth gerekli",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedError"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Adres bulunamadı (IDOR-safe)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Address"
+                ],
+                "summary": "Adres güncelle",
+                "description": "IDOR-protected. Default flag'ler bu endpoint ile değişmez.",
+                "operationId": "2f32978d1c40e5aea69c89c0c1d1394b",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateAddressRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Adres güncellendi",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/AddressDTO"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Adres bulunamadı",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundError"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation veya il/ilçe hatası",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Address"
+                ],
+                "summary": "Adres sil (soft delete)",
+                "description": "Sipariş history snapshot'ları korunur. Silinen adres default ise en son aktif adres otomatik default'a promote olur.",
+                "operationId": "08561c9c40befcd8bd3bf179bdafaa0a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Silindi"
+                    },
+                    "404": {
+                        "description": "Adres bulunamadı",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/identity/addresses/{id}/default-delivery": {
+            "patch": {
+                "tags": [
+                    "Address"
+                ],
+                "summary": "Bu adresi varsayılan teslimat yap",
+                "description": "Idempotent — zaten default ise no-op. Diğer adresin default delivery flag'i unset edilir.",
+                "operationId": "514b118aa5601e363c0a206c9cfba9d7",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Varsayılan teslimat ayarlandı",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/AddressDTO"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Adres bulunamadı",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/identity/addresses/{id}/default-billing": {
+            "patch": {
+                "tags": [
+                    "Address"
+                ],
+                "summary": "Bu adresi varsayılan fatura yap",
+                "description": "Idempotent — zaten default ise no-op. Diğer adresin default billing flag'i unset edilir.",
+                "operationId": "668fe08d2fc697286037a573b45cadd7",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Varsayılan fatura ayarlandı",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/AddressDTO"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Adres bulunamadı",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "cookieAuth": []
+                    },
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/auth/register": {
             "post": {
                 "tags": [
@@ -897,6 +1316,87 @@
                         "bearerAuth": []
                     }
                 ]
+            }
+        },
+        "/locations/cities": {
+            "get": {
+                "tags": [
+                    "Locations"
+                ],
+                "summary": "Türkiye il listesi",
+                "description": "Statik veri (TurkeyLocationsService); 81 il. Public endpoint.",
+                "operationId": "940707562cb5f99671f3b6b3cac4fb52",
+                "responses": {
+                    "200": {
+                        "description": "İl listesi",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/CityDTO"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/locations/cities/{city}/districts": {
+            "get": {
+                "tags": [
+                    "Locations"
+                ],
+                "summary": "İl ilçeleri",
+                "description": "Verilen ilin tüm ilçeleri. Geçersiz şehir adı 422 INVALID_CITY.",
+                "operationId": "6a4ec1fbcf329d13259701897f4f67d2",
+                "parameters": [
+                    {
+                        "name": "city",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "İstanbul"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "İlçe listesi",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/DistrictDTO"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Geçersiz şehir",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
             }
         },
         "/auth/me": {
@@ -1923,6 +2423,78 @@
                 },
                 "type": "object"
             },
+            "AddressDTO": {
+                "title": "Address",
+                "description": "Kullanıcı adres rehberindeki bir kayıt (ADR-018).",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Ev"
+                    },
+                    "fullName": {
+                        "type": "string",
+                        "example": "Ahmet Bekem"
+                    },
+                    "phone": {
+                        "type": "string",
+                        "example": "+905551234567"
+                    },
+                    "phoneDisplay": {
+                        "type": "string",
+                        "example": "0 555 123 45 67"
+                    },
+                    "countryCode": {
+                        "type": "string",
+                        "example": "TR"
+                    },
+                    "city": {
+                        "type": "string",
+                        "example": "İstanbul"
+                    },
+                    "district": {
+                        "type": "string",
+                        "example": "Kadıköy"
+                    },
+                    "neighborhood": {
+                        "type": "string",
+                        "example": "Caferağa",
+                        "nullable": true
+                    },
+                    "postalCode": {
+                        "type": "string",
+                        "example": "34710",
+                        "nullable": true
+                    },
+                    "addressLine": {
+                        "type": "string",
+                        "example": "Moda Cad. No: 123 D: 5"
+                    },
+                    "addressLine2": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "isDefaultDelivery": {
+                        "type": "boolean"
+                    },
+                    "isDefaultBilling": {
+                        "type": "boolean"
+                    },
+                    "createdAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
             "AuthTokenPairDTO": {
                 "title": "Token Pair",
                 "description": "Refresh cevabı — yeni access+refresh çifti, user payload yok.",
@@ -1943,6 +2515,32 @@
                     "tokenType": {
                         "type": "string",
                         "example": "Bearer"
+                    }
+                },
+                "type": "object"
+            },
+            "CityDTO": {
+                "title": "City",
+                "description": "Türkiye il listesi entry'si — ADR-018 statik veri.",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "example": "34"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "İstanbul"
+                    }
+                },
+                "type": "object"
+            },
+            "DistrictDTO": {
+                "title": "District",
+                "description": "Bir ilin ilçesi — ADR-018 statik veri.",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "Kadıköy"
                     }
                 },
                 "type": "object"
@@ -2259,6 +2857,27 @@
                         "type": "string",
                         "format": "date-time",
                         "nullable": true
+                    },
+                    "deliveryAddress": {
+                        "description": "ADR-018 — sipariş anında dondurulmuş JSONB snapshot. Adres sonradan silinse bile burada kalır.",
+                        "type": "object",
+                        "nullable": true
+                    },
+                    "billingAddress": {
+                        "description": "Teslimat ile aynı olabilir; sameBillingAddress audit metadata'sında işaretli.",
+                        "type": "object",
+                        "nullable": true
+                    },
+                    "deliveryAddressId": {
+                        "description": "Orijinal adres referansı; soft-delete sonrası null'a düşer.",
+                        "type": "string",
+                        "format": "uuid",
+                        "nullable": true
+                    },
+                    "billingAddressId": {
+                        "type": "string",
+                        "format": "uuid",
+                        "nullable": true
                     }
                 },
                 "type": "object"
@@ -2305,6 +2924,39 @@
                     "createdAt": {
                         "type": "string",
                         "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "ChangeBaseCurrencyResultDTO": {
+                "title": "Base Currency Change Result",
+                "description": "Admin base_currency değiştirdikten sonra UI'a geri dönen sonuç — kaç ürün repriceall edildi, kaç aktif cart abandoned'a çekildi, kullanılan kur.",
+                "properties": {
+                    "fromCurrency": {
+                        "type": "string",
+                        "example": "TRY"
+                    },
+                    "toCurrency": {
+                        "type": "string",
+                        "example": "USD"
+                    },
+                    "rate": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 0.029
+                    },
+                    "rateDate": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2026-05-06"
+                    },
+                    "productsUpdated": {
+                        "type": "integer",
+                        "example": 142
+                    },
+                    "cartsAbandoned": {
+                        "type": "integer",
+                        "example": 8
                     }
                 },
                 "type": "object"
@@ -2444,6 +3096,76 @@
                 },
                 "type": "object"
             },
+            "CreateAddressRequest": {
+                "required": [
+                    "title",
+                    "fullName",
+                    "phone",
+                    "city",
+                    "district",
+                    "addressLine"
+                ],
+                "properties": {
+                    "title": {
+                        "type": "string",
+                        "example": "Ev",
+                        "maxLength": 50,
+                        "minLength": 2
+                    },
+                    "fullName": {
+                        "type": "string",
+                        "example": "Ahmet Bekem",
+                        "maxLength": 255,
+                        "minLength": 3
+                    },
+                    "phone": {
+                        "type": "string",
+                        "example": "+90 555 123 45 67"
+                    },
+                    "city": {
+                        "type": "string",
+                        "example": "İstanbul",
+                        "maxLength": 100
+                    },
+                    "district": {
+                        "type": "string",
+                        "example": "Kadıköy",
+                        "maxLength": 100
+                    },
+                    "neighborhood": {
+                        "type": "string",
+                        "example": "Caferağa",
+                        "nullable": true,
+                        "maxLength": 150
+                    },
+                    "postalCode": {
+                        "type": "string",
+                        "pattern": "^[0-9]{5}$",
+                        "example": "34710",
+                        "nullable": true
+                    },
+                    "addressLine": {
+                        "type": "string",
+                        "example": "Moda Caddesi No: 123 D: 5",
+                        "maxLength": 500,
+                        "minLength": 10
+                    },
+                    "addressLine2": {
+                        "type": "string",
+                        "nullable": true,
+                        "maxLength": 255
+                    },
+                    "setAsDefaultDelivery": {
+                        "type": "boolean",
+                        "default": false
+                    },
+                    "setAsDefaultBilling": {
+                        "type": "boolean",
+                        "default": false
+                    }
+                },
+                "type": "object"
+            },
             "LoginRequest": {
                 "required": [
                     "email",
@@ -2508,6 +3230,61 @@
                 },
                 "type": "object"
             },
+            "UpdateAddressRequest": {
+                "description": "CreateAddressRequest ile aynı alanlar; default flag'lere bu endpoint dokunmaz (ayrı endpoint var: PATCH /addresses/{id}/default-delivery|billing).",
+                "required": [
+                    "title",
+                    "fullName",
+                    "phone",
+                    "city",
+                    "district",
+                    "addressLine"
+                ],
+                "properties": {
+                    "title": {
+                        "type": "string",
+                        "maxLength": 50,
+                        "minLength": 2
+                    },
+                    "fullName": {
+                        "type": "string",
+                        "maxLength": 255,
+                        "minLength": 3
+                    },
+                    "phone": {
+                        "type": "string"
+                    },
+                    "city": {
+                        "type": "string",
+                        "maxLength": 100
+                    },
+                    "district": {
+                        "type": "string",
+                        "maxLength": 100
+                    },
+                    "neighborhood": {
+                        "type": "string",
+                        "nullable": true,
+                        "maxLength": 150
+                    },
+                    "postalCode": {
+                        "type": "string",
+                        "pattern": "^[0-9]{5}$",
+                        "nullable": true
+                    },
+                    "addressLine": {
+                        "type": "string",
+                        "maxLength": 500,
+                        "minLength": 10
+                    },
+                    "addressLine2": {
+                        "type": "string",
+                        "nullable": true,
+                        "maxLength": 255
+                    }
+                },
+                "type": "object"
+            },
             "AddCartItemRequest": {
                 "required": [
                     "productId",
@@ -2544,7 +3321,8 @@
             },
             "PlaceOrderRequest": {
                 "required": [
-                    "displayCurrency"
+                    "displayCurrency",
+                    "deliveryAddressId"
                 ],
                 "properties": {
                     "displayCurrency": {
@@ -2556,6 +3334,17 @@
                             "USD",
                             "EUR"
                         ]
+                    },
+                    "deliveryAddressId": {
+                        "description": "ADR-018 — Teslimat adresi ID. IDOR-safe (başka kullanıcının ID'si 404).",
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "billingAddressId": {
+                        "description": "Fatura adresi ID. null verilirse delivery ile aynı kabul edilir.",
+                        "type": "string",
+                        "format": "uuid",
+                        "nullable": true
                     },
                     "notes": {
                         "type": "string",
@@ -2789,6 +3578,14 @@
         {
             "name": "System (Admin)",
             "description": "Admin-only sistem ayarları yönetimi (base_currency vb.)"
+        },
+        {
+            "name": "Address",
+            "description": "Address"
+        },
+        {
+            "name": "Locations",
+            "description": "Locations"
         }
     ]
 }

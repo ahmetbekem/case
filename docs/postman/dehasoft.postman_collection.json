@@ -5,7 +5,7 @@
       "description": "Login, register, token operations",
       "item": [
         {
-          "id": "b7ff6e12-3879-44ac-85af-00e899f19105",
+          "id": "c6b93c15-3bac-4eaf-ba4e-8985f533edf0",
           "name": "Yeni kullanıcı kaydı",
           "request": {
             "name": "Yeni kullanıcı kaydı",
@@ -49,7 +49,7 @@
           },
           "response": [
             {
-              "id": "31b22cdc-06f1-4edd-8f22-99109abbe6dc",
+              "id": "cae26ffe-fe0e-4451-86c6-6bc1406c3670",
               "name": "Kullanıcı oluşturuldu",
               "originalRequest": {
                 "url": {
@@ -93,12 +93,12 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"data\": {\n    \"user\": {\n      \"id\": \"<uuid>\",\n      \"email\": \"<email>\",\n      \"fullName\": \"<string>\",\n      \"role\": \"customer\",\n      \"isActive\": \"<boolean>\",\n      \"emailVerifiedAt\": \"<dateTime>\",\n      \"lastLoginAt\": \"<dateTime>\",\n      \"createdAt\": \"<dateTime>\",\n      \"updatedAt\": \"<dateTime>\"\n    },\n    \"accessToken\": \"<string>\",\n    \"accessTokenExpiresIn\": \"<integer>\",\n    \"refreshToken\": \"<string>\",\n    \"tokenType\": \"<string>\",\n    \"cartMerged\": \"<boolean>\"\n  },\n  \"message\": \"<string>\"\n}",
+              "body": "{\n  \"data\": {\n    \"user\": {\n      \"id\": \"<uuid>\",\n      \"email\": \"<email>\",\n      \"fullName\": \"<string>\",\n      \"role\": \"admin\",\n      \"isActive\": \"<boolean>\",\n      \"emailVerifiedAt\": \"<dateTime>\",\n      \"lastLoginAt\": \"<dateTime>\",\n      \"createdAt\": \"<dateTime>\",\n      \"updatedAt\": \"<dateTime>\"\n    },\n    \"accessToken\": \"<string>\",\n    \"accessTokenExpiresIn\": \"<integer>\",\n    \"refreshToken\": \"<string>\",\n    \"tokenType\": \"<string>\",\n    \"cartMerged\": \"<boolean>\"\n  },\n  \"message\": \"<string>\"\n}",
               "cookie": [],
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "e196391b-28ca-4d11-95ba-b59b47ecb5a6",
+              "id": "eee17735-e67e-4aa2-8748-676fc0b7b62c",
               "name": "Email zaten kayıtlı",
               "originalRequest": {
                 "url": {
@@ -142,12 +142,12 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"error\": {\n    \"code\": \"<string>\",\n    \"message\": \"<string>\",\n    \"context\": {\n      \"ad_493\": \"<string>\",\n      \"id70\": \"<string>\",\n      \"sit0_c\": \"<string>\"\n    }\n  }\n}",
+              "body": "{\n  \"error\": {\n    \"code\": \"<string>\",\n    \"message\": \"<string>\",\n    \"context\": {\n      \"minim_05\": \"<string>\"\n    }\n  }\n}",
               "cookie": [],
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "af4eb2e3-b9b2-4323-b6ab-e97f496285f0",
+              "id": "d3d250b2-e9e3-48c0-ac95-da70d003b107",
               "name": "Validation error",
               "originalRequest": {
                 "url": {
@@ -191,12 +191,12 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"message\": \"<string>\",\n  \"errors\": {\n    \"consectetur_17\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"esse_4\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  }\n}",
+              "body": "{\n  \"message\": \"<string>\",\n  \"errors\": {\n    \"adipisicing_ee\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  }\n}",
               "cookie": [],
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "ec5e243b-dda4-4320-b986-6d7e795d8fa8",
+              "id": "5d7e22c3-43d6-4c8c-be84-ef5d9ab2d67d",
               "name": "Rate limit exceeded",
               "originalRequest": {
                 "url": {
@@ -251,7 +251,7 @@
           }
         },
         {
-          "id": "cc17b7cc-6e17-4555-9aa8-2b2fb7c24d43",
+          "id": "9bf638f7-0957-415e-b1a7-10e15840f7a4",
           "name": "Giriş yap",
           "request": {
             "name": "Giriş yap",
@@ -295,7 +295,7 @@
           },
           "response": [
             {
-              "id": "7d96c75f-51eb-49fd-91d5-c0354818786c",
+              "id": "26b1982c-978d-4e1f-9d5f-4d3f6829b9ee",
               "name": "Giriş başarılı",
               "originalRequest": {
                 "url": {
@@ -344,7 +344,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "dc18101c-3aba-4214-b7f5-cd310fecd5a4",
+              "id": "ae70c592-d2c6-49ff-8165-0a2d133d5f59",
               "name": "Email veya şifre hatalı",
               "originalRequest": {
                 "url": {
@@ -393,7 +393,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "b0957d9d-dd7c-44c3-b78f-461bf46e6ed7",
+              "id": "bdbfbca5-6093-4449-b217-144e6caf93e8",
               "name": "Validation error",
               "originalRequest": {
                 "url": {
@@ -437,12 +437,12 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"message\": \"<string>\",\n  \"errors\": {\n    \"consectetur_17\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"esse_4\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  }\n}",
+              "body": "{\n  \"message\": \"<string>\",\n  \"errors\": {\n    \"adipisicing_ee\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  }\n}",
               "cookie": [],
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "c880b447-ea9b-4ce7-8b4e-20781a235738",
+              "id": "4d935713-8e9d-4f47-86c7-6d0cd4ae23e7",
               "name": "Rate limit exceeded",
               "originalRequest": {
                 "url": {
@@ -523,7 +523,7 @@
           }
         },
         {
-          "id": "9566d611-2851-4e30-8a20-f26bb8f3c8ac",
+          "id": "4778a05b-0030-42ed-8324-7040232d8eed",
           "name": "Access token yenile",
           "request": {
             "name": "Access token yenile",
@@ -555,7 +555,7 @@
             "method": "POST",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"refresh_token\": \"205e7a12cbea9e855995d34b726dfe7411462fe8eabf8484c5b4130c65f7b733\"\n}",
+              "raw": "{\n  \"refresh_token\": \"99bd88367a1b5a872994c9cde77c167a7b90f6fdb2db03dff1f2431c84b1e508\"\n}",
               "options": {
                 "raw": {
                   "headerFamily": "json",
@@ -567,7 +567,7 @@
           },
           "response": [
             {
-              "id": "618e52e3-de8f-4acb-97c1-1bb275aef88f",
+              "id": "f04e998d-6961-4a09-bc99-b85acbb0bf08",
               "name": "Token yenilendi",
               "originalRequest": {
                 "url": {
@@ -594,7 +594,7 @@
                 "method": "POST",
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"refresh_token\": \"205e7a12cbea9e855995d34b726dfe7411462fe8eabf8484c5b4130c65f7b733\"\n}",
+                  "raw": "{\n  \"refresh_token\": \"99bd88367a1b5a872994c9cde77c167a7b90f6fdb2db03dff1f2431c84b1e508\"\n}",
                   "options": {
                     "raw": {
                       "headerFamily": "json",
@@ -616,7 +616,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "757d4de1-528d-4e8b-bda8-7c6becc80903",
+              "id": "dd8c23c3-fd3d-4eef-824c-11e3eb566fb2",
               "name": "Refresh token geçersiz / revoked / replay tespiti",
               "originalRequest": {
                 "url": {
@@ -643,7 +643,7 @@
                 "method": "POST",
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"refresh_token\": \"205e7a12cbea9e855995d34b726dfe7411462fe8eabf8484c5b4130c65f7b733\"\n}",
+                  "raw": "{\n  \"refresh_token\": \"99bd88367a1b5a872994c9cde77c167a7b90f6fdb2db03dff1f2431c84b1e508\"\n}",
                   "options": {
                     "raw": {
                       "headerFamily": "json",
@@ -665,7 +665,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "abc40128-0122-431c-bf8d-2f450f7ebd09",
+              "id": "d3895757-0f6f-463d-a42d-fd8ba1ca0d04",
               "name": "Validation error",
               "originalRequest": {
                 "url": {
@@ -692,7 +692,7 @@
                 "method": "POST",
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"refresh_token\": \"205e7a12cbea9e855995d34b726dfe7411462fe8eabf8484c5b4130c65f7b733\"\n}",
+                  "raw": "{\n  \"refresh_token\": \"99bd88367a1b5a872994c9cde77c167a7b90f6fdb2db03dff1f2431c84b1e508\"\n}",
                   "options": {
                     "raw": {
                       "headerFamily": "json",
@@ -709,12 +709,12 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"message\": \"<string>\",\n  \"errors\": {\n    \"consectetur_17\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"esse_4\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  }\n}",
+              "body": "{\n  \"message\": \"<string>\",\n  \"errors\": {\n    \"adipisicing_ee\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  }\n}",
               "cookie": [],
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "b32e8519-4cc9-4be0-b758-3580086c7775",
+              "id": "d83bd1d3-c528-4db9-b6ec-6df438eec961",
               "name": "Rate limit exceeded",
               "originalRequest": {
                 "url": {
@@ -741,7 +741,7 @@
                 "method": "POST",
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"refresh_token\": \"205e7a12cbea9e855995d34b726dfe7411462fe8eabf8484c5b4130c65f7b733\"\n}",
+                  "raw": "{\n  \"refresh_token\": \"99bd88367a1b5a872994c9cde77c167a7b90f6fdb2db03dff1f2431c84b1e508\"\n}",
                   "options": {
                     "raw": {
                       "headerFamily": "json",
@@ -795,7 +795,7 @@
           }
         },
         {
-          "id": "daf07ed9-b50a-4d13-878c-8154af665e9e",
+          "id": "2fb5d231-591a-4017-b25d-3ffe7ed5c9e6",
           "name": "Çıkış yap",
           "request": {
             "name": "Çıkış yap",
@@ -855,7 +855,7 @@
           },
           "response": [
             {
-              "id": "833cf0ee-40e0-4988-b870-5d9b31b0b2d8",
+              "id": "f9308897-3aff-44a5-992b-f7a74345ac01",
               "name": "Çıkış başarılı (no content)",
               "originalRequest": {
                 "url": {
@@ -902,7 +902,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "13ee7252-b6b2-46fc-ae18-8c3c5e0c0b74",
+              "id": "9c0346d8-cd44-4102-8dd1-9b0448420e36",
               "name": "Auth gerekli",
               "originalRequest": {
                 "url": {
@@ -965,7 +965,7 @@
           }
         },
         {
-          "id": "58deddb0-fc2d-4a05-abd0-f6a0d173becb",
+          "id": "99dcb5ca-e3f0-4bb9-a823-dbc7b8013c05",
           "name": "Mevcut kullanıcı bilgisi",
           "request": {
             "name": "Mevcut kullanıcı bilgisi",
@@ -1012,7 +1012,7 @@
           },
           "response": [
             {
-              "id": "8d683097-84ec-48ed-8b7c-694db43cf93e",
+              "id": "2fd35e78-996e-4169-a6d9-5e66a7fef810",
               "name": "Mevcut kullanıcı",
               "originalRequest": {
                 "url": {
@@ -1056,7 +1056,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "d1c55d66-54a1-4f2b-a8df-912179b36e1b",
+              "id": "aff61058-d514-45c1-9fff-b80d8cea5a4b",
               "name": "Token gerekli/geçersiz",
               "originalRequest": {
                 "url": {
@@ -1100,7 +1100,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "137dd887-ca73-4663-91be-5a72338ccb87",
+              "id": "fd9db4a7-5262-4cfc-a79e-055a986518c2",
               "name": "Rate limit exceeded",
               "originalRequest": {
                 "url": {
@@ -1156,7 +1156,7 @@
       "description": "Public ürün okuma",
       "item": [
         {
-          "id": "7fdb3f33-a932-40a5-b914-8a3dfee690c1",
+          "id": "3bd1aa37-6bc9-478e-b981-52f3e6ca43c3",
           "name": "Ürün listesi",
           "request": {
             "name": "Ürün listesi",
@@ -1224,7 +1224,7 @@
           },
           "response": [
             {
-              "id": "978cae5d-c587-4d20-92db-3497435dcc23",
+              "id": "0e58dff5-9f7b-455e-9af8-b6e30b56bed3",
               "name": "Sayfalanmış liste",
               "originalRequest": {
                 "url": {
@@ -1292,12 +1292,12 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"data\": [\n    {\n      \"id\": \"<uuid>\",\n      \"sku\": \"<string>\",\n      \"name\": \"<string>\",\n      \"description\": \"<string>\",\n      \"basePrice\": \"<float>\",\n      \"baseCurrency\": \"USD\",\n      \"displayPrice\": \"<float>\",\n      \"displayCurrency\": \"EUR\",\n      \"exchangeRate\": \"<float>\",\n      \"price\": \"<float>\",\n      \"currency\": \"USD\",\n      \"stock\": \"<integer>\",\n      \"isActive\": \"<boolean>\",\n      \"createdBy\": \"<uuid>\",\n      \"createdAt\": \"<dateTime>\",\n      \"updatedAt\": \"<dateTime>\"\n    },\n    {\n      \"id\": \"<uuid>\",\n      \"sku\": \"<string>\",\n      \"name\": \"<string>\",\n      \"description\": \"<string>\",\n      \"basePrice\": \"<float>\",\n      \"baseCurrency\": \"EUR\",\n      \"displayPrice\": \"<float>\",\n      \"displayCurrency\": \"USD\",\n      \"exchangeRate\": \"<float>\",\n      \"price\": \"<float>\",\n      \"currency\": \"EUR\",\n      \"stock\": \"<integer>\",\n      \"isActive\": \"<boolean>\",\n      \"createdBy\": \"<uuid>\",\n      \"createdAt\": \"<dateTime>\",\n      \"updatedAt\": \"<dateTime>\"\n    }\n  ],\n  \"meta\": {\n    \"currentPage\": \"<integer>\",\n    \"pageSize\": \"<integer>\",\n    \"total\": \"<integer>\",\n    \"totalPages\": \"<integer>\"\n  }\n}",
+              "body": "{\n  \"data\": [\n    {\n      \"id\": \"<uuid>\",\n      \"sku\": \"<string>\",\n      \"name\": \"<string>\",\n      \"description\": \"<string>\",\n      \"basePrice\": \"<float>\",\n      \"baseCurrency\": \"USD\",\n      \"displayPrice\": \"<float>\",\n      \"displayCurrency\": \"TRY\",\n      \"exchangeRate\": \"<float>\",\n      \"price\": \"<float>\",\n      \"currency\": \"EUR\",\n      \"stock\": \"<integer>\",\n      \"isActive\": \"<boolean>\",\n      \"createdBy\": \"<uuid>\",\n      \"createdAt\": \"<dateTime>\",\n      \"updatedAt\": \"<dateTime>\"\n    },\n    {\n      \"id\": \"<uuid>\",\n      \"sku\": \"<string>\",\n      \"name\": \"<string>\",\n      \"description\": \"<string>\",\n      \"basePrice\": \"<float>\",\n      \"baseCurrency\": \"EUR\",\n      \"displayPrice\": \"<float>\",\n      \"displayCurrency\": \"TRY\",\n      \"exchangeRate\": \"<float>\",\n      \"price\": \"<float>\",\n      \"currency\": \"EUR\",\n      \"stock\": \"<integer>\",\n      \"isActive\": \"<boolean>\",\n      \"createdBy\": \"<uuid>\",\n      \"createdAt\": \"<dateTime>\",\n      \"updatedAt\": \"<dateTime>\"\n    }\n  ],\n  \"meta\": {\n    \"currentPage\": \"<integer>\",\n    \"pageSize\": \"<integer>\",\n    \"total\": \"<integer>\",\n    \"totalPages\": \"<integer>\"\n  }\n}",
               "cookie": [],
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "309e422b-01e2-4c04-ad00-010460b2d4be",
+              "id": "2af57edc-0f0c-4408-a757-e9940475d553",
               "name": "Validation error",
               "originalRequest": {
                 "url": {
@@ -1365,12 +1365,12 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"message\": \"<string>\",\n  \"errors\": {\n    \"consectetur_17\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"esse_4\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  }\n}",
+              "body": "{\n  \"message\": \"<string>\",\n  \"errors\": {\n    \"adipisicing_ee\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  }\n}",
               "cookie": [],
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "252007ce-7ed2-43a8-89c5-854e153e897e",
+              "id": "142fd4db-4419-41c4-b336-ca007e72d633",
               "name": "Rate limit exceeded",
               "originalRequest": {
                 "url": {
@@ -1449,7 +1449,7 @@
           }
         },
         {
-          "id": "e2d8e116-b2c4-4ee9-8004-b66a38565213",
+          "id": "f76a6dd1-9ad4-409f-aa8f-0c32105aa0bc",
           "name": "Ürün detay",
           "request": {
             "name": "Ürün detay",
@@ -1492,7 +1492,7 @@
           },
           "response": [
             {
-              "id": "4b923f63-405d-423a-823d-9d02ffc8353d",
+              "id": "9f31bcf2-924c-4cbe-bb64-4dc0597e1a9c",
               "name": "Ürün",
               "originalRequest": {
                 "url": {
@@ -1524,12 +1524,12 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"data\": {\n    \"id\": \"<uuid>\",\n    \"sku\": \"<string>\",\n    \"name\": \"<string>\",\n    \"description\": \"<string>\",\n    \"basePrice\": \"<float>\",\n    \"baseCurrency\": \"EUR\",\n    \"displayPrice\": \"<float>\",\n    \"displayCurrency\": \"USD\",\n    \"exchangeRate\": \"<float>\",\n    \"price\": \"<float>\",\n    \"currency\": \"EUR\",\n    \"stock\": \"<integer>\",\n    \"isActive\": \"<boolean>\",\n    \"createdBy\": \"<uuid>\",\n    \"createdAt\": \"<dateTime>\",\n    \"updatedAt\": \"<dateTime>\"\n  }\n}",
+              "body": "{\n  \"data\": {\n    \"id\": \"<uuid>\",\n    \"sku\": \"<string>\",\n    \"name\": \"<string>\",\n    \"description\": \"<string>\",\n    \"basePrice\": \"<float>\",\n    \"baseCurrency\": \"TRY\",\n    \"displayPrice\": \"<float>\",\n    \"displayCurrency\": \"TRY\",\n    \"exchangeRate\": \"<float>\",\n    \"price\": \"<float>\",\n    \"currency\": \"EUR\",\n    \"stock\": \"<integer>\",\n    \"isActive\": \"<boolean>\",\n    \"createdBy\": \"<uuid>\",\n    \"createdAt\": \"<dateTime>\",\n    \"updatedAt\": \"<dateTime>\"\n  }\n}",
               "cookie": [],
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "a341d7b6-8543-4b4e-af39-8ef711e887a9",
+              "id": "d400938f-2023-4ab7-9d36-a4def79027df",
               "name": "Ürün bulunamadı",
               "originalRequest": {
                 "url": {
@@ -1566,7 +1566,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "84113257-1ea7-4156-90e7-7f366e1413a1",
+              "id": "3a95bd13-aa56-435d-b7d0-7a96cfe1780c",
               "name": "Rate limit exceeded",
               "originalRequest": {
                 "url": {
@@ -1615,7 +1615,7 @@
       "description": "Admin-only ürün yönetimi",
       "item": [
         {
-          "id": "8e45c06f-ab77-4961-ad54-e35cac04cd7f",
+          "id": "ddc2ed16-d7e2-483c-8c03-eee18c0ba3a2",
           "name": "Yeni ürün oluştur",
           "request": {
             "name": "Yeni ürün oluştur",
@@ -1647,7 +1647,7 @@
             "method": "POST",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"sku\": \"P2FXA1HBN\",\n  \"name\": \"<string>\",\n  \"price\": \"<float>\",\n  \"stock\": \"<integer>\",\n  \"description\": \"<string>\"\n}",
+              "raw": "{\n  \"sku\": \"A1KQB52OZ\",\n  \"name\": \"<string>\",\n  \"price\": \"<float>\",\n  \"stock\": \"<integer>\",\n  \"description\": \"<string>\"\n}",
               "options": {
                 "raw": {
                   "headerFamily": "json",
@@ -1675,7 +1675,7 @@
           },
           "response": [
             {
-              "id": "6b2601af-ad96-4e4d-80e9-7c1340c6201d",
+              "id": "c744ebaf-a019-467e-bc55-489a654af4f3",
               "name": "Ürün oluşturuldu",
               "originalRequest": {
                 "url": {
@@ -1710,7 +1710,7 @@
                 "method": "POST",
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"sku\": \"P2FXA1HBN\",\n  \"name\": \"<string>\",\n  \"price\": \"<float>\",\n  \"stock\": \"<integer>\",\n  \"description\": \"<string>\"\n}",
+                  "raw": "{\n  \"sku\": \"A1KQB52OZ\",\n  \"name\": \"<string>\",\n  \"price\": \"<float>\",\n  \"stock\": \"<integer>\",\n  \"description\": \"<string>\"\n}",
                   "options": {
                     "raw": {
                       "headerFamily": "json",
@@ -1727,12 +1727,12 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"data\": {\n    \"id\": \"<uuid>\",\n    \"sku\": \"<string>\",\n    \"name\": \"<string>\",\n    \"description\": \"<string>\",\n    \"basePrice\": \"<float>\",\n    \"baseCurrency\": \"EUR\",\n    \"displayPrice\": \"<float>\",\n    \"displayCurrency\": \"EUR\",\n    \"exchangeRate\": \"<float>\",\n    \"price\": \"<float>\",\n    \"currency\": \"EUR\",\n    \"stock\": \"<integer>\",\n    \"isActive\": \"<boolean>\",\n    \"createdBy\": \"<uuid>\",\n    \"createdAt\": \"<dateTime>\",\n    \"updatedAt\": \"<dateTime>\"\n  },\n  \"message\": \"<string>\"\n}",
+              "body": "{\n  \"data\": {\n    \"id\": \"<uuid>\",\n    \"sku\": \"<string>\",\n    \"name\": \"<string>\",\n    \"description\": \"<string>\",\n    \"basePrice\": \"<float>\",\n    \"baseCurrency\": \"USD\",\n    \"displayPrice\": \"<float>\",\n    \"displayCurrency\": \"USD\",\n    \"exchangeRate\": \"<float>\",\n    \"price\": \"<float>\",\n    \"currency\": \"USD\",\n    \"stock\": \"<integer>\",\n    \"isActive\": \"<boolean>\",\n    \"createdBy\": \"<uuid>\",\n    \"createdAt\": \"<dateTime>\",\n    \"updatedAt\": \"<dateTime>\"\n  },\n  \"message\": \"<string>\"\n}",
               "cookie": [],
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "46b27d1d-b431-4734-b648-c8b0fd0467c7",
+              "id": "1af9f7f1-08fd-498d-8362-345c36785681",
               "name": "Auth gerekli",
               "originalRequest": {
                 "url": {
@@ -1767,7 +1767,7 @@
                 "method": "POST",
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"sku\": \"P2FXA1HBN\",\n  \"name\": \"<string>\",\n  \"price\": \"<float>\",\n  \"stock\": \"<integer>\",\n  \"description\": \"<string>\"\n}",
+                  "raw": "{\n  \"sku\": \"A1KQB52OZ\",\n  \"name\": \"<string>\",\n  \"price\": \"<float>\",\n  \"stock\": \"<integer>\",\n  \"description\": \"<string>\"\n}",
                   "options": {
                     "raw": {
                       "headerFamily": "json",
@@ -1789,7 +1789,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "d80727c7-9360-4d54-9c87-c2e93a2042f3",
+              "id": "a0f388f9-03b5-443d-a586-cfa22ed91962",
               "name": "Admin değil",
               "originalRequest": {
                 "url": {
@@ -1824,7 +1824,7 @@
                 "method": "POST",
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"sku\": \"P2FXA1HBN\",\n  \"name\": \"<string>\",\n  \"price\": \"<float>\",\n  \"stock\": \"<integer>\",\n  \"description\": \"<string>\"\n}",
+                  "raw": "{\n  \"sku\": \"A1KQB52OZ\",\n  \"name\": \"<string>\",\n  \"price\": \"<float>\",\n  \"stock\": \"<integer>\",\n  \"description\": \"<string>\"\n}",
                   "options": {
                     "raw": {
                       "headerFamily": "json",
@@ -1846,7 +1846,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "883b380f-a73b-47f2-9d03-cd846e9747f1",
+              "id": "ae74fd6d-ffd3-42c9-b656-37df5677558d",
               "name": "Duplicate SKU",
               "originalRequest": {
                 "url": {
@@ -1881,7 +1881,7 @@
                 "method": "POST",
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"sku\": \"P2FXA1HBN\",\n  \"name\": \"<string>\",\n  \"price\": \"<float>\",\n  \"stock\": \"<integer>\",\n  \"description\": \"<string>\"\n}",
+                  "raw": "{\n  \"sku\": \"A1KQB52OZ\",\n  \"name\": \"<string>\",\n  \"price\": \"<float>\",\n  \"stock\": \"<integer>\",\n  \"description\": \"<string>\"\n}",
                   "options": {
                     "raw": {
                       "headerFamily": "json",
@@ -1898,12 +1898,12 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"error\": {\n    \"code\": \"<string>\",\n    \"message\": \"<string>\",\n    \"context\": {\n      \"ad_493\": \"<string>\",\n      \"id70\": \"<string>\",\n      \"sit0_c\": \"<string>\"\n    }\n  }\n}",
+              "body": "{\n  \"error\": {\n    \"code\": \"<string>\",\n    \"message\": \"<string>\",\n    \"context\": {\n      \"minim_05\": \"<string>\"\n    }\n  }\n}",
               "cookie": [],
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "ef65ccbc-8c12-4340-939c-9dc57cd6baa6",
+              "id": "4d911f30-bd1c-409f-ba2c-e088a245042a",
               "name": "Validation error",
               "originalRequest": {
                 "url": {
@@ -1938,7 +1938,7 @@
                 "method": "POST",
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"sku\": \"P2FXA1HBN\",\n  \"name\": \"<string>\",\n  \"price\": \"<float>\",\n  \"stock\": \"<integer>\",\n  \"description\": \"<string>\"\n}",
+                  "raw": "{\n  \"sku\": \"A1KQB52OZ\",\n  \"name\": \"<string>\",\n  \"price\": \"<float>\",\n  \"stock\": \"<integer>\",\n  \"description\": \"<string>\"\n}",
                   "options": {
                     "raw": {
                       "headerFamily": "json",
@@ -1955,7 +1955,7 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"message\": \"<string>\",\n  \"errors\": {\n    \"consectetur_17\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"esse_4\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  }\n}",
+              "body": "{\n  \"message\": \"<string>\",\n  \"errors\": {\n    \"adipisicing_ee\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  }\n}",
               "cookie": [],
               "_postman_previewlanguage": "json"
             }
@@ -1966,7 +1966,7 @@
           }
         },
         {
-          "id": "7b8777af-628a-4753-9753-077aabcb0778",
+          "id": "06788a7c-12cc-4815-aead-ce1b05dccf58",
           "name": "Ürün sil (soft)",
           "request": {
             "name": "Ürün sil (soft)",
@@ -2025,7 +2025,7 @@
           },
           "response": [
             {
-              "id": "2bad0436-fa47-47b3-a5dc-1531c0e7b9e6",
+              "id": "bce76057-8679-4cd9-8819-f192ce475e66",
               "name": "Ürün silindi (no content)",
               "originalRequest": {
                 "url": {
@@ -2060,7 +2060,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "507d2267-81a9-4261-8d1f-a0381337043a",
+              "id": "51620e84-b12a-4488-b634-98ff08c62f89",
               "name": "Auth gerekli",
               "originalRequest": {
                 "url": {
@@ -2105,7 +2105,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "89890b3a-ab3b-4367-99da-178ac26ff2aa",
+              "id": "9e0f88a1-82ae-42fc-ba05-cfe9dd7f8dd7",
               "name": "Admin değil",
               "originalRequest": {
                 "url": {
@@ -2150,7 +2150,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "d37c5127-a89e-4258-9012-2c7603bb5067",
+              "id": "de538eb5-1503-45eb-87f1-244e4094ee22",
               "name": "Ürün bulunamadı",
               "originalRequest": {
                 "url": {
@@ -2201,7 +2201,7 @@
           }
         },
         {
-          "id": "af71b026-445f-4210-bb76-416c2dec520f",
+          "id": "73a45fb0-711b-4092-bfa9-5394893b58f6",
           "name": "Ürün güncelle (partial)",
           "request": {
             "name": "Ürün güncelle (partial)",
@@ -2273,7 +2273,7 @@
           },
           "response": [
             {
-              "id": "2828bf09-2174-47ee-807a-c8f27bb51618",
+              "id": "7526b40b-9891-4f51-9ed5-ac0dd49b10a7",
               "name": "Ürün güncellendi",
               "originalRequest": {
                 "url": {
@@ -2326,12 +2326,12 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"data\": {\n    \"id\": \"<uuid>\",\n    \"sku\": \"<string>\",\n    \"name\": \"<string>\",\n    \"description\": \"<string>\",\n    \"basePrice\": \"<float>\",\n    \"baseCurrency\": \"EUR\",\n    \"displayPrice\": \"<float>\",\n    \"displayCurrency\": \"TRY\",\n    \"exchangeRate\": \"<float>\",\n    \"price\": \"<float>\",\n    \"currency\": \"EUR\",\n    \"stock\": \"<integer>\",\n    \"isActive\": \"<boolean>\",\n    \"createdBy\": \"<uuid>\",\n    \"createdAt\": \"<dateTime>\",\n    \"updatedAt\": \"<dateTime>\"\n  },\n  \"message\": \"<string>\"\n}",
+              "body": "{\n  \"data\": {\n    \"id\": \"<uuid>\",\n    \"sku\": \"<string>\",\n    \"name\": \"<string>\",\n    \"description\": \"<string>\",\n    \"basePrice\": \"<float>\",\n    \"baseCurrency\": \"EUR\",\n    \"displayPrice\": \"<float>\",\n    \"displayCurrency\": \"EUR\",\n    \"exchangeRate\": \"<float>\",\n    \"price\": \"<float>\",\n    \"currency\": \"USD\",\n    \"stock\": \"<integer>\",\n    \"isActive\": \"<boolean>\",\n    \"createdBy\": \"<uuid>\",\n    \"createdAt\": \"<dateTime>\",\n    \"updatedAt\": \"<dateTime>\"\n  },\n  \"message\": \"<string>\"\n}",
               "cookie": [],
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "608b5ecf-bf9d-4c26-83d9-88310b5c75a0",
+              "id": "5b73265a-f249-400e-9579-7fb92796e986",
               "name": "Auth gerekli",
               "originalRequest": {
                 "url": {
@@ -2389,7 +2389,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "00675afc-f422-4f07-9f95-336cb6704ede",
+              "id": "00704e42-e3a4-4f17-a042-01c1680bb590",
               "name": "Admin değil",
               "originalRequest": {
                 "url": {
@@ -2447,7 +2447,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "aab0d12e-9c68-4b90-adc5-fb60e23d354b",
+              "id": "988be0a9-554f-4d30-9832-0b1228c6e55b",
               "name": "Ürün bulunamadı",
               "originalRequest": {
                 "url": {
@@ -2505,7 +2505,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "8ac59aeb-43ad-4abe-b007-25fe397ae381",
+              "id": "1db73fa5-6e7d-494c-926b-a2acd321fcd3",
               "name": "Validation error",
               "originalRequest": {
                 "url": {
@@ -2558,7 +2558,7 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"message\": \"<string>\",\n  \"errors\": {\n    \"consectetur_17\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"esse_4\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  }\n}",
+              "body": "{\n  \"message\": \"<string>\",\n  \"errors\": {\n    \"adipisicing_ee\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  }\n}",
               "cookie": [],
               "_postman_previewlanguage": "json"
             }
@@ -2569,7 +2569,7 @@
           }
         },
         {
-          "id": "ce6a7199-18df-4cf6-b623-a141c8be3e01",
+          "id": "207f67b2-67c1-42a5-9ee0-735cd06061ff",
           "name": "Stok ayarla (delta)",
           "request": {
             "name": "Stok ayarla (delta)",
@@ -2642,7 +2642,7 @@
           },
           "response": [
             {
-              "id": "492489da-4bcf-46a1-9153-fc41710fddc5",
+              "id": "2e9ac149-1b7e-4508-b31e-9ff0da7ea3f0",
               "name": "Stok güncellendi",
               "originalRequest": {
                 "url": {
@@ -2696,12 +2696,12 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"data\": {\n    \"id\": \"<uuid>\",\n    \"sku\": \"<string>\",\n    \"name\": \"<string>\",\n    \"description\": \"<string>\",\n    \"basePrice\": \"<float>\",\n    \"baseCurrency\": \"USD\",\n    \"displayPrice\": \"<float>\",\n    \"displayCurrency\": \"USD\",\n    \"exchangeRate\": \"<float>\",\n    \"price\": \"<float>\",\n    \"currency\": \"USD\",\n    \"stock\": \"<integer>\",\n    \"isActive\": \"<boolean>\",\n    \"createdBy\": \"<uuid>\",\n    \"createdAt\": \"<dateTime>\",\n    \"updatedAt\": \"<dateTime>\"\n  },\n  \"message\": \"<string>\"\n}",
+              "body": "{\n  \"data\": {\n    \"id\": \"<uuid>\",\n    \"sku\": \"<string>\",\n    \"name\": \"<string>\",\n    \"description\": \"<string>\",\n    \"basePrice\": \"<float>\",\n    \"baseCurrency\": \"EUR\",\n    \"displayPrice\": \"<float>\",\n    \"displayCurrency\": \"USD\",\n    \"exchangeRate\": \"<float>\",\n    \"price\": \"<float>\",\n    \"currency\": \"TRY\",\n    \"stock\": \"<integer>\",\n    \"isActive\": \"<boolean>\",\n    \"createdBy\": \"<uuid>\",\n    \"createdAt\": \"<dateTime>\",\n    \"updatedAt\": \"<dateTime>\"\n  },\n  \"message\": \"<string>\"\n}",
               "cookie": [],
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "1b0a1ea7-8e1a-4096-91fd-235330274aaa",
+              "id": "6b86ea7b-367a-4f15-8548-993794f878d8",
               "name": "Auth gerekli",
               "originalRequest": {
                 "url": {
@@ -2760,7 +2760,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "1f45284a-0f25-4746-b9e2-1e7e5bf94611",
+              "id": "6ef1c51b-ecfd-4648-b299-2c92f1512a4a",
               "name": "Admin değil",
               "originalRequest": {
                 "url": {
@@ -2819,7 +2819,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "077ddb67-7ab4-461d-a7d6-eb18f1e6c714",
+              "id": "6ee46b52-9c4a-4e76-813a-43a97bca7892",
               "name": "Ürün bulunamadı",
               "originalRequest": {
                 "url": {
@@ -2878,7 +2878,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "2b3a6ca2-4cca-4700-a6ac-1cf683bf42ed",
+              "id": "3fb98c46-f004-4952-b487-2b83bdb51531",
               "name": "Yetersiz stok (sonuç negatif)",
               "originalRequest": {
                 "url": {
@@ -2932,7 +2932,7 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"error\": {\n    \"code\": \"<string>\",\n    \"message\": \"<string>\",\n    \"context\": {\n      \"ad_493\": \"<string>\",\n      \"id70\": \"<string>\",\n      \"sit0_c\": \"<string>\"\n    }\n  }\n}",
+              "body": "{\n  \"error\": {\n    \"code\": \"<string>\",\n    \"message\": \"<string>\",\n    \"context\": {\n      \"minim_05\": \"<string>\"\n    }\n  }\n}",
               "cookie": [],
               "_postman_previewlanguage": "json"
             }
@@ -2949,7 +2949,7 @@
       "description": "Sepet işlemleri (kullanıcı kendi sepeti)",
       "item": [
         {
-          "id": "8f1e9322-401f-49fc-8074-d39c3ab60c3b",
+          "id": "3b83e258-03a1-4ef3-b8c5-4aab8dcff77a",
           "name": "Sepet (user veya guest)",
           "request": {
             "name": "Sepet (user veya guest)",
@@ -2980,7 +2980,7 @@
           },
           "response": [
             {
-              "id": "3ccfc7a6-e964-418e-82e0-b4208ebb2e69",
+              "id": "4b714e45-30e2-4c71-bb32-4b500d699814",
               "name": "Sepet",
               "originalRequest": {
                 "url": {
@@ -3011,7 +3011,7 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"data\": {\n    \"id\": \"<uuid>\",\n    \"userId\": \"<uuid>\",\n    \"status\": \"converted\",\n    \"convertedToOrderId\": \"<uuid>\",\n    \"items\": [\n      {\n        \"id\": \"<uuid>\",\n        \"productId\": \"<uuid>\",\n        \"productName\": \"<string>\",\n        \"productSku\": \"<string>\",\n        \"quantity\": \"<integer>\",\n        \"unitPrice\": \"<float>\",\n        \"currency\": \"USD\",\n        \"lineTotal\": \"<float>\",\n        \"createdAt\": \"<dateTime>\",\n        \"updatedAt\": \"<dateTime>\"\n      },\n      {\n        \"id\": \"<uuid>\",\n        \"productId\": \"<uuid>\",\n        \"productName\": \"<string>\",\n        \"productSku\": \"<string>\",\n        \"quantity\": \"<integer>\",\n        \"unitPrice\": \"<float>\",\n        \"currency\": \"TRY\",\n        \"lineTotal\": \"<float>\",\n        \"createdAt\": \"<dateTime>\",\n        \"updatedAt\": \"<dateTime>\"\n      }\n    ],\n    \"itemCount\": \"<integer>\",\n    \"totalQuantity\": \"<integer>\",\n    \"subtotal\": \"<float>\",\n    \"currency\": \"TRY\",\n    \"subtotalsByCurrency\": {\n      \"ea_f06\": \"<float>\"\n    },\n    \"isUniformCurrency\": \"<boolean>\",\n    \"createdAt\": \"<dateTime>\",\n    \"updatedAt\": \"<dateTime>\"\n  }\n}",
+              "body": "{\n  \"data\": {\n    \"id\": \"<uuid>\",\n    \"userId\": \"<uuid>\",\n    \"status\": \"active\",\n    \"convertedToOrderId\": \"<uuid>\",\n    \"items\": [\n      {\n        \"id\": \"<uuid>\",\n        \"productId\": \"<uuid>\",\n        \"productName\": \"<string>\",\n        \"productSku\": \"<string>\",\n        \"quantity\": \"<integer>\",\n        \"unitPrice\": \"<float>\",\n        \"currency\": \"TRY\",\n        \"lineTotal\": \"<float>\",\n        \"createdAt\": \"<dateTime>\",\n        \"updatedAt\": \"<dateTime>\"\n      },\n      {\n        \"id\": \"<uuid>\",\n        \"productId\": \"<uuid>\",\n        \"productName\": \"<string>\",\n        \"productSku\": \"<string>\",\n        \"quantity\": \"<integer>\",\n        \"unitPrice\": \"<float>\",\n        \"currency\": \"EUR\",\n        \"lineTotal\": \"<float>\",\n        \"createdAt\": \"<dateTime>\",\n        \"updatedAt\": \"<dateTime>\"\n      }\n    ],\n    \"itemCount\": \"<integer>\",\n    \"totalQuantity\": \"<integer>\",\n    \"subtotal\": \"<float>\",\n    \"currency\": \"TRY\",\n    \"subtotalsByCurrency\": {\n      \"ut8\": \"<float>\"\n    },\n    \"isUniformCurrency\": \"<boolean>\",\n    \"createdAt\": \"<dateTime>\",\n    \"updatedAt\": \"<dateTime>\"\n  }\n}",
               "cookie": [],
               "_postman_previewlanguage": "json"
             }
@@ -3022,7 +3022,7 @@
           }
         },
         {
-          "id": "0be50e4a-1d2c-45b5-a072-b5d1d4a55599",
+          "id": "a48fee14-ab47-46a6-8c02-e8e14674963d",
           "name": "Sepeti tamamen boşalt",
           "request": {
             "name": "Sepeti tamamen boşalt",
@@ -3053,7 +3053,7 @@
           },
           "response": [
             {
-              "id": "bff330fe-4f49-4c9d-9918-9b90937afa2f",
+              "id": "60656485-a063-4a1d-946b-6b615a7a6ef7",
               "name": "Sepet boşaltıldı",
               "originalRequest": {
                 "url": {
@@ -3084,7 +3084,7 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"data\": {\n    \"id\": \"<uuid>\",\n    \"userId\": \"<uuid>\",\n    \"status\": \"converted\",\n    \"convertedToOrderId\": \"<uuid>\",\n    \"items\": [\n      {\n        \"id\": \"<uuid>\",\n        \"productId\": \"<uuid>\",\n        \"productName\": \"<string>\",\n        \"productSku\": \"<string>\",\n        \"quantity\": \"<integer>\",\n        \"unitPrice\": \"<float>\",\n        \"currency\": \"USD\",\n        \"lineTotal\": \"<float>\",\n        \"createdAt\": \"<dateTime>\",\n        \"updatedAt\": \"<dateTime>\"\n      },\n      {\n        \"id\": \"<uuid>\",\n        \"productId\": \"<uuid>\",\n        \"productName\": \"<string>\",\n        \"productSku\": \"<string>\",\n        \"quantity\": \"<integer>\",\n        \"unitPrice\": \"<float>\",\n        \"currency\": \"TRY\",\n        \"lineTotal\": \"<float>\",\n        \"createdAt\": \"<dateTime>\",\n        \"updatedAt\": \"<dateTime>\"\n      }\n    ],\n    \"itemCount\": \"<integer>\",\n    \"totalQuantity\": \"<integer>\",\n    \"subtotal\": \"<float>\",\n    \"currency\": \"TRY\",\n    \"subtotalsByCurrency\": {\n      \"ea_f06\": \"<float>\"\n    },\n    \"isUniformCurrency\": \"<boolean>\",\n    \"createdAt\": \"<dateTime>\",\n    \"updatedAt\": \"<dateTime>\"\n  }\n}",
+              "body": "{\n  \"data\": {\n    \"id\": \"<uuid>\",\n    \"userId\": \"<uuid>\",\n    \"status\": \"active\",\n    \"convertedToOrderId\": \"<uuid>\",\n    \"items\": [\n      {\n        \"id\": \"<uuid>\",\n        \"productId\": \"<uuid>\",\n        \"productName\": \"<string>\",\n        \"productSku\": \"<string>\",\n        \"quantity\": \"<integer>\",\n        \"unitPrice\": \"<float>\",\n        \"currency\": \"TRY\",\n        \"lineTotal\": \"<float>\",\n        \"createdAt\": \"<dateTime>\",\n        \"updatedAt\": \"<dateTime>\"\n      },\n      {\n        \"id\": \"<uuid>\",\n        \"productId\": \"<uuid>\",\n        \"productName\": \"<string>\",\n        \"productSku\": \"<string>\",\n        \"quantity\": \"<integer>\",\n        \"unitPrice\": \"<float>\",\n        \"currency\": \"EUR\",\n        \"lineTotal\": \"<float>\",\n        \"createdAt\": \"<dateTime>\",\n        \"updatedAt\": \"<dateTime>\"\n      }\n    ],\n    \"itemCount\": \"<integer>\",\n    \"totalQuantity\": \"<integer>\",\n    \"subtotal\": \"<float>\",\n    \"currency\": \"TRY\",\n    \"subtotalsByCurrency\": {\n      \"ut8\": \"<float>\"\n    },\n    \"isUniformCurrency\": \"<boolean>\",\n    \"createdAt\": \"<dateTime>\",\n    \"updatedAt\": \"<dateTime>\"\n  }\n}",
               "cookie": [],
               "_postman_previewlanguage": "json"
             }
@@ -3095,7 +3095,7 @@
           }
         },
         {
-          "id": "50061cd1-a636-41dc-9af5-16a134889150",
+          "id": "36aadd00-e581-4c4f-a7c9-77a3111d42bd",
           "name": "Sepete ürün ekle (user veya guest)",
           "request": {
             "name": "Sepete ürün ekle (user veya guest)",
@@ -3140,7 +3140,7 @@
           },
           "response": [
             {
-              "id": "cd19bd5b-bb2f-49eb-a289-b377baeb81b1",
+              "id": "1a49755e-e1b0-4e34-b9e7-2bd24ac4671b",
               "name": "Sepet güncel",
               "originalRequest": {
                 "url": {
@@ -3185,12 +3185,12 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"data\": {\n    \"id\": \"<uuid>\",\n    \"userId\": \"<uuid>\",\n    \"status\": \"converted\",\n    \"convertedToOrderId\": \"<uuid>\",\n    \"items\": [\n      {\n        \"id\": \"<uuid>\",\n        \"productId\": \"<uuid>\",\n        \"productName\": \"<string>\",\n        \"productSku\": \"<string>\",\n        \"quantity\": \"<integer>\",\n        \"unitPrice\": \"<float>\",\n        \"currency\": \"USD\",\n        \"lineTotal\": \"<float>\",\n        \"createdAt\": \"<dateTime>\",\n        \"updatedAt\": \"<dateTime>\"\n      },\n      {\n        \"id\": \"<uuid>\",\n        \"productId\": \"<uuid>\",\n        \"productName\": \"<string>\",\n        \"productSku\": \"<string>\",\n        \"quantity\": \"<integer>\",\n        \"unitPrice\": \"<float>\",\n        \"currency\": \"TRY\",\n        \"lineTotal\": \"<float>\",\n        \"createdAt\": \"<dateTime>\",\n        \"updatedAt\": \"<dateTime>\"\n      }\n    ],\n    \"itemCount\": \"<integer>\",\n    \"totalQuantity\": \"<integer>\",\n    \"subtotal\": \"<float>\",\n    \"currency\": \"TRY\",\n    \"subtotalsByCurrency\": {\n      \"ea_f06\": \"<float>\"\n    },\n    \"isUniformCurrency\": \"<boolean>\",\n    \"createdAt\": \"<dateTime>\",\n    \"updatedAt\": \"<dateTime>\"\n  }\n}",
+              "body": "{\n  \"data\": {\n    \"id\": \"<uuid>\",\n    \"userId\": \"<uuid>\",\n    \"status\": \"active\",\n    \"convertedToOrderId\": \"<uuid>\",\n    \"items\": [\n      {\n        \"id\": \"<uuid>\",\n        \"productId\": \"<uuid>\",\n        \"productName\": \"<string>\",\n        \"productSku\": \"<string>\",\n        \"quantity\": \"<integer>\",\n        \"unitPrice\": \"<float>\",\n        \"currency\": \"TRY\",\n        \"lineTotal\": \"<float>\",\n        \"createdAt\": \"<dateTime>\",\n        \"updatedAt\": \"<dateTime>\"\n      },\n      {\n        \"id\": \"<uuid>\",\n        \"productId\": \"<uuid>\",\n        \"productName\": \"<string>\",\n        \"productSku\": \"<string>\",\n        \"quantity\": \"<integer>\",\n        \"unitPrice\": \"<float>\",\n        \"currency\": \"EUR\",\n        \"lineTotal\": \"<float>\",\n        \"createdAt\": \"<dateTime>\",\n        \"updatedAt\": \"<dateTime>\"\n      }\n    ],\n    \"itemCount\": \"<integer>\",\n    \"totalQuantity\": \"<integer>\",\n    \"subtotal\": \"<float>\",\n    \"currency\": \"TRY\",\n    \"subtotalsByCurrency\": {\n      \"ut8\": \"<float>\"\n    },\n    \"isUniformCurrency\": \"<boolean>\",\n    \"createdAt\": \"<dateTime>\",\n    \"updatedAt\": \"<dateTime>\"\n  }\n}",
               "cookie": [],
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "a66f970a-c108-4766-934c-95ecbdc10beb",
+              "id": "bafa26ba-1ded-40f2-8c6a-669fdc43772f",
               "name": "Ürün bulunamadı",
               "originalRequest": {
                 "url": {
@@ -3240,7 +3240,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "0f4b9571-37b8-4c05-a523-a1600f878316",
+              "id": "0d3a815c-b7de-46bb-94d0-a7c3348f4c17",
               "name": "Yetersiz stok / pasif ürün",
               "originalRequest": {
                 "url": {
@@ -3285,12 +3285,12 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"error\": {\n    \"code\": \"<string>\",\n    \"message\": \"<string>\",\n    \"context\": {\n      \"ad_493\": \"<string>\",\n      \"id70\": \"<string>\",\n      \"sit0_c\": \"<string>\"\n    }\n  }\n}",
+              "body": "{\n  \"error\": {\n    \"code\": \"<string>\",\n    \"message\": \"<string>\",\n    \"context\": {\n      \"minim_05\": \"<string>\"\n    }\n  }\n}",
               "cookie": [],
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "2218d433-3c45-428c-ad7b-18f0b441d4cc",
+              "id": "af820116-308f-4688-a8ba-12718981f1cd",
               "name": "Validation error",
               "originalRequest": {
                 "url": {
@@ -3335,7 +3335,7 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"message\": \"<string>\",\n  \"errors\": {\n    \"consectetur_17\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"esse_4\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  }\n}",
+              "body": "{\n  \"message\": \"<string>\",\n  \"errors\": {\n    \"adipisicing_ee\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  }\n}",
               "cookie": [],
               "_postman_previewlanguage": "json"
             }
@@ -3346,7 +3346,7 @@
           }
         },
         {
-          "id": "da71ce69-642e-49f3-ab5f-e3c85a79fa23",
+          "id": "fa9eb0a5-f2fb-4aa5-b4e8-50b38ac50cff",
           "name": "Sepet kaleminden tek ürünü çıkar",
           "request": {
             "name": "Sepet kaleminden tek ürünü çıkar",
@@ -3387,7 +3387,7 @@
           },
           "response": [
             {
-              "id": "82e4981c-ad19-48f1-bf4f-5e6d53acb4da",
+              "id": "162dc483-8356-42ce-9fc3-5fbb03262852",
               "name": "Sepet güncel",
               "originalRequest": {
                 "url": {
@@ -3420,12 +3420,12 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"data\": {\n    \"id\": \"<uuid>\",\n    \"userId\": \"<uuid>\",\n    \"status\": \"converted\",\n    \"convertedToOrderId\": \"<uuid>\",\n    \"items\": [\n      {\n        \"id\": \"<uuid>\",\n        \"productId\": \"<uuid>\",\n        \"productName\": \"<string>\",\n        \"productSku\": \"<string>\",\n        \"quantity\": \"<integer>\",\n        \"unitPrice\": \"<float>\",\n        \"currency\": \"USD\",\n        \"lineTotal\": \"<float>\",\n        \"createdAt\": \"<dateTime>\",\n        \"updatedAt\": \"<dateTime>\"\n      },\n      {\n        \"id\": \"<uuid>\",\n        \"productId\": \"<uuid>\",\n        \"productName\": \"<string>\",\n        \"productSku\": \"<string>\",\n        \"quantity\": \"<integer>\",\n        \"unitPrice\": \"<float>\",\n        \"currency\": \"TRY\",\n        \"lineTotal\": \"<float>\",\n        \"createdAt\": \"<dateTime>\",\n        \"updatedAt\": \"<dateTime>\"\n      }\n    ],\n    \"itemCount\": \"<integer>\",\n    \"totalQuantity\": \"<integer>\",\n    \"subtotal\": \"<float>\",\n    \"currency\": \"TRY\",\n    \"subtotalsByCurrency\": {\n      \"ea_f06\": \"<float>\"\n    },\n    \"isUniformCurrency\": \"<boolean>\",\n    \"createdAt\": \"<dateTime>\",\n    \"updatedAt\": \"<dateTime>\"\n  }\n}",
+              "body": "{\n  \"data\": {\n    \"id\": \"<uuid>\",\n    \"userId\": \"<uuid>\",\n    \"status\": \"active\",\n    \"convertedToOrderId\": \"<uuid>\",\n    \"items\": [\n      {\n        \"id\": \"<uuid>\",\n        \"productId\": \"<uuid>\",\n        \"productName\": \"<string>\",\n        \"productSku\": \"<string>\",\n        \"quantity\": \"<integer>\",\n        \"unitPrice\": \"<float>\",\n        \"currency\": \"TRY\",\n        \"lineTotal\": \"<float>\",\n        \"createdAt\": \"<dateTime>\",\n        \"updatedAt\": \"<dateTime>\"\n      },\n      {\n        \"id\": \"<uuid>\",\n        \"productId\": \"<uuid>\",\n        \"productName\": \"<string>\",\n        \"productSku\": \"<string>\",\n        \"quantity\": \"<integer>\",\n        \"unitPrice\": \"<float>\",\n        \"currency\": \"EUR\",\n        \"lineTotal\": \"<float>\",\n        \"createdAt\": \"<dateTime>\",\n        \"updatedAt\": \"<dateTime>\"\n      }\n    ],\n    \"itemCount\": \"<integer>\",\n    \"totalQuantity\": \"<integer>\",\n    \"subtotal\": \"<float>\",\n    \"currency\": \"TRY\",\n    \"subtotalsByCurrency\": {\n      \"ut8\": \"<float>\"\n    },\n    \"isUniformCurrency\": \"<boolean>\",\n    \"createdAt\": \"<dateTime>\",\n    \"updatedAt\": \"<dateTime>\"\n  }\n}",
               "cookie": [],
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "8b6b26dd-661a-4fe6-b38a-e6953500ab8c",
+              "id": "de1f0294-6471-4b8e-b9e2-7b842291b778",
               "name": "Sepet kalemi bulunamadı",
               "originalRequest": {
                 "url": {
@@ -3469,7 +3469,7 @@
           }
         },
         {
-          "id": "b00eb39f-2f43-4650-a0af-bd6af2b2f2b7",
+          "id": "7fb18aeb-f567-4225-84ad-efdff105058f",
           "name": "Sepet kaleminin quantity'sini güncelle",
           "request": {
             "name": "Sepet kaleminin quantity'sini güncelle",
@@ -3526,7 +3526,7 @@
           },
           "response": [
             {
-              "id": "02123ecb-d0b0-491b-9f1a-fef7ddcba0fc",
+              "id": "899d8fe7-7e0e-4748-9d2d-3b0a1b5003b9",
               "name": "Sepet güncel",
               "originalRequest": {
                 "url": {
@@ -3572,12 +3572,12 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"data\": {\n    \"id\": \"<uuid>\",\n    \"userId\": \"<uuid>\",\n    \"status\": \"converted\",\n    \"convertedToOrderId\": \"<uuid>\",\n    \"items\": [\n      {\n        \"id\": \"<uuid>\",\n        \"productId\": \"<uuid>\",\n        \"productName\": \"<string>\",\n        \"productSku\": \"<string>\",\n        \"quantity\": \"<integer>\",\n        \"unitPrice\": \"<float>\",\n        \"currency\": \"USD\",\n        \"lineTotal\": \"<float>\",\n        \"createdAt\": \"<dateTime>\",\n        \"updatedAt\": \"<dateTime>\"\n      },\n      {\n        \"id\": \"<uuid>\",\n        \"productId\": \"<uuid>\",\n        \"productName\": \"<string>\",\n        \"productSku\": \"<string>\",\n        \"quantity\": \"<integer>\",\n        \"unitPrice\": \"<float>\",\n        \"currency\": \"TRY\",\n        \"lineTotal\": \"<float>\",\n        \"createdAt\": \"<dateTime>\",\n        \"updatedAt\": \"<dateTime>\"\n      }\n    ],\n    \"itemCount\": \"<integer>\",\n    \"totalQuantity\": \"<integer>\",\n    \"subtotal\": \"<float>\",\n    \"currency\": \"TRY\",\n    \"subtotalsByCurrency\": {\n      \"ea_f06\": \"<float>\"\n    },\n    \"isUniformCurrency\": \"<boolean>\",\n    \"createdAt\": \"<dateTime>\",\n    \"updatedAt\": \"<dateTime>\"\n  }\n}",
+              "body": "{\n  \"data\": {\n    \"id\": \"<uuid>\",\n    \"userId\": \"<uuid>\",\n    \"status\": \"active\",\n    \"convertedToOrderId\": \"<uuid>\",\n    \"items\": [\n      {\n        \"id\": \"<uuid>\",\n        \"productId\": \"<uuid>\",\n        \"productName\": \"<string>\",\n        \"productSku\": \"<string>\",\n        \"quantity\": \"<integer>\",\n        \"unitPrice\": \"<float>\",\n        \"currency\": \"TRY\",\n        \"lineTotal\": \"<float>\",\n        \"createdAt\": \"<dateTime>\",\n        \"updatedAt\": \"<dateTime>\"\n      },\n      {\n        \"id\": \"<uuid>\",\n        \"productId\": \"<uuid>\",\n        \"productName\": \"<string>\",\n        \"productSku\": \"<string>\",\n        \"quantity\": \"<integer>\",\n        \"unitPrice\": \"<float>\",\n        \"currency\": \"EUR\",\n        \"lineTotal\": \"<float>\",\n        \"createdAt\": \"<dateTime>\",\n        \"updatedAt\": \"<dateTime>\"\n      }\n    ],\n    \"itemCount\": \"<integer>\",\n    \"totalQuantity\": \"<integer>\",\n    \"subtotal\": \"<float>\",\n    \"currency\": \"TRY\",\n    \"subtotalsByCurrency\": {\n      \"ut8\": \"<float>\"\n    },\n    \"isUniformCurrency\": \"<boolean>\",\n    \"createdAt\": \"<dateTime>\",\n    \"updatedAt\": \"<dateTime>\"\n  }\n}",
               "cookie": [],
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "1e3a6480-e72a-475a-a5b1-ec23cea70467",
+              "id": "3bcaab6f-2406-488c-863e-0d6f8e360677",
               "name": "Sepet kalemi bulunamadı (IDOR korumalı 404)",
               "originalRequest": {
                 "url": {
@@ -3628,7 +3628,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "5f298e5d-8a2a-42e2-9882-9c9045dd8755",
+              "id": "44969b50-b65c-4145-97b8-169ad164ca2c",
               "name": "Yetersiz stok",
               "originalRequest": {
                 "url": {
@@ -3674,12 +3674,12 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"error\": {\n    \"code\": \"<string>\",\n    \"message\": \"<string>\",\n    \"context\": {\n      \"ad_493\": \"<string>\",\n      \"id70\": \"<string>\",\n      \"sit0_c\": \"<string>\"\n    }\n  }\n}",
+              "body": "{\n  \"error\": {\n    \"code\": \"<string>\",\n    \"message\": \"<string>\",\n    \"context\": {\n      \"minim_05\": \"<string>\"\n    }\n  }\n}",
               "cookie": [],
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "12269364-8655-4bdc-87d6-d2b79fa52f6a",
+              "id": "87c4b6d9-80e3-41c8-8dc1-c4c62cf28696",
               "name": "Validation error",
               "originalRequest": {
                 "url": {
@@ -3725,7 +3725,7 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"message\": \"<string>\",\n  \"errors\": {\n    \"consectetur_17\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"esse_4\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  }\n}",
+              "body": "{\n  \"message\": \"<string>\",\n  \"errors\": {\n    \"adipisicing_ee\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  }\n}",
               "cookie": [],
               "_postman_previewlanguage": "json"
             }
@@ -3742,7 +3742,7 @@
       "description": "Sipariş oluşturma ve takip",
       "item": [
         {
-          "id": "be4e824b-e4ff-4011-8230-db6db9199e0c",
+          "id": "ed935f70-0d36-4689-883c-d15dca2be66b",
           "name": "Sipariş listesi (kullanıcı kendi)",
           "request": {
             "name": "Sipariş listesi (kullanıcı kendi)",
@@ -3817,7 +3817,7 @@
           },
           "response": [
             {
-              "id": "08c63335-e32c-4411-a977-9294bf56b3da",
+              "id": "fd0d7e69-5cc9-422c-8cd3-f9a6b7fcee5e",
               "name": "Sayfalanmış sipariş listesi",
               "originalRequest": {
                 "url": {
@@ -3884,12 +3884,12 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"data\": [\n    {\n      \"id\": \"<uuid>\",\n      \"orderNumber\": \"<string>\",\n      \"userId\": \"<uuid>\",\n      \"status\": \"completed\",\n      \"subtotal\": \"<float>\",\n      \"total\": \"<float>\",\n      \"currency\": \"EUR\",\n      \"displayCurrency\": \"TRY\",\n      \"displayTotal\": \"<float>\",\n      \"exchangeRateSnapshot\": \"<float>\",\n      \"notes\": \"<string>\",\n      \"items\": [\n        {\n          \"id\": \"<uuid>\",\n          \"productId\": \"<uuid>\",\n          \"productName\": \"<string>\",\n          \"productSku\": \"<string>\",\n          \"quantity\": \"<integer>\",\n          \"unitPrice\": \"<float>\",\n          \"currency\": \"EUR\",\n          \"lineTotal\": \"<float>\",\n          \"createdAt\": \"<dateTime>\"\n        },\n        {\n          \"id\": \"<uuid>\",\n          \"productId\": \"<uuid>\",\n          \"productName\": \"<string>\",\n          \"productSku\": \"<string>\",\n          \"quantity\": \"<integer>\",\n          \"unitPrice\": \"<float>\",\n          \"currency\": \"USD\",\n          \"lineTotal\": \"<float>\",\n          \"createdAt\": \"<dateTime>\"\n        }\n      ],\n      \"itemCount\": \"<integer>\",\n      \"cancelledAt\": \"<dateTime>\",\n      \"cancelledReason\": \"<string>\",\n      \"completedAt\": \"<dateTime>\",\n      \"createdAt\": \"<dateTime>\",\n      \"updatedAt\": \"<dateTime>\"\n    },\n    {\n      \"id\": \"<uuid>\",\n      \"orderNumber\": \"<string>\",\n      \"userId\": \"<uuid>\",\n      \"status\": \"cancelled\",\n      \"subtotal\": \"<float>\",\n      \"total\": \"<float>\",\n      \"currency\": \"TRY\",\n      \"displayCurrency\": \"TRY\",\n      \"displayTotal\": \"<float>\",\n      \"exchangeRateSnapshot\": \"<float>\",\n      \"notes\": \"<string>\",\n      \"items\": [\n        {\n          \"id\": \"<uuid>\",\n          \"productId\": \"<uuid>\",\n          \"productName\": \"<string>\",\n          \"productSku\": \"<string>\",\n          \"quantity\": \"<integer>\",\n          \"unitPrice\": \"<float>\",\n          \"currency\": \"USD\",\n          \"lineTotal\": \"<float>\",\n          \"createdAt\": \"<dateTime>\"\n        },\n        {\n          \"id\": \"<uuid>\",\n          \"productId\": \"<uuid>\",\n          \"productName\": \"<string>\",\n          \"productSku\": \"<string>\",\n          \"quantity\": \"<integer>\",\n          \"unitPrice\": \"<float>\",\n          \"currency\": \"TRY\",\n          \"lineTotal\": \"<float>\",\n          \"createdAt\": \"<dateTime>\"\n        }\n      ],\n      \"itemCount\": \"<integer>\",\n      \"cancelledAt\": \"<dateTime>\",\n      \"cancelledReason\": \"<string>\",\n      \"completedAt\": \"<dateTime>\",\n      \"createdAt\": \"<dateTime>\",\n      \"updatedAt\": \"<dateTime>\"\n    }\n  ],\n  \"meta\": {\n    \"currentPage\": \"<integer>\",\n    \"pageSize\": \"<integer>\",\n    \"total\": \"<integer>\",\n    \"totalPages\": \"<integer>\"\n  }\n}",
+              "body": "{\n  \"data\": [\n    {\n      \"id\": \"<uuid>\",\n      \"orderNumber\": \"<string>\",\n      \"userId\": \"<uuid>\",\n      \"status\": \"cancelled\",\n      \"subtotal\": \"<float>\",\n      \"total\": \"<float>\",\n      \"currency\": \"TRY\",\n      \"displayCurrency\": \"EUR\",\n      \"displayTotal\": \"<float>\",\n      \"exchangeRateSnapshot\": \"<float>\",\n      \"notes\": \"<string>\",\n      \"items\": [\n        {\n          \"id\": \"<uuid>\",\n          \"productId\": \"<uuid>\",\n          \"productName\": \"<string>\",\n          \"productSku\": \"<string>\",\n          \"quantity\": \"<integer>\",\n          \"unitPrice\": \"<float>\",\n          \"currency\": \"USD\",\n          \"lineTotal\": \"<float>\",\n          \"createdAt\": \"<dateTime>\"\n        },\n        {\n          \"id\": \"<uuid>\",\n          \"productId\": \"<uuid>\",\n          \"productName\": \"<string>\",\n          \"productSku\": \"<string>\",\n          \"quantity\": \"<integer>\",\n          \"unitPrice\": \"<float>\",\n          \"currency\": \"USD\",\n          \"lineTotal\": \"<float>\",\n          \"createdAt\": \"<dateTime>\"\n        }\n      ],\n      \"itemCount\": \"<integer>\",\n      \"cancelledAt\": \"<dateTime>\",\n      \"cancelledReason\": \"<string>\",\n      \"completedAt\": \"<dateTime>\",\n      \"createdAt\": \"<dateTime>\",\n      \"updatedAt\": \"<dateTime>\",\n      \"deliveryAddress\": {},\n      \"billingAddress\": {},\n      \"deliveryAddressId\": \"<uuid>\",\n      \"billingAddressId\": \"<uuid>\"\n    },\n    {\n      \"id\": \"<uuid>\",\n      \"orderNumber\": \"<string>\",\n      \"userId\": \"<uuid>\",\n      \"status\": \"cancelled\",\n      \"subtotal\": \"<float>\",\n      \"total\": \"<float>\",\n      \"currency\": \"EUR\",\n      \"displayCurrency\": \"TRY\",\n      \"displayTotal\": \"<float>\",\n      \"exchangeRateSnapshot\": \"<float>\",\n      \"notes\": \"<string>\",\n      \"items\": [\n        {\n          \"id\": \"<uuid>\",\n          \"productId\": \"<uuid>\",\n          \"productName\": \"<string>\",\n          \"productSku\": \"<string>\",\n          \"quantity\": \"<integer>\",\n          \"unitPrice\": \"<float>\",\n          \"currency\": \"EUR\",\n          \"lineTotal\": \"<float>\",\n          \"createdAt\": \"<dateTime>\"\n        },\n        {\n          \"id\": \"<uuid>\",\n          \"productId\": \"<uuid>\",\n          \"productName\": \"<string>\",\n          \"productSku\": \"<string>\",\n          \"quantity\": \"<integer>\",\n          \"unitPrice\": \"<float>\",\n          \"currency\": \"TRY\",\n          \"lineTotal\": \"<float>\",\n          \"createdAt\": \"<dateTime>\"\n        }\n      ],\n      \"itemCount\": \"<integer>\",\n      \"cancelledAt\": \"<dateTime>\",\n      \"cancelledReason\": \"<string>\",\n      \"completedAt\": \"<dateTime>\",\n      \"createdAt\": \"<dateTime>\",\n      \"updatedAt\": \"<dateTime>\",\n      \"deliveryAddress\": {},\n      \"billingAddress\": {},\n      \"deliveryAddressId\": \"<uuid>\",\n      \"billingAddressId\": \"<uuid>\"\n    }\n  ],\n  \"meta\": {\n    \"currentPage\": \"<integer>\",\n    \"pageSize\": \"<integer>\",\n    \"total\": \"<integer>\",\n    \"totalPages\": \"<integer>\"\n  }\n}",
               "cookie": [],
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "1e5947a0-88bf-4065-bc06-58bb68659a82",
+              "id": "848c27a3-4472-45eb-bc8f-f5c46f9f4050",
               "name": "Auth gerekli",
               "originalRequest": {
                 "url": {
@@ -3961,7 +3961,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "126e55e9-d291-4bcf-9204-3cd20f33df7a",
+              "id": "3fadfaab-216e-4c02-96c2-bfae60b472fa",
               "name": "Rate limit exceeded",
               "originalRequest": {
                 "url": {
@@ -4039,7 +4039,7 @@
           }
         },
         {
-          "id": "a638e97d-99fe-4d6e-98ab-87508a69d110",
+          "id": "2eb4bbba-9b9b-4ec4-b0ca-673138ebea8e",
           "name": "Sepetten sipariş oluştur",
           "request": {
             "name": "Sepetten sipariş oluştur",
@@ -4071,7 +4071,7 @@
             "method": "POST",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"displayCurrency\": \"EUR\",\n  \"notes\": \"<string>\"\n}",
+              "raw": "{\n  \"displayCurrency\": \"TRY\",\n  \"deliveryAddressId\": \"<uuid>\",\n  \"billingAddressId\": \"<uuid>\",\n  \"notes\": \"<string>\"\n}",
               "options": {
                 "raw": {
                   "headerFamily": "json",
@@ -4099,7 +4099,7 @@
           },
           "response": [
             {
-              "id": "d1919fb9-777a-48fb-af39-d926298565c0",
+              "id": "947f1e1c-a9cb-4447-adeb-206ec451079e",
               "name": "Sipariş oluşturuldu",
               "originalRequest": {
                 "url": {
@@ -4134,7 +4134,7 @@
                 "method": "POST",
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"displayCurrency\": \"EUR\",\n  \"notes\": \"<string>\"\n}",
+                  "raw": "{\n  \"displayCurrency\": \"TRY\",\n  \"deliveryAddressId\": \"<uuid>\",\n  \"billingAddressId\": \"<uuid>\",\n  \"notes\": \"<string>\"\n}",
                   "options": {
                     "raw": {
                       "headerFamily": "json",
@@ -4151,12 +4151,12 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"data\": {\n    \"id\": \"<uuid>\",\n    \"orderNumber\": \"<string>\",\n    \"userId\": \"<uuid>\",\n    \"status\": \"completed\",\n    \"subtotal\": \"<float>\",\n    \"total\": \"<float>\",\n    \"currency\": \"USD\",\n    \"displayCurrency\": \"USD\",\n    \"displayTotal\": \"<float>\",\n    \"exchangeRateSnapshot\": \"<float>\",\n    \"notes\": \"<string>\",\n    \"items\": [\n      {\n        \"id\": \"<uuid>\",\n        \"productId\": \"<uuid>\",\n        \"productName\": \"<string>\",\n        \"productSku\": \"<string>\",\n        \"quantity\": \"<integer>\",\n        \"unitPrice\": \"<float>\",\n        \"currency\": \"USD\",\n        \"lineTotal\": \"<float>\",\n        \"createdAt\": \"<dateTime>\"\n      },\n      {\n        \"id\": \"<uuid>\",\n        \"productId\": \"<uuid>\",\n        \"productName\": \"<string>\",\n        \"productSku\": \"<string>\",\n        \"quantity\": \"<integer>\",\n        \"unitPrice\": \"<float>\",\n        \"currency\": \"EUR\",\n        \"lineTotal\": \"<float>\",\n        \"createdAt\": \"<dateTime>\"\n      }\n    ],\n    \"itemCount\": \"<integer>\",\n    \"cancelledAt\": \"<dateTime>\",\n    \"cancelledReason\": \"<string>\",\n    \"completedAt\": \"<dateTime>\",\n    \"createdAt\": \"<dateTime>\",\n    \"updatedAt\": \"<dateTime>\"\n  },\n  \"message\": \"<string>\"\n}",
+              "body": "{\n  \"data\": {\n    \"id\": \"<uuid>\",\n    \"orderNumber\": \"<string>\",\n    \"userId\": \"<uuid>\",\n    \"status\": \"cancelled\",\n    \"subtotal\": \"<float>\",\n    \"total\": \"<float>\",\n    \"currency\": \"USD\",\n    \"displayCurrency\": \"EUR\",\n    \"displayTotal\": \"<float>\",\n    \"exchangeRateSnapshot\": \"<float>\",\n    \"notes\": \"<string>\",\n    \"items\": [\n      {\n        \"id\": \"<uuid>\",\n        \"productId\": \"<uuid>\",\n        \"productName\": \"<string>\",\n        \"productSku\": \"<string>\",\n        \"quantity\": \"<integer>\",\n        \"unitPrice\": \"<float>\",\n        \"currency\": \"EUR\",\n        \"lineTotal\": \"<float>\",\n        \"createdAt\": \"<dateTime>\"\n      },\n      {\n        \"id\": \"<uuid>\",\n        \"productId\": \"<uuid>\",\n        \"productName\": \"<string>\",\n        \"productSku\": \"<string>\",\n        \"quantity\": \"<integer>\",\n        \"unitPrice\": \"<float>\",\n        \"currency\": \"TRY\",\n        \"lineTotal\": \"<float>\",\n        \"createdAt\": \"<dateTime>\"\n      }\n    ],\n    \"itemCount\": \"<integer>\",\n    \"cancelledAt\": \"<dateTime>\",\n    \"cancelledReason\": \"<string>\",\n    \"completedAt\": \"<dateTime>\",\n    \"createdAt\": \"<dateTime>\",\n    \"updatedAt\": \"<dateTime>\",\n    \"deliveryAddress\": {},\n    \"billingAddress\": {},\n    \"deliveryAddressId\": \"<uuid>\",\n    \"billingAddressId\": \"<uuid>\"\n  },\n  \"message\": \"<string>\"\n}",
               "cookie": [],
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "640f784e-d898-43a5-a4c7-4afd4571541b",
+              "id": "352e8605-8cf2-4d86-8217-205651396ffe",
               "name": "Auth gerekli",
               "originalRequest": {
                 "url": {
@@ -4191,7 +4191,7 @@
                 "method": "POST",
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"displayCurrency\": \"EUR\",\n  \"notes\": \"<string>\"\n}",
+                  "raw": "{\n  \"displayCurrency\": \"TRY\",\n  \"deliveryAddressId\": \"<uuid>\",\n  \"billingAddressId\": \"<uuid>\",\n  \"notes\": \"<string>\"\n}",
                   "options": {
                     "raw": {
                       "headerFamily": "json",
@@ -4213,7 +4213,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "b8d3af2d-9641-4c97-8281-a438a03d6b56",
+              "id": "6083d09f-71d9-490b-acb1-81b341bb61fa",
               "name": "Boş sepet / yetersiz stok / pasif ürün",
               "originalRequest": {
                 "url": {
@@ -4248,7 +4248,7 @@
                 "method": "POST",
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"displayCurrency\": \"EUR\",\n  \"notes\": \"<string>\"\n}",
+                  "raw": "{\n  \"displayCurrency\": \"TRY\",\n  \"deliveryAddressId\": \"<uuid>\",\n  \"billingAddressId\": \"<uuid>\",\n  \"notes\": \"<string>\"\n}",
                   "options": {
                     "raw": {
                       "headerFamily": "json",
@@ -4265,12 +4265,12 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"error\": {\n    \"code\": \"<string>\",\n    \"message\": \"<string>\",\n    \"context\": {\n      \"ad_493\": \"<string>\",\n      \"id70\": \"<string>\",\n      \"sit0_c\": \"<string>\"\n    }\n  }\n}",
+              "body": "{\n  \"error\": {\n    \"code\": \"<string>\",\n    \"message\": \"<string>\",\n    \"context\": {\n      \"minim_05\": \"<string>\"\n    }\n  }\n}",
               "cookie": [],
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "8759823c-ea0b-4ec7-b097-483256d9614e",
+              "id": "6aafced2-582e-4008-92de-b863f8fd4e1d",
               "name": "Validation error",
               "originalRequest": {
                 "url": {
@@ -4305,7 +4305,7 @@
                 "method": "POST",
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"displayCurrency\": \"EUR\",\n  \"notes\": \"<string>\"\n}",
+                  "raw": "{\n  \"displayCurrency\": \"TRY\",\n  \"deliveryAddressId\": \"<uuid>\",\n  \"billingAddressId\": \"<uuid>\",\n  \"notes\": \"<string>\"\n}",
                   "options": {
                     "raw": {
                       "headerFamily": "json",
@@ -4322,12 +4322,12 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"message\": \"<string>\",\n  \"errors\": {\n    \"consectetur_17\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"esse_4\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  }\n}",
+              "body": "{\n  \"message\": \"<string>\",\n  \"errors\": {\n    \"adipisicing_ee\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  }\n}",
               "cookie": [],
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "3bc6430b-7b37-4e16-a5a6-ff4e64d25ec9",
+              "id": "c0a8b508-7bdb-44d5-97d4-779443e76f8c",
               "name": "Rate limit exceeded",
               "originalRequest": {
                 "url": {
@@ -4362,7 +4362,7 @@
                 "method": "POST",
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"displayCurrency\": \"EUR\",\n  \"notes\": \"<string>\"\n}",
+                  "raw": "{\n  \"displayCurrency\": \"TRY\",\n  \"deliveryAddressId\": \"<uuid>\",\n  \"billingAddressId\": \"<uuid>\",\n  \"notes\": \"<string>\"\n}",
                   "options": {
                     "raw": {
                       "headerFamily": "json",
@@ -4390,7 +4390,7 @@
           }
         },
         {
-          "id": "9fa0ccc3-7b03-4db0-b0f2-d2d0686758cd",
+          "id": "823306ab-ba4f-4222-9976-d635f2d95670",
           "name": "Sipariş detay",
           "request": {
             "name": "Sipariş detay",
@@ -4449,7 +4449,7 @@
           },
           "response": [
             {
-              "id": "85d36e6d-15b3-4a1a-a835-7c879ecb39ae",
+              "id": "10b86d36-9a53-4da8-a7cc-eabdc67d8b41",
               "name": "Sipariş",
               "originalRequest": {
                 "url": {
@@ -4489,12 +4489,12 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"data\": {\n    \"id\": \"<uuid>\",\n    \"orderNumber\": \"<string>\",\n    \"userId\": \"<uuid>\",\n    \"status\": \"completed\",\n    \"subtotal\": \"<float>\",\n    \"total\": \"<float>\",\n    \"currency\": \"EUR\",\n    \"displayCurrency\": \"TRY\",\n    \"displayTotal\": \"<float>\",\n    \"exchangeRateSnapshot\": \"<float>\",\n    \"notes\": \"<string>\",\n    \"items\": [\n      {\n        \"id\": \"<uuid>\",\n        \"productId\": \"<uuid>\",\n        \"productName\": \"<string>\",\n        \"productSku\": \"<string>\",\n        \"quantity\": \"<integer>\",\n        \"unitPrice\": \"<float>\",\n        \"currency\": \"TRY\",\n        \"lineTotal\": \"<float>\",\n        \"createdAt\": \"<dateTime>\"\n      },\n      {\n        \"id\": \"<uuid>\",\n        \"productId\": \"<uuid>\",\n        \"productName\": \"<string>\",\n        \"productSku\": \"<string>\",\n        \"quantity\": \"<integer>\",\n        \"unitPrice\": \"<float>\",\n        \"currency\": \"TRY\",\n        \"lineTotal\": \"<float>\",\n        \"createdAt\": \"<dateTime>\"\n      }\n    ],\n    \"itemCount\": \"<integer>\",\n    \"cancelledAt\": \"<dateTime>\",\n    \"cancelledReason\": \"<string>\",\n    \"completedAt\": \"<dateTime>\",\n    \"createdAt\": \"<dateTime>\",\n    \"updatedAt\": \"<dateTime>\"\n  }\n}",
+              "body": "{\n  \"data\": {\n    \"id\": \"<uuid>\",\n    \"orderNumber\": \"<string>\",\n    \"userId\": \"<uuid>\",\n    \"status\": \"pending\",\n    \"subtotal\": \"<float>\",\n    \"total\": \"<float>\",\n    \"currency\": \"TRY\",\n    \"displayCurrency\": \"TRY\",\n    \"displayTotal\": \"<float>\",\n    \"exchangeRateSnapshot\": \"<float>\",\n    \"notes\": \"<string>\",\n    \"items\": [\n      {\n        \"id\": \"<uuid>\",\n        \"productId\": \"<uuid>\",\n        \"productName\": \"<string>\",\n        \"productSku\": \"<string>\",\n        \"quantity\": \"<integer>\",\n        \"unitPrice\": \"<float>\",\n        \"currency\": \"TRY\",\n        \"lineTotal\": \"<float>\",\n        \"createdAt\": \"<dateTime>\"\n      },\n      {\n        \"id\": \"<uuid>\",\n        \"productId\": \"<uuid>\",\n        \"productName\": \"<string>\",\n        \"productSku\": \"<string>\",\n        \"quantity\": \"<integer>\",\n        \"unitPrice\": \"<float>\",\n        \"currency\": \"TRY\",\n        \"lineTotal\": \"<float>\",\n        \"createdAt\": \"<dateTime>\"\n      }\n    ],\n    \"itemCount\": \"<integer>\",\n    \"cancelledAt\": \"<dateTime>\",\n    \"cancelledReason\": \"<string>\",\n    \"completedAt\": \"<dateTime>\",\n    \"createdAt\": \"<dateTime>\",\n    \"updatedAt\": \"<dateTime>\",\n    \"deliveryAddress\": {},\n    \"billingAddress\": {},\n    \"deliveryAddressId\": \"<uuid>\",\n    \"billingAddressId\": \"<uuid>\"\n  }\n}",
               "cookie": [],
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "64c7c65f-a65b-499d-9e42-b0bdc68e9f17",
+              "id": "347cf7db-78b1-4726-8932-eeb1031c3d9c",
               "name": "Auth gerekli",
               "originalRequest": {
                 "url": {
@@ -4539,7 +4539,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "190b460f-9249-4dc2-9d82-debaf5ef0ffd",
+              "id": "90db85aa-673e-4155-b0da-db2f478a60e3",
               "name": "Sipariş bulunamadı (yetki yoksa da bu döner)",
               "originalRequest": {
                 "url": {
@@ -4590,7 +4590,7 @@
           }
         },
         {
-          "id": "6456b479-d79b-42dc-a61d-d937b558463b",
+          "id": "21abfa45-33af-42ca-9b06-d518d35b43a1",
           "name": "Sipariş iptal",
           "request": {
             "name": "Sipariş iptal",
@@ -4663,7 +4663,7 @@
           },
           "response": [
             {
-              "id": "80f0ef30-579c-4ac1-9cbd-d1ab90ff9c76",
+              "id": "42ec5ad4-f596-4909-8958-f8d9ae0bf05d",
               "name": "Sipariş iptal edildi",
               "originalRequest": {
                 "url": {
@@ -4717,12 +4717,12 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"data\": {\n    \"id\": \"<uuid>\",\n    \"orderNumber\": \"<string>\",\n    \"userId\": \"<uuid>\",\n    \"status\": \"completed\",\n    \"subtotal\": \"<float>\",\n    \"total\": \"<float>\",\n    \"currency\": \"TRY\",\n    \"displayCurrency\": \"TRY\",\n    \"displayTotal\": \"<float>\",\n    \"exchangeRateSnapshot\": \"<float>\",\n    \"notes\": \"<string>\",\n    \"items\": [\n      {\n        \"id\": \"<uuid>\",\n        \"productId\": \"<uuid>\",\n        \"productName\": \"<string>\",\n        \"productSku\": \"<string>\",\n        \"quantity\": \"<integer>\",\n        \"unitPrice\": \"<float>\",\n        \"currency\": \"USD\",\n        \"lineTotal\": \"<float>\",\n        \"createdAt\": \"<dateTime>\"\n      },\n      {\n        \"id\": \"<uuid>\",\n        \"productId\": \"<uuid>\",\n        \"productName\": \"<string>\",\n        \"productSku\": \"<string>\",\n        \"quantity\": \"<integer>\",\n        \"unitPrice\": \"<float>\",\n        \"currency\": \"EUR\",\n        \"lineTotal\": \"<float>\",\n        \"createdAt\": \"<dateTime>\"\n      }\n    ],\n    \"itemCount\": \"<integer>\",\n    \"cancelledAt\": \"<dateTime>\",\n    \"cancelledReason\": \"<string>\",\n    \"completedAt\": \"<dateTime>\",\n    \"createdAt\": \"<dateTime>\",\n    \"updatedAt\": \"<dateTime>\"\n  },\n  \"message\": \"<string>\"\n}",
+              "body": "{\n  \"data\": {\n    \"id\": \"<uuid>\",\n    \"orderNumber\": \"<string>\",\n    \"userId\": \"<uuid>\",\n    \"status\": \"pending\",\n    \"subtotal\": \"<float>\",\n    \"total\": \"<float>\",\n    \"currency\": \"EUR\",\n    \"displayCurrency\": \"USD\",\n    \"displayTotal\": \"<float>\",\n    \"exchangeRateSnapshot\": \"<float>\",\n    \"notes\": \"<string>\",\n    \"items\": [\n      {\n        \"id\": \"<uuid>\",\n        \"productId\": \"<uuid>\",\n        \"productName\": \"<string>\",\n        \"productSku\": \"<string>\",\n        \"quantity\": \"<integer>\",\n        \"unitPrice\": \"<float>\",\n        \"currency\": \"TRY\",\n        \"lineTotal\": \"<float>\",\n        \"createdAt\": \"<dateTime>\"\n      },\n      {\n        \"id\": \"<uuid>\",\n        \"productId\": \"<uuid>\",\n        \"productName\": \"<string>\",\n        \"productSku\": \"<string>\",\n        \"quantity\": \"<integer>\",\n        \"unitPrice\": \"<float>\",\n        \"currency\": \"TRY\",\n        \"lineTotal\": \"<float>\",\n        \"createdAt\": \"<dateTime>\"\n      }\n    ],\n    \"itemCount\": \"<integer>\",\n    \"cancelledAt\": \"<dateTime>\",\n    \"cancelledReason\": \"<string>\",\n    \"completedAt\": \"<dateTime>\",\n    \"createdAt\": \"<dateTime>\",\n    \"updatedAt\": \"<dateTime>\",\n    \"deliveryAddress\": {},\n    \"billingAddress\": {},\n    \"deliveryAddressId\": \"<uuid>\",\n    \"billingAddressId\": \"<uuid>\"\n  },\n  \"message\": \"<string>\"\n}",
               "cookie": [],
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "365004d2-cd44-4dd3-ae34-4ab312947fc3",
+              "id": "dba40bb4-02cd-490f-a56a-73c9106a2b13",
               "name": "Auth gerekli",
               "originalRequest": {
                 "url": {
@@ -4781,7 +4781,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "194df01f-6b4a-4624-8f2e-7e8a5dcf2460",
+              "id": "db86906e-7da5-4bd4-a867-11c46a4f9fc9",
               "name": "Sipariş bulunamadı",
               "originalRequest": {
                 "url": {
@@ -4840,7 +4840,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "88641acc-aa62-4347-9f37-91d1f9f9b387",
+              "id": "00b437b7-6f71-47b5-b40d-4cbe48df251f",
               "name": "Sipariş zaten iptal/tamamlanmış",
               "originalRequest": {
                 "url": {
@@ -4894,12 +4894,12 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"error\": {\n    \"code\": \"<string>\",\n    \"message\": \"<string>\",\n    \"context\": {\n      \"ad_493\": \"<string>\",\n      \"id70\": \"<string>\",\n      \"sit0_c\": \"<string>\"\n    }\n  }\n}",
+              "body": "{\n  \"error\": {\n    \"code\": \"<string>\",\n    \"message\": \"<string>\",\n    \"context\": {\n      \"minim_05\": \"<string>\"\n    }\n  }\n}",
               "cookie": [],
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "859874e4-d70a-4018-8697-d8617d0248f9",
+              "id": "e60ca1e1-7165-46fd-98f5-9e8e2d3a090c",
               "name": "Validation error (reason eksik/kısa)",
               "originalRequest": {
                 "url": {
@@ -4953,7 +4953,7 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"message\": \"<string>\",\n  \"errors\": {\n    \"consectetur_17\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"esse_4\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  }\n}",
+              "body": "{\n  \"message\": \"<string>\",\n  \"errors\": {\n    \"adipisicing_ee\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  }\n}",
               "cookie": [],
               "_postman_previewlanguage": "json"
             }
@@ -4970,7 +4970,7 @@
       "description": "Public döviz kurları",
       "item": [
         {
-          "id": "8c3f2611-0cf9-4e6f-be3f-abb7443ba778",
+          "id": "df117395-563e-4751-8490-121548a5c734",
           "name": "Desteklenen para birimleri",
           "request": {
             "name": "Desteklenen para birimleri",
@@ -5000,7 +5000,7 @@
           },
           "response": [
             {
-              "id": "4f1fd47e-a5e9-4c32-af34-b7461e48b3d4",
+              "id": "718e9b4f-2814-416c-8139-d634d4498eda",
               "name": "Para birimi listesi",
               "originalRequest": {
                 "url": {
@@ -5030,12 +5030,12 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"data\": [\n    {\n      \"code\": \"TRY\",\n      \"symbol\": \"<string>\"\n    },\n    {\n      \"code\": \"EUR\",\n      \"symbol\": \"<string>\"\n    }\n  ]\n}",
+              "body": "{\n  \"data\": [\n    {\n      \"code\": \"USD\",\n      \"symbol\": \"<string>\"\n    },\n    {\n      \"code\": \"TRY\",\n      \"symbol\": \"<string>\"\n    }\n  ]\n}",
               "cookie": [],
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "24021eb5-4557-4734-8fc3-fda4ce951a1a",
+              "id": "3f590af1-be02-4340-9b9f-24b3f67a0074",
               "name": "Rate limit exceeded",
               "originalRequest": {
                 "url": {
@@ -5076,7 +5076,7 @@
           }
         },
         {
-          "id": "03b33018-dd5e-4003-beb2-0d1e023291d9",
+          "id": "cf46c069-55d4-4844-8449-f3e5a9b3354e",
           "name": "Tek kur",
           "request": {
             "name": "Tek kur",
@@ -5129,7 +5129,7 @@
           },
           "response": [
             {
-              "id": "71d2fdd1-4768-4df4-9343-3311c97fe071",
+              "id": "d92c2329-4c64-4098-9dd7-0c0005bc6295",
               "name": "Exchange rate",
               "originalRequest": {
                 "url": {
@@ -5166,7 +5166,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "cfc975e3-2d66-42cb-b719-7c13f5da30d5",
+              "id": "cc6f34ad-87f5-4dd0-bb5e-1e5ec3fe2a90",
               "name": "Geçersiz para birimi kodu veya kur bulunamadı",
               "originalRequest": {
                 "url": {
@@ -5203,7 +5203,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "7d9be210-5460-4c45-8ede-2cebbbc7d699",
+              "id": "5e2605c2-94c8-42fe-94b8-2c0c483cc50e",
               "name": "Rate limit exceeded",
               "originalRequest": {
                 "url": {
@@ -5252,7 +5252,7 @@
       "description": "Healthcheck, public settings ve alt-yapı endpoint'leri",
       "item": [
         {
-          "id": "49a213fc-1433-4569-be60-92a2a497efe4",
+          "id": "6ad67724-6215-49d6-8ce6-4de366701b13",
           "name": "Healthcheck",
           "request": {
             "name": "Healthcheck",
@@ -5276,7 +5276,7 @@
           },
           "response": [
             {
-              "id": "2e1c0045-0e21-443b-a90e-38fcbf54752e",
+              "id": "6ba639be-cf41-44d3-a198-93cd189c3fd3",
               "name": "Servis ayakta",
               "originalRequest": {
                 "url": {
@@ -5299,7 +5299,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "b6e72d49-3858-4871-9c97-8f060cfbbd62",
+              "id": "bcb57d76-7ea0-4a11-a030-a213b920d6a4",
               "name": "Servis sağlıksız",
               "originalRequest": {
                 "url": {
@@ -5328,7 +5328,7 @@
           }
         },
         {
-          "id": "68a3fd72-8ab1-4289-a7b3-bdfa40eff06c",
+          "id": "887431bd-4616-453f-917c-53b5bf35ee66",
           "name": "Public sistem ayarları",
           "request": {
             "name": "Public sistem ayarları",
@@ -5360,7 +5360,7 @@
           },
           "response": [
             {
-              "id": "6f83d275-463c-4ee3-9b7b-d684a75e19b2",
+              "id": "69f7b3e5-3b7e-42dd-838f-945b666118d6",
               "name": "Public ayar listesi",
               "originalRequest": {
                 "url": {
@@ -5392,12 +5392,12 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"data\": [\n    {\n      \"key\": \"<string>\",\n      \"value\": \"<string>\",\n      \"type\": \"string\",\n      \"category\": \"<string>\",\n      \"description\": \"<string>\",\n      \"isPublic\": \"<boolean>\",\n      \"updatedAt\": \"<dateTime>\"\n    },\n    {\n      \"key\": \"<string>\",\n      \"value\": \"<string>\",\n      \"type\": \"boolean\",\n      \"category\": \"<string>\",\n      \"description\": \"<string>\",\n      \"isPublic\": \"<boolean>\",\n      \"updatedAt\": \"<dateTime>\"\n    }\n  ]\n}",
+              "body": "{\n  \"data\": [\n    {\n      \"key\": \"<string>\",\n      \"value\": \"<string>\",\n      \"type\": \"boolean\",\n      \"category\": \"<string>\",\n      \"description\": \"<string>\",\n      \"isPublic\": \"<boolean>\",\n      \"updatedAt\": \"<dateTime>\"\n    },\n    {\n      \"key\": \"<string>\",\n      \"value\": \"<string>\",\n      \"type\": \"json\",\n      \"category\": \"<string>\",\n      \"description\": \"<string>\",\n      \"isPublic\": \"<boolean>\",\n      \"updatedAt\": \"<dateTime>\"\n    }\n  ]\n}",
               "cookie": [],
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "28ec80b9-82db-498b-b7ce-e17379feda25",
+              "id": "f2f96b71-94cc-4c3d-b0e2-aca651d58ef2",
               "name": "Rate limit exceeded",
               "originalRequest": {
                 "url": {
@@ -5446,7 +5446,7 @@
       "description": "Admin-only sistem ayarları yönetimi (base_currency vb.)",
       "item": [
         {
-          "id": "675fcae4-d49a-415d-9e1a-4d41ca628390",
+          "id": "7d930ad9-a907-4fcc-b62f-73571990f677",
           "name": "Tüm sistem ayarları (admin)",
           "request": {
             "name": "Tüm sistem ayarları (admin)",
@@ -5494,7 +5494,7 @@
           },
           "response": [
             {
-              "id": "6e80c5fc-c096-496b-8c93-58115a7e2fa9",
+              "id": "78942abb-8272-4654-9ef0-174e39e2ead5",
               "name": "Tüm ayarlar",
               "originalRequest": {
                 "url": {
@@ -5534,12 +5534,12 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"data\": [\n    {\n      \"key\": \"<string>\",\n      \"value\": \"<string>\",\n      \"type\": \"string\",\n      \"category\": \"<string>\",\n      \"description\": \"<string>\",\n      \"isPublic\": \"<boolean>\",\n      \"updatedAt\": \"<dateTime>\"\n    },\n    {\n      \"key\": \"<string>\",\n      \"value\": \"<string>\",\n      \"type\": \"boolean\",\n      \"category\": \"<string>\",\n      \"description\": \"<string>\",\n      \"isPublic\": \"<boolean>\",\n      \"updatedAt\": \"<dateTime>\"\n    }\n  ]\n}",
+              "body": "{\n  \"data\": [\n    {\n      \"key\": \"<string>\",\n      \"value\": \"<string>\",\n      \"type\": \"boolean\",\n      \"category\": \"<string>\",\n      \"description\": \"<string>\",\n      \"isPublic\": \"<boolean>\",\n      \"updatedAt\": \"<dateTime>\"\n    },\n    {\n      \"key\": \"<string>\",\n      \"value\": \"<string>\",\n      \"type\": \"json\",\n      \"category\": \"<string>\",\n      \"description\": \"<string>\",\n      \"isPublic\": \"<boolean>\",\n      \"updatedAt\": \"<dateTime>\"\n    }\n  ]\n}",
               "cookie": [],
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "c7fa49f4-2b14-4ba1-9f96-76b910bff4e1",
+              "id": "9dcad714-1380-4749-bcaf-638589cdaa96",
               "name": "Auth gerekli",
               "originalRequest": {
                 "url": {
@@ -5584,7 +5584,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "0865ec80-0d4d-4148-a586-99d691833cbd",
+              "id": "1fc75668-b499-49fd-b1ab-274875035750",
               "name": "Admin değil",
               "originalRequest": {
                 "url": {
@@ -5635,7 +5635,7 @@
           }
         },
         {
-          "id": "1950f38e-2cb4-4f00-a53e-827f82e9d429",
+          "id": "e18fc4fb-0d92-4df8-ad3c-fa6de83c9f06",
           "name": "Ayar değeri güncelle",
           "request": {
             "name": "Ayar değeri güncelle",
@@ -5708,7 +5708,7 @@
           },
           "response": [
             {
-              "id": "3853fd78-bdcc-4f8d-957b-6c859937fe7e",
+              "id": "c37baee3-156b-483b-abb8-5a207b4f19a9",
               "name": "Güncel ayar",
               "originalRequest": {
                 "url": {
@@ -5762,12 +5762,12 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"data\": {\n    \"key\": \"<string>\",\n    \"value\": \"<string>\",\n    \"type\": \"number\",\n    \"category\": \"<string>\",\n    \"description\": \"<string>\",\n    \"isPublic\": \"<boolean>\",\n    \"updatedAt\": \"<dateTime>\"\n  },\n  \"message\": \"<string>\"\n}",
+              "body": "{\n  \"data\": {\n    \"key\": \"<string>\",\n    \"value\": \"<string>\",\n    \"type\": \"json\",\n    \"category\": \"<string>\",\n    \"description\": \"<string>\",\n    \"isPublic\": \"<boolean>\",\n    \"updatedAt\": \"<dateTime>\"\n  },\n  \"message\": \"<string>\"\n}",
               "cookie": [],
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "3d3ed515-66ab-45c7-ae33-28de5a6ade0f",
+              "id": "4f341a07-4f10-4381-b774-b9bcaba21a83",
               "name": "Auth gerekli",
               "originalRequest": {
                 "url": {
@@ -5826,7 +5826,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "bbff2fba-b3a4-42b1-95b9-7d25143d788c",
+              "id": "39ae3de8-0e56-4151-b1a8-e11e200fc04b",
               "name": "Admin değil",
               "originalRequest": {
                 "url": {
@@ -5885,7 +5885,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "6c4ff1a8-36e1-4283-b33e-ec1201ebe0c5",
+              "id": "bc9ceeef-5e8d-4d0d-a603-d6672075be7e",
               "name": "Ayar bulunamadı",
               "originalRequest": {
                 "url": {
@@ -5944,7 +5944,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "b3b9f93d-7bd0-4c87-96f2-5f81a0dd8668",
+              "id": "82e1f9b1-9971-4885-b60f-53de7a57e11e",
               "name": "Validation error",
               "originalRequest": {
                 "url": {
@@ -5998,7 +5998,1566 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"message\": \"<string>\",\n  \"errors\": {\n    \"consectetur_17\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"esse_4\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  }\n}",
+              "body": "{\n  \"message\": \"<string>\",\n  \"errors\": {\n    \"adipisicing_ee\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ]
+    },
+    {
+      "name": "Address",
+      "description": "Address",
+      "item": [
+        {
+          "id": "92961576-e414-45eb-9e59-b93d8935886a",
+          "name": "Kullanıcı adres listesi",
+          "request": {
+            "name": "Kullanıcı adres listesi",
+            "description": {
+              "content": "Kullanıcının tüm aktif adresleri (soft-delete'ler hariç). Sıralama: önce default delivery, sonra default billing, en son createdAt DESC.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "identity",
+                "addresses"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "body": {},
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "access_token"
+                },
+                {
+                  "key": "value",
+                  "value": "{{apiKey}}"
+                },
+                {
+                  "key": "in",
+                  "value": "header"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "0ac3e226-45bd-46ee-8458-d67ce523d61e",
+              "name": "Adres listesi",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "identity",
+                    "addresses"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "access_token",
+                    "value": "<API Key>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"id\": \"<uuid>\",\n      \"title\": \"<string>\",\n      \"fullName\": \"<string>\",\n      \"phone\": \"<string>\",\n      \"phoneDisplay\": \"<string>\",\n      \"countryCode\": \"<string>\",\n      \"city\": \"<string>\",\n      \"district\": \"<string>\",\n      \"neighborhood\": \"<string>\",\n      \"postalCode\": \"<string>\",\n      \"addressLine\": \"<string>\",\n      \"addressLine2\": \"<string>\",\n      \"isDefaultDelivery\": \"<boolean>\",\n      \"isDefaultBilling\": \"<boolean>\",\n      \"createdAt\": \"<dateTime>\",\n      \"updatedAt\": \"<dateTime>\"\n    },\n    {\n      \"id\": \"<uuid>\",\n      \"title\": \"<string>\",\n      \"fullName\": \"<string>\",\n      \"phone\": \"<string>\",\n      \"phoneDisplay\": \"<string>\",\n      \"countryCode\": \"<string>\",\n      \"city\": \"<string>\",\n      \"district\": \"<string>\",\n      \"neighborhood\": \"<string>\",\n      \"postalCode\": \"<string>\",\n      \"addressLine\": \"<string>\",\n      \"addressLine2\": \"<string>\",\n      \"isDefaultDelivery\": \"<boolean>\",\n      \"isDefaultBilling\": \"<boolean>\",\n      \"createdAt\": \"<dateTime>\",\n      \"updatedAt\": \"<dateTime>\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "40ab63e3-ba6e-44e0-89de-2d41382c97ae",
+              "name": "Auth gerekli",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "identity",
+                    "addresses"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "access_token",
+                    "value": "<API Key>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"<string>\",\n    \"message\": \"<string>\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "5b3833cb-000d-4a62-aff5-1cc3a5acf1d8",
+          "name": "Yeni adres ekle",
+          "request": {
+            "name": "Yeni adres ekle",
+            "description": {
+              "content": "Limit: aktif 10 adres / kullanıcı. İlk adres otomatik default delivery + billing. İl/ilçe TurkeyLocationsService'e karşı validate edilir.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "identity",
+                "addresses"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"<string>\",\n  \"fullName\": \"<string>\",\n  \"phone\": \"<string>\",\n  \"city\": \"<string>\",\n  \"district\": \"<string>\",\n  \"addressLine\": \"<string>\",\n  \"neighborhood\": \"<string>\",\n  \"postalCode\": \"56710\",\n  \"addressLine2\": \"<string>\",\n  \"setAsDefaultDelivery\": false,\n  \"setAsDefaultBilling\": false\n}",
+              "options": {
+                "raw": {
+                  "headerFamily": "json",
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "access_token"
+                },
+                {
+                  "key": "value",
+                  "value": "{{apiKey}}"
+                },
+                {
+                  "key": "in",
+                  "value": "header"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "9d55f4b2-7c98-46b1-8101-caf0cd27f976",
+              "name": "Adres oluşturuldu",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "identity",
+                    "addresses"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "access_token",
+                    "value": "<API Key>"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"<string>\",\n  \"fullName\": \"<string>\",\n  \"phone\": \"<string>\",\n  \"city\": \"<string>\",\n  \"district\": \"<string>\",\n  \"addressLine\": \"<string>\",\n  \"neighborhood\": \"<string>\",\n  \"postalCode\": \"56710\",\n  \"addressLine2\": \"<string>\",\n  \"setAsDefaultDelivery\": false,\n  \"setAsDefaultBilling\": false\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"id\": \"<uuid>\",\n    \"title\": \"<string>\",\n    \"fullName\": \"<string>\",\n    \"phone\": \"<string>\",\n    \"phoneDisplay\": \"<string>\",\n    \"countryCode\": \"<string>\",\n    \"city\": \"<string>\",\n    \"district\": \"<string>\",\n    \"neighborhood\": \"<string>\",\n    \"postalCode\": \"<string>\",\n    \"addressLine\": \"<string>\",\n    \"addressLine2\": \"<string>\",\n    \"isDefaultDelivery\": \"<boolean>\",\n    \"isDefaultBilling\": \"<boolean>\",\n    \"createdAt\": \"<dateTime>\",\n    \"updatedAt\": \"<dateTime>\"\n  },\n  \"message\": \"<string>\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "3bc71233-ef72-4490-b6d4-34931a506b7b",
+              "name": "Auth gerekli",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "identity",
+                    "addresses"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "access_token",
+                    "value": "<API Key>"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"<string>\",\n  \"fullName\": \"<string>\",\n  \"phone\": \"<string>\",\n  \"city\": \"<string>\",\n  \"district\": \"<string>\",\n  \"addressLine\": \"<string>\",\n  \"neighborhood\": \"<string>\",\n  \"postalCode\": \"56710\",\n  \"addressLine2\": \"<string>\",\n  \"setAsDefaultDelivery\": false,\n  \"setAsDefaultBilling\": false\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"<string>\",\n    \"message\": \"<string>\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "1d2c8223-1663-4e88-9877-95e5c41a0c61",
+              "name": "Adres limiti dolu",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "identity",
+                    "addresses"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "access_token",
+                    "value": "<API Key>"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"<string>\",\n  \"fullName\": \"<string>\",\n  \"phone\": \"<string>\",\n  \"city\": \"<string>\",\n  \"district\": \"<string>\",\n  \"addressLine\": \"<string>\",\n  \"neighborhood\": \"<string>\",\n  \"postalCode\": \"56710\",\n  \"addressLine2\": \"<string>\",\n  \"setAsDefaultDelivery\": false,\n  \"setAsDefaultBilling\": false\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Conflict",
+              "code": 409,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"<string>\",\n    \"message\": \"<string>\",\n    \"context\": {\n      \"minim_05\": \"<string>\"\n    }\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "9d61d5ad-2ca5-4402-bc2b-8e24e39843d8",
+              "name": "Validation veya il/ilçe hatası",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "identity",
+                    "addresses"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "access_token",
+                    "value": "<API Key>"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"<string>\",\n  \"fullName\": \"<string>\",\n  \"phone\": \"<string>\",\n  \"city\": \"<string>\",\n  \"district\": \"<string>\",\n  \"addressLine\": \"<string>\",\n  \"neighborhood\": \"<string>\",\n  \"postalCode\": \"56710\",\n  \"addressLine2\": \"<string>\",\n  \"setAsDefaultDelivery\": false,\n  \"setAsDefaultBilling\": false\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"<string>\",\n  \"errors\": {\n    \"adipisicing_ee\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "357f30fd-da1a-418a-af5c-c6185a44fbb2",
+          "name": "Adres detay",
+          "request": {
+            "name": "Adres detay",
+            "description": {
+              "content": "IDOR-protected: başka kullanıcının adresi de 404 (anti-enumeration).",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "identity",
+                "addresses",
+                ":id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "id",
+                  "disabled": false,
+                  "description": {
+                    "content": "(Required) ",
+                    "type": "text/plain"
+                  }
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "body": {},
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "access_token"
+                },
+                {
+                  "key": "value",
+                  "value": "{{apiKey}}"
+                },
+                {
+                  "key": "in",
+                  "value": "header"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "30348bef-8fdb-4fbc-93e6-f243abe44762",
+              "name": "Adres",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "identity",
+                    "addresses",
+                    ":id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "access_token",
+                    "value": "<API Key>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"id\": \"<uuid>\",\n    \"title\": \"<string>\",\n    \"fullName\": \"<string>\",\n    \"phone\": \"<string>\",\n    \"phoneDisplay\": \"<string>\",\n    \"countryCode\": \"<string>\",\n    \"city\": \"<string>\",\n    \"district\": \"<string>\",\n    \"neighborhood\": \"<string>\",\n    \"postalCode\": \"<string>\",\n    \"addressLine\": \"<string>\",\n    \"addressLine2\": \"<string>\",\n    \"isDefaultDelivery\": \"<boolean>\",\n    \"isDefaultBilling\": \"<boolean>\",\n    \"createdAt\": \"<dateTime>\",\n    \"updatedAt\": \"<dateTime>\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "e20bfd95-0a82-433b-9173-0b377c898b27",
+              "name": "Auth gerekli",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "identity",
+                    "addresses",
+                    ":id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "access_token",
+                    "value": "<API Key>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"<string>\",\n    \"message\": \"<string>\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "ad89b8dd-7aa1-4779-857a-6c1e887bd44f",
+              "name": "Adres bulunamadı (IDOR-safe)",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "identity",
+                    "addresses",
+                    ":id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "access_token",
+                    "value": "<API Key>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"<string>\",\n    \"message\": \"<string>\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "9be2d293-b7cd-414e-bdeb-30d8343c710b",
+          "name": "Adres güncelle",
+          "request": {
+            "name": "Adres güncelle",
+            "description": {
+              "content": "IDOR-protected. Default flag'ler bu endpoint ile değişmez.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "identity",
+                "addresses",
+                ":id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "id",
+                  "disabled": false,
+                  "description": {
+                    "content": "(Required) ",
+                    "type": "text/plain"
+                  }
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "PUT",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"<string>\",\n  \"fullName\": \"<string>\",\n  \"phone\": \"<string>\",\n  \"city\": \"<string>\",\n  \"district\": \"<string>\",\n  \"addressLine\": \"<string>\",\n  \"neighborhood\": \"<string>\",\n  \"postalCode\": \"94142\",\n  \"addressLine2\": \"<string>\"\n}",
+              "options": {
+                "raw": {
+                  "headerFamily": "json",
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "access_token"
+                },
+                {
+                  "key": "value",
+                  "value": "{{apiKey}}"
+                },
+                {
+                  "key": "in",
+                  "value": "header"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "7f615cea-178c-4121-81fb-50349f8c8d07",
+              "name": "Adres güncellendi",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "identity",
+                    "addresses",
+                    ":id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "access_token",
+                    "value": "<API Key>"
+                  }
+                ],
+                "method": "PUT",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"<string>\",\n  \"fullName\": \"<string>\",\n  \"phone\": \"<string>\",\n  \"city\": \"<string>\",\n  \"district\": \"<string>\",\n  \"addressLine\": \"<string>\",\n  \"neighborhood\": \"<string>\",\n  \"postalCode\": \"94142\",\n  \"addressLine2\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"id\": \"<uuid>\",\n    \"title\": \"<string>\",\n    \"fullName\": \"<string>\",\n    \"phone\": \"<string>\",\n    \"phoneDisplay\": \"<string>\",\n    \"countryCode\": \"<string>\",\n    \"city\": \"<string>\",\n    \"district\": \"<string>\",\n    \"neighborhood\": \"<string>\",\n    \"postalCode\": \"<string>\",\n    \"addressLine\": \"<string>\",\n    \"addressLine2\": \"<string>\",\n    \"isDefaultDelivery\": \"<boolean>\",\n    \"isDefaultBilling\": \"<boolean>\",\n    \"createdAt\": \"<dateTime>\",\n    \"updatedAt\": \"<dateTime>\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "1b22be68-bf7e-44d9-975e-3d9027b8e884",
+              "name": "Adres bulunamadı",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "identity",
+                    "addresses",
+                    ":id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "access_token",
+                    "value": "<API Key>"
+                  }
+                ],
+                "method": "PUT",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"<string>\",\n  \"fullName\": \"<string>\",\n  \"phone\": \"<string>\",\n  \"city\": \"<string>\",\n  \"district\": \"<string>\",\n  \"addressLine\": \"<string>\",\n  \"neighborhood\": \"<string>\",\n  \"postalCode\": \"94142\",\n  \"addressLine2\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"<string>\",\n    \"message\": \"<string>\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "5e99d9df-0e9c-4a5e-b1f4-36fca8a2d098",
+              "name": "Validation veya il/ilçe hatası",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "identity",
+                    "addresses",
+                    ":id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "access_token",
+                    "value": "<API Key>"
+                  }
+                ],
+                "method": "PUT",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"<string>\",\n  \"fullName\": \"<string>\",\n  \"phone\": \"<string>\",\n  \"city\": \"<string>\",\n  \"district\": \"<string>\",\n  \"addressLine\": \"<string>\",\n  \"neighborhood\": \"<string>\",\n  \"postalCode\": \"94142\",\n  \"addressLine2\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"<string>\",\n  \"errors\": {\n    \"adipisicing_ee\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "536a83e6-1280-4a0a-af4b-c515f9f8c108",
+          "name": "Adres sil (soft delete)",
+          "request": {
+            "name": "Adres sil (soft delete)",
+            "description": {
+              "content": "Sipariş history snapshot'ları korunur. Silinen adres default ise en son aktif adres otomatik default'a promote olur.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "identity",
+                "addresses",
+                ":id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "id",
+                  "disabled": false,
+                  "description": {
+                    "content": "(Required) ",
+                    "type": "text/plain"
+                  }
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "DELETE",
+            "body": {},
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "access_token"
+                },
+                {
+                  "key": "value",
+                  "value": "{{apiKey}}"
+                },
+                {
+                  "key": "in",
+                  "value": "header"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "fcaf9038-8264-49af-8bfb-5e5709e61561",
+              "name": "Silindi",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "identity",
+                    "addresses",
+                    ":id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "access_token",
+                    "value": "<API Key>"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "No Content",
+              "code": 204,
+              "header": [],
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "1a30b2dd-0607-4e9b-824f-7bdf55abe5ee",
+              "name": "Adres bulunamadı",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "identity",
+                    "addresses",
+                    ":id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "access_token",
+                    "value": "<API Key>"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"<string>\",\n    \"message\": \"<string>\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "22d4969d-1776-4681-859d-d1823499f024",
+          "name": "Bu adresi varsayılan teslimat yap",
+          "request": {
+            "name": "Bu adresi varsayılan teslimat yap",
+            "description": {
+              "content": "Idempotent — zaten default ise no-op. Diğer adresin default delivery flag'i unset edilir.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "identity",
+                "addresses",
+                ":id",
+                "default-delivery"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "id",
+                  "disabled": false,
+                  "description": {
+                    "content": "(Required) ",
+                    "type": "text/plain"
+                  }
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "PATCH",
+            "body": {},
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "access_token"
+                },
+                {
+                  "key": "value",
+                  "value": "{{apiKey}}"
+                },
+                {
+                  "key": "in",
+                  "value": "header"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "8e4adc80-a823-43be-9ea5-7638d3518c34",
+              "name": "Varsayılan teslimat ayarlandı",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "identity",
+                    "addresses",
+                    ":id",
+                    "default-delivery"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "access_token",
+                    "value": "<API Key>"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"id\": \"<uuid>\",\n    \"title\": \"<string>\",\n    \"fullName\": \"<string>\",\n    \"phone\": \"<string>\",\n    \"phoneDisplay\": \"<string>\",\n    \"countryCode\": \"<string>\",\n    \"city\": \"<string>\",\n    \"district\": \"<string>\",\n    \"neighborhood\": \"<string>\",\n    \"postalCode\": \"<string>\",\n    \"addressLine\": \"<string>\",\n    \"addressLine2\": \"<string>\",\n    \"isDefaultDelivery\": \"<boolean>\",\n    \"isDefaultBilling\": \"<boolean>\",\n    \"createdAt\": \"<dateTime>\",\n    \"updatedAt\": \"<dateTime>\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "93756ca9-e57a-4c9c-8fcb-5f24ac18a705",
+              "name": "Adres bulunamadı",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "identity",
+                    "addresses",
+                    ":id",
+                    "default-delivery"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "access_token",
+                    "value": "<API Key>"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"<string>\",\n    \"message\": \"<string>\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "5604aa95-2760-42c8-a5d0-f714d6e47a94",
+          "name": "Bu adresi varsayılan fatura yap",
+          "request": {
+            "name": "Bu adresi varsayılan fatura yap",
+            "description": {
+              "content": "Idempotent — zaten default ise no-op. Diğer adresin default billing flag'i unset edilir.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "identity",
+                "addresses",
+                ":id",
+                "default-billing"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "id",
+                  "disabled": false,
+                  "description": {
+                    "content": "(Required) ",
+                    "type": "text/plain"
+                  }
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "PATCH",
+            "body": {},
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "access_token"
+                },
+                {
+                  "key": "value",
+                  "value": "{{apiKey}}"
+                },
+                {
+                  "key": "in",
+                  "value": "header"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "b1a1618f-3b29-4f81-ba2c-aa2e7d0f6583",
+              "name": "Varsayılan fatura ayarlandı",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "identity",
+                    "addresses",
+                    ":id",
+                    "default-billing"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "access_token",
+                    "value": "<API Key>"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": {\n    \"id\": \"<uuid>\",\n    \"title\": \"<string>\",\n    \"fullName\": \"<string>\",\n    \"phone\": \"<string>\",\n    \"phoneDisplay\": \"<string>\",\n    \"countryCode\": \"<string>\",\n    \"city\": \"<string>\",\n    \"district\": \"<string>\",\n    \"neighborhood\": \"<string>\",\n    \"postalCode\": \"<string>\",\n    \"addressLine\": \"<string>\",\n    \"addressLine2\": \"<string>\",\n    \"isDefaultDelivery\": \"<boolean>\",\n    \"isDefaultBilling\": \"<boolean>\",\n    \"createdAt\": \"<dateTime>\",\n    \"updatedAt\": \"<dateTime>\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "dbafe3e5-9abb-4008-a146-7d3230974e47",
+              "name": "Adres bulunamadı",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "identity",
+                    "addresses",
+                    ":id",
+                    "default-billing"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: apikey",
+                      "type": "text/plain"
+                    },
+                    "key": "access_token",
+                    "value": "<API Key>"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": {\n    \"code\": \"<string>\",\n    \"message\": \"<string>\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ]
+    },
+    {
+      "name": "Locations",
+      "description": "Locations",
+      "item": [
+        {
+          "id": "f38bdd48-560f-497c-960b-f4dd6953fd56",
+          "name": "Türkiye il listesi",
+          "request": {
+            "name": "Türkiye il listesi",
+            "description": {
+              "content": "Statik veri (TurkeyLocationsService); 81 il. Public endpoint.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "locations",
+                "cities"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "body": {},
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "4aae105a-5642-4e3d-9d5a-0d2774872b11",
+              "name": "İl listesi",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "locations",
+                    "cities"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"id\": \"<string>\",\n      \"name\": \"<string>\"\n    },\n    {\n      \"id\": \"<string>\",\n      \"name\": \"<string>\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "795b9e10-e343-498a-80bc-65e129ad1817",
+          "name": "İl ilçeleri",
+          "request": {
+            "name": "İl ilçeleri",
+            "description": {
+              "content": "Verilen ilin tüm ilçeleri. Geçersiz şehir adı 422 INVALID_CITY.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "locations",
+                "cities",
+                ":city",
+                "districts"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "city",
+                  "disabled": false,
+                  "description": {
+                    "content": "(Required) ",
+                    "type": "text/plain"
+                  }
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "body": {},
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "91fc4d2e-ca57-40b9-abd9-ed06fea432b7",
+              "name": "İlçe listesi",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "locations",
+                    "cities",
+                    ":city",
+                    "districts"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"name\": \"<string>\"\n    },\n    {\n      \"name\": \"<string>\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "da3962f2-284c-4739-8b07-0dcfbf5dd1f0",
+              "name": "Geçersiz şehir",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "locations",
+                    "cities",
+                    ":city",
+                    "districts"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"<string>\",\n  \"errors\": {\n    \"adipisicing_ee\": [\n      \"<string>\",\n      \"<string>\"\n    ]\n  }\n}",
               "cookie": [],
               "_postman_previewlanguage": "json"
             }
@@ -6019,7 +7578,7 @@
     }
   ],
   "info": {
-    "_postman_id": "12a52122-bc80-4f71-8301-ec55fcd7b432",
+    "_postman_id": "9479afda-2af2-47b4-a2de-1fc32e2c22ee",
     "name": "Dehasoft API",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "description": {
