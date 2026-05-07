@@ -297,15 +297,23 @@ Path-filter ile sadece ilgili klasör değişince tetiklenir.
 
 ## Doküman Haritası
 
+> Case incelemesi için 3 ana giriş: **KURULUM** (kur), **KULLANIM** (kullan), **TANITIM** (sistem özeti).
+
 | Dosya | İçerik |
 |-------|--------|
+| **`docs/KURULUM.md`** | **Sıfırdan kurulum — clone'dan smoke test'e (10 dk)** |
+| **`docs/KULLANIM.md`** | **Customer/Admin akış + smoke script + Kibana rehberi** |
+| **`docs/TANITIM.md`** | **Sistem mimari özet — modül, ADR, endpoint, metrik** |
 | `CLAUDE.md` | Glob patterns, hızlı kod kalıpları, sık hatalar |
-| `DECISIONS.md` | Mimari ADR'ları (15 karar) |
+| `DECISIONS.md` | Mimari ADR'ları (18 karar) |
 | `docs/PROJECT_STRUCTURE.md` | Klasör yapısı, modüller, FSD, dependency rules |
 | `docs/DATABASE_SCHEMA.md` | PostgreSQL şemaları, tablolar, indexler |
 | `docs/CODING_STANDARDS.md` | Kod template'leri (VO, Entity, Handler, Repo, Controller) |
+| `docs/API_DOCUMENTATION.md` | 34 endpoint inventory + OpenAPI strateji |
+| `docs/FRONTEND_GUIDE.md` | FSD pattern + page envanter |
 | `docs/LOGGING_SERVICE.md` | RabbitMQ + Node.js + ES pipeline detayı |
-| `docs/SECURITY.md` | 5 güvenlik tehdidi + mitigation + test checklist |
+| `docs/SECURITY.md` | Güvenlik tehditleri + mitigation + test checklist |
+| `docs/CODE_REVIEW_REPORT.md` | 10-faz code review raporu (Phase 1-10) |
 
 ---
 
