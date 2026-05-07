@@ -959,8 +959,8 @@
                 "tags": [
                     "Cart"
                 ],
-                "summary": "Kullanıcı sepeti",
-                "description": "Aktif sepeti getirir. Henüz ürün eklenmemişse boş bir sepet döner.",
+                "summary": "Sepet (user veya guest)",
+                "description": "Aktif sepeti getirir. Guest için cookie üretilir/okunur. Boşsa boş sepet döner.",
                 "operationId": "c73a01b6dfb0aa6f2f957e8fbc28beaf",
                 "responses": {
                     "200": {
@@ -977,26 +977,8 @@
                                 }
                             }
                         }
-                    },
-                    "401": {
-                        "description": "Auth gerekli",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/UnauthorizedError"
-                                }
-                            }
-                        }
                     }
-                },
-                "security": [
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "bearerAuth": []
-                    }
-                ]
+                }
             },
             "delete": {
                 "tags": [
@@ -1020,26 +1002,8 @@
                                 }
                             }
                         }
-                    },
-                    "401": {
-                        "description": "Auth gerekli",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/UnauthorizedError"
-                                }
-                            }
-                        }
                     }
-                },
-                "security": [
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "bearerAuth": []
-                    }
-                ]
+                }
             }
         },
         "/sales/cart/items": {
@@ -1047,7 +1011,7 @@
                 "tags": [
                     "Cart"
                 ],
-                "summary": "Sepete ürün ekle",
+                "summary": "Sepete ürün ekle (user veya guest)",
                 "description": "Aynı productId zaten sepetteyse quantity'leri toplar; fiyat snapshot'ı ilk ekleme anındaki kalır.",
                 "operationId": "e8b28c1fbf7be3ddd1a4272d3be87524",
                 "requestBody": {
@@ -1072,16 +1036,6 @@
                                         }
                                     },
                                     "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Auth gerekli",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/UnauthorizedError"
                                 }
                             }
                         }
@@ -1116,15 +1070,7 @@
                             }
                         }
                     }
-                },
-                "security": [
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "bearerAuth": []
-                    }
-                ]
+                }
             }
         },
         "/sales/cart/items/{itemId}": {
@@ -1161,16 +1107,6 @@
                             }
                         }
                     },
-                    "401": {
-                        "description": "Auth gerekli",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/UnauthorizedError"
-                                }
-                            }
-                        }
-                    },
                     "404": {
                         "description": "Sepet kalemi bulunamadı",
                         "content": {
@@ -1181,15 +1117,7 @@
                             }
                         }
                     }
-                },
-                "security": [
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "bearerAuth": []
-                    }
-                ]
+                }
             },
             "patch": {
                 "tags": [
@@ -1235,16 +1163,6 @@
                             }
                         }
                     },
-                    "401": {
-                        "description": "Auth gerekli",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/UnauthorizedError"
-                                }
-                            }
-                        }
-                    },
                     "404": {
                         "description": "Sepet kalemi bulunamadı (IDOR korumalı 404)",
                         "content": {
@@ -1275,15 +1193,7 @@
                             }
                         }
                     }
-                },
-                "security": [
-                    {
-                        "cookieAuth": []
-                    },
-                    {
-                        "bearerAuth": []
-                    }
-                ]
+                }
             }
         },
         "/sales/orders": {
@@ -2060,6 +1970,10 @@
                     "tokenType": {
                         "type": "string",
                         "example": "Bearer"
+                    },
+                    "cartMerged": {
+                        "description": "true ise login/register sırasında guest cart user cart ile birleştirildi (ADR-017)",
+                        "type": "boolean"
                     }
                 },
                 "type": "object"

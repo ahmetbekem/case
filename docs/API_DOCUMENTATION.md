@@ -721,15 +721,37 @@ Endpoint inventory — her birinin annotation'u olmalı. **Bu liste TASK 0.10-0.
 
 ### 8.5 Sales (Cart)
 
+ADR-017 — Cart endpoint'leri **auth-optional**: middleware stack
+`optional.jwt + guest.session`. Authenticated user için `user_id`
+attribute set edilir; guest için `guest_session_id` cookie'den okunur
+veya yeni UUID v4 üretilip `Set-Cookie: guest_cart_token=…` header'ı
+ile dönülür (httpOnly + Secure + SameSite=Strict, 30 gün TTL). Backend
+her zaman bir Cart döner — fresh user/guest için items=[].
+
 | Method | Path | Summary | Auth |
 |--------|------|---------|------|
-| GET | `/sales/cart` | Aktif sepetimi getir | Customer |
-| POST | `/sales/cart/items` | Sepete ürün ekle | Customer |
-| PATCH | `/sales/cart/items/{id}` | Quantity güncelle | Customer |
-| DELETE | `/sales/cart/items/{id}` | Sepetten çıkar | Customer |
-| DELETE | `/sales/cart` | Sepeti boşalt | Customer |
+| GET | `/sales/cart` | Aktif sepetimi getir | Optional (user OR guest cookie) |
+| POST | `/sales/cart/items` | Sepete ürün ekle | Optional (user OR guest cookie) |
+| PATCH | `/sales/cart/items/{id}` | Quantity güncelle | Optional (user OR guest cookie) |
+| DELETE | `/sales/cart/items/{id}` | Sepetten çıkar | Optional (user OR guest cookie) |
+| DELETE | `/sales/cart` | Sepeti boşalt | Optional (user OR guest cookie) |
+
+**Login/Register merge:** İstemci login/register isteğinde
+`guest_cart_token` cookie de gönderirse backend `MergeGuestCartCommand`
+tetikler (3 senaryo: no guest cart no-op; user cart yok →
+transferOwnership; ikisi de var → CartMerger.applyToUserCart, oldest
+snapshot price korunur, guest cart abandoned'a alınır). Response'ta
+`data.cartMerged: bool` döner; success akışında BFF cookie'yi expire
+eder.
+
+**Cleanup job:** `php artisan sales:clean-guest-carts` günlük 03:00
+(routes/console.php). Yalnızca status=active + expires_at<=now() guest
+cart'lar silinir; cart_items FK ON DELETE CASCADE.
 
 ### 8.6 Sales (Orders)
+
+Cart'tan farklı olarak Orders endpoint'leri **auth zorunlu** (KVKK
+denetim — guest order yok).
 
 | Method | Path | Summary | Auth |
 |--------|------|---------|------|
