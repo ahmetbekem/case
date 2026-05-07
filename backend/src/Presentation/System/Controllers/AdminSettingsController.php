@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Presentation\System\Controllers;
 
+use Application\System\Commands\ChangeBaseCurrencyCommand;
 use Application\System\Commands\UpdateSettingCommand;
 use Application\System\Queries\GetAllSettingsQuery;
+use Domain\System\ValueObjects\SettingKey;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use OpenApi\Attributes as OA;
@@ -82,12 +84,31 @@ final class AdminSettingsController extends AbstractApiController
     )]
     public function update(UpdateSettingRequest $request, string $key): JsonResponse
     {
+        $value = (string) $request->validated('value');
+
+        // ADR-016 — base_currency yalnızca raw setting update değil; tüm
+        // catalog.products fiyatlarını yeniden hesaplamayı + aktif
+        // cart'ları abandoned'a çekmeyi gerektirir. Frontend SweetAlert
+        // ile onay aldıktan sonra bu endpoint'i çağırır.
+        if ($key === SettingKey::BASE_CURRENCY) {
+            $changeCommand = new ChangeBaseCurrencyCommand(
+                userId: $this->getUserId($request),
+                correlationId: $this->getCorrelationId($request),
+                userIp: $request->ip() ?? '0.0.0.0',
+                newBaseCurrency: $value,
+            );
+            return $this->success(
+                data: $this->commandBus->dispatch($changeCommand),
+                message: 'Base currency changed; products repriced',
+            );
+        }
+
         $command = new UpdateSettingCommand(
             userId: $this->getUserId($request),
             correlationId: $this->getCorrelationId($request),
             userIp: $request->ip() ?? '0.0.0.0',
             key: $key,
-            value: (string) $request->validated('value'),
+            value: $value,
         );
         return $this->success(
             data: $this->commandBus->dispatch($command),

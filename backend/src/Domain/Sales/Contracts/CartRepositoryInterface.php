@@ -48,4 +48,14 @@ interface CartRepositoryInterface extends RepositoryInterface
      * de gider). Daily scheduled job çağırır. Silinen sayıyı döner.
      */
     public function deleteExpiredGuestCarts(): int;
+
+    /**
+     * ADR-016 — base_currency değiştiğinde tüm aktif cart'ları
+     * (user + guest) abandoned'a çeker. Mevcut snapshot fiyatlar eski
+     * currency'de; user yeni ürün eklerse mixed currency cart oluşur ve
+     * PlaceOrder reddeder. Abandoned'a çekerek user yeni cart yaratır
+     * (yeni base'de fiyatlarla). cart_items dokunulmaz (analytics).
+     * Order'lara dokunulmaz (historical snapshot).
+     */
+    public function abandonAllActive(): int;
 }

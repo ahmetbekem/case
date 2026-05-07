@@ -8,6 +8,8 @@ use Domain\Catalog\Contracts\ProductRepositoryInterface;
 use Domain\Catalog\Entities\Product;
 use Domain\Catalog\ValueObjects\ProductId;
 use Domain\Shared\Contracts\ValueObjectInterface;
+use Domain\Shared\ValueObjects\Currency;
+use Illuminate\Support\Facades\DB;
 use Infrastructure\Catalog\Mappers\ProductMapper;
 use Infrastructure\Catalog\Models\ProductModel;
 use Infrastructure\Shared\Abstracts\AbstractEloquentRepository;
@@ -85,6 +87,23 @@ final class EloquentProductRepository extends AbstractEloquentRepository impleme
             'deleted_at' => now(),
             'updated_at' => now(),
         ]);
+    }
+
+    public function repriceAll(Currency $from, Currency $to, float $rate): int
+    {
+        if ($rate <= 0) {
+            throw new \InvalidArgumentException('Reprice rate must be positive');
+        }
+        // ROUND ile 2 decimal — chk_products_price (>= 0) ve hassasiyet
+        // korunur. CHECK constraint kur sıfıra yakınsa patlayabilir;
+        // caller stale rate'i çağırmadan önce eler.
+        return DB::table('catalog.products')
+            ->where('currency', $from->value)
+            ->update([
+                'price' => DB::raw('ROUND(price * ' . $rate . '::numeric, 2)'),
+                'currency' => $to->value,
+                'updated_at' => now(),
+            ]);
     }
 
     /**

@@ -135,6 +135,18 @@ final class EloquentCartRepository extends AbstractEloquentRepository implements
             ->delete();
     }
 
+    public function abandonAllActive(): int
+    {
+        // Bulk UPDATE — aggregate'leri tek tek hidrate etmeyiz.
+        // cart_items dokunulmaz (snapshot analytics için kalsın).
+        return CartModel::query()
+            ->where('status', Cart::STATUS_ACTIVE)
+            ->update([
+                'status' => Cart::STATUS_ABANDONED,
+                'updated_at' => new \DateTimeImmutable(),
+            ]);
+    }
+
     private function hydrate(CartModel $cartModel): Cart
     {
         $itemModels = CartItemModel::query()

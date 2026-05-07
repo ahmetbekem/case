@@ -34,4 +34,16 @@ interface ProductRepositoryInterface extends RepositoryInterface
     public function save(Product $product): void;
 
     public function softDelete(ProductId $id): void;
+
+    /**
+     * ADR-016 — Tek SQL UPDATE ile, currency=$from olan tüm ürünleri
+     * yeni base'e çevirir: price *= $rate, currency = $to. Etkilenen
+     * satır sayısını döner. Admin base_currency değişikliği için.
+     *
+     * Domain entity yüklenmez (binlerce ürün için verimsiz olurdu);
+     * bulk SQL kullanır. Caller (handler) bunu transaction içinde
+     * çağırmalı ve CHECK constraint hatasını açıklayıcı domain
+     * exception'a çevirmeli.
+     */
+    public function repriceAll(\Domain\Shared\ValueObjects\Currency $from, \Domain\Shared\ValueObjects\Currency $to, float $rate): int;
 }

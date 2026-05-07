@@ -94,19 +94,22 @@ describe('GET /admin/system/settings', function () {
 
 describe('PATCH /admin/system/settings/{key}', function () {
     it('updates an existing setting + audit', function () {
-        seedSetting('base_currency', 'TRY', isPublic: true);
+        // ADR-016 — base_currency artık ChangeBaseCurrencyHandler'a
+        // yönlendiriliyor; jenerik update testi non-base_currency key
+        // ile yapılır. Base currency akışı CurrencyChangeTest'te.
+        seedSetting('site_name', 'Eski Site', isPublic: true);
         $admin = seedUserForSettings(role: 'admin');
         $token = loginAndGetToken($admin);
 
         $response = test()->withHeader('Authorization', 'Bearer ' . $token)
-            ->patchJson('/api/v1/admin/system/settings/base_currency', ['value' => 'USD'])
+            ->patchJson('/api/v1/admin/system/settings/site_name', ['value' => 'Yeni Site'])
             ->assertOk();
 
-        expect($response->json('data.value'))->toBe('USD')
+        expect($response->json('data.value'))->toBe('Yeni Site')
             ->and($response->json('message'))->toBe('Setting updated');
 
-        $row = SettingModel::query()->where('key', 'base_currency')->first();
-        expect($row->value)->toBe('USD');
+        $row = SettingModel::query()->where('key', 'site_name')->first();
+        expect($row->value)->toBe('Yeni Site');
     });
 
     it('returns 404 for unknown key', function () {
@@ -120,12 +123,12 @@ describe('PATCH /admin/system/settings/{key}', function () {
     });
 
     it('rejects empty value', function () {
-        seedSetting('base_currency', 'TRY', isPublic: true);
+        seedSetting('site_name', 'X', isPublic: true);
         $admin = seedUserForSettings(role: 'admin');
         $token = loginAndGetToken($admin);
 
         test()->withHeader('Authorization', 'Bearer ' . $token)
-            ->patchJson('/api/v1/admin/system/settings/base_currency', ['value' => ''])
+            ->patchJson('/api/v1/admin/system/settings/site_name', ['value' => ''])
             ->assertStatus(422);
     });
 });

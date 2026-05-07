@@ -56,7 +56,9 @@ use Application\Shared\Bus\CommandBus;
 use Application\Shared\Bus\QueryBus;
 use Application\Shared\Contracts\CommandBusInterface;
 use Application\Shared\Contracts\QueryBusInterface;
+use Application\System\Commands\ChangeBaseCurrencyCommand;
 use Application\System\Commands\UpdateSettingCommand;
+use Application\System\Handlers\Commands\ChangeBaseCurrencyHandler;
 use Application\System\Handlers\Commands\UpdateSettingHandler;
 use Application\System\Handlers\Queries\GetAllSettingsHandler;
 use Application\System\Handlers\Queries\GetSettingHandler;
@@ -94,6 +96,7 @@ final class BusServiceProvider extends ServiceProvider
         CancelOrderCommand::class              => CancelOrderHandler::class,
 
         UpdateSettingCommand::class            => UpdateSettingHandler::class,
+        ChangeBaseCurrencyCommand::class       => ChangeBaseCurrencyHandler::class,
     ];
 
     /**
