@@ -15,11 +15,19 @@ Route::prefix('sales')->group(function () {
     // attribute'u set eder. Sıralama önemli: önce optional.jwt ki
     // GuestSessionMiddleware login-li request'te cookie üretmesin.
     Route::middleware(['optional.jwt', 'guest.session'])->group(function () {
-        Route::get('/cart',                       [CartController::class, 'show']);
-        Route::delete('/cart',                    [CartController::class, 'clear']);
-        Route::post('/cart/items',                [CartController::class, 'addItem']);
-        Route::patch('/cart/items/{itemId}',      [CartController::class, 'updateItem']);
-        Route::delete('/cart/items/{itemId}',     [CartController::class, 'removeItem']);
+        // GET — read-heavy traffic, api-read throttle (200/dakika)
+        Route::get('/cart',                       [CartController::class, 'show'])
+            ->middleware('throttle:api-read');
+
+        // Cart write — Code Review v2 KRİTİK fix: 30/dakika per
+        // user_id|guest_cookie|IP. Bot DB flood + concurrency abuse'a
+        // karşı koruma. ADR-017 §12.3 SECURITY notu hayata geçti.
+        Route::middleware('throttle:cart-write')->group(function () {
+            Route::delete('/cart',                    [CartController::class, 'clear']);
+            Route::post('/cart/items',                [CartController::class, 'addItem']);
+            Route::patch('/cart/items/{itemId}',      [CartController::class, 'updateItem']);
+            Route::delete('/cart/items/{itemId}',     [CartController::class, 'removeItem']);
+        });
     });
 
     // ─── Orders ───────────────────────────────────────────────────

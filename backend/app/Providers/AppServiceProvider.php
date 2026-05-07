@@ -87,5 +87,23 @@ final class AppServiceProvider extends ServiceProvider
             $userId = (string) ($request->attributes->get('user_id') ?? $request->ip());
             return [Limit::perMinutes(60, 10)->by($userId)];
         });
+
+        // ADR-017 — cart write spam guard. Code Review v2 tespit etti:
+        // 60 ardışık POST /sales/cart/items 200/404 döndü, 429 hiç fire
+        // etmedi → bot tek session'da DB flood mümkündü. Anahtar
+        // önceliği: user_id (auth) > guest_cart_token cookie > IP
+        // (defense-in-depth: bir saldırgan yeni cookie üretmeye çalışsa
+        // bile IP fallback yakalar).
+        RateLimiter::for('cart-write', function (Request $request) {
+            if ($this->app->environment('testing')) {
+                return Limit::perMinute(1000)->by('test');
+            }
+            $key = (string) (
+                $request->attributes->get('user_id')
+                ?? $request->cookie('guest_cart_token')
+                ?? $request->ip()
+            );
+            return [Limit::perMinute(30)->by('cart-write:' . $key)];
+        });
     }
 }
