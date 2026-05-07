@@ -9,6 +9,7 @@ use Domain\Catalog\Contracts\ProductRepositoryInterface;
 use Domain\Currency\Contracts\ExchangeRateProviderInterface;
 use Domain\Currency\Contracts\ExchangeRateRepositoryInterface;
 use Domain\Currency\Services\CurrencyConverter;
+use Domain\Identity\Contracts\AddressRepositoryInterface;
 use Domain\Identity\Contracts\JwtBlacklistInterface;
 use Domain\Identity\Contracts\JwtIssuerInterface;
 use Domain\Identity\Contracts\PasswordHasherInterface;
@@ -22,6 +23,7 @@ use Illuminate\Support\ServiceProvider;
 use Infrastructure\Catalog\Repositories\EloquentProductRepository;
 use Infrastructure\Currency\Providers\FrankfurterApiProvider;
 use Infrastructure\Currency\Repositories\EloquentExchangeRateRepository;
+use Infrastructure\Identity\Repositories\EloquentAddressRepository;
 use Infrastructure\Identity\Repositories\EloquentRefreshTokenRepository;
 use Infrastructure\Identity\Repositories\EloquentUserRepository;
 use Infrastructure\Identity\Services\BcryptPasswordHasher;
@@ -49,6 +51,7 @@ final class RepositoryServiceProvider extends ServiceProvider
     public array $bindings = [
         UserRepositoryInterface::class         => EloquentUserRepository::class,
         RefreshTokenRepositoryInterface::class => EloquentRefreshTokenRepository::class,
+        AddressRepositoryInterface::class      => EloquentAddressRepository::class,
 
         ProductRepositoryInterface::class      => EloquentProductRepository::class,
 
