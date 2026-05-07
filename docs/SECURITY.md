@@ -21,6 +21,7 @@
 9. [Secrets Management](#9-secrets-management)
 10. [Security Testing Checklist](#10-security-testing-checklist)
 11. [Incident Response](#11-incident-response)
+12. [Guest Cart Security (ADR-017)](#12-guest-cart-security-adr-017)
 
 ---
 
@@ -1398,6 +1399,86 @@ $this->auditLogger->log(new AuditEvent(
     ],
 ));
 ```
+
+---
+
+## 12. GUEST CART SECURITY (ADR-017)
+
+Login zorunluluğunu kaldırıp guest sepeti destekleyince yeni
+saldırı/kötüye-kullanım yüzeyleri oluştu. Bu bölüm alınan önlemleri ve
+açık kalan riskleri belgeler.
+
+### 12.1 Session Token Generation
+
+`guest_cart_token` cookie değeri **UUID v4** — `Ramsey\Uuid\Uuid::uuid4()`
+kriptografik random kullanır. Tahmin edilemez ve enumerasyona kapalı.
+`GuestSessionId` Value Object'i format doğrulamasını
+`AbstractUuidValueObject`'ten miras alır; bozuk değerler
+`GuestSessionMiddleware`'de regex filter ile düşürülür (yeni session
+üretilir).
+
+### 12.2 Cookie Flags
+
+`GuestSessionMiddleware` Set-Cookie header'ını şu flag'lerle yazar:
+
+| Flag | Değer | Neden |
+|------|-------|-------|
+| `HttpOnly` | true | XSS koruması — JS okuyamaz |
+| `Secure` | `app()->environment() !== 'testing'` | Production'da HTTPS-only; test ortamı HTTP olduğundan istisna |
+| `SameSite` | Strict | CSRF koruması — cross-site request'lerde gönderilmez |
+| `Path` | `/` | Tüm endpoint'ler erişebilsin (BFF mediation'da gerekli) |
+| `Max-Age` | 30 gün | DB `expires_at` ile aynı; cleanup job ile uyumlu |
+
+BFF (`frontend/src/app/api/_lib/guest-cart-cookie.ts`) cookie'yi
+browser'a Next domain'inde set ederken aynı flag'leri uygular —
+`secure` `process.env.NODE_ENV === 'production'`.
+
+### 12.3 Rate Limiting
+
+Guest cart endpoint'leri auth gerektirmediğinden bot/spam riskine
+açıktır. Mevcut throttle profilleri yetersiz olabilir; **TODO**:
+
+- `POST /sales/cart/items`: 30/dakika per IP profili eklenmeli
+- `GET /sales/cart`: 60/dakika per IP
+
+Şu an global `api` throttle'a güveniyor — incident sonrası kart
+endpoint-spesifik profil eklenmeli.
+
+### 12.4 CSRF Protection
+
+`CsrfOriginMiddleware` halen aktif (POST/PATCH/DELETE'te
+Origin/Referer header eşleşmesi). SameSite=Strict cookie ek koruma
+katmanı; cross-site form post'ları cookie alamaz.
+
+### 12.5 Cleanup & Storage Bloat
+
+Süresi geçmiş guest cart'lar günlük `sales:clean-guest-carts` ile
+silinir (routes/console.php → 03:00 daily, withoutOverlapping +
+onOneServer). cart_items FK ON DELETE CASCADE ile beraber gider.
+Yalnızca `status=active` + `expires_at<=now()` satırlar silinir;
+abandoned/converted cart'lar analytics için korunur. Bot saldırısı
+sırasında storage şişerse cleanup window'u 1 günden 1 saate çekilebilir
+(schedule değişikliği).
+
+### 12.6 Cart Hijack Vektörü
+
+Guest cookie ele geçirilirse saldırgan o sepet üzerinde işlem
+yapabilir. Etkisi sınırlı:
+- Sipariş veremez (PlaceOrder zorunlu auth)
+- Login sonrası merge tetiklendiğinde hijack edilen sepet user'ın
+  cart'ına eklenir (saldırgan sepete kötü ürün koyup user'ı login'e
+  ittirebilir → user farkında olmadan o ürünleri sipariş edebilir)
+- **Mitigation**: SameSite=Strict + HttpOnly + Secure → cookie sızması
+  zor; merge sonrası UI banner ("Misafir sepetiniz birleştirildi")
+  user'ı uyarır
+
+### 12.7 KVKK / Privacy Perspektifi
+
+Guest cart `guest_session_id` UUID'si **kişisel veri değil** (anonim,
+kendi başına bir kişiyi tanımlamaz). Login sonrası `user_id`'ye
+bağlandığı andan itibaren KVKK kapsamına girer; merge audit event
+(`sales.cart_merged_from_guest`) kaydı bu sınır geçişini belgeler.
+Cleanup job 30 gün retention ile veri minimizasyonu prensibine uyar.
 
 ---
 
