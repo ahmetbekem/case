@@ -61,6 +61,12 @@ export function Header() {
               >
                 Siparişler
               </Link>
+              <Link
+                href="/profile/addresses"
+                className="rounded-md px-2 py-1 text-sm text-slate-700 hover:bg-slate-100"
+              >
+                Adreslerim
+              </Link>
               {user.role === 'admin' && <AdminMenu />}
               <Button
                 variant="ghost"

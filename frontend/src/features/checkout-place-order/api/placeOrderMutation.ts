@@ -9,6 +9,10 @@ import type { ApiResponse } from '@/shared/api/types';
 
 interface PlaceOrderPayload {
   displayCurrency: 'TRY' | 'USD' | 'EUR';
+  /** ADR-018 — Zorunlu, IDOR-safe (başka kullanıcının ID'si 404). */
+  deliveryAddressId: string;
+  /** Null verilirse backend delivery ile aynı kabul eder. */
+  billingAddressId?: string | null;
   notes?: string;
 }
 
