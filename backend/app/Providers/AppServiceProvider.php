@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use Domain\Identity\Services\TurkeyLocationsService;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
@@ -13,7 +14,13 @@ final class AppServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        //
+        // ADR-018 — TR il/ilçe statik veri singleton; her constructor
+        // çağrısında JSON parse maliyeti olmasın.
+        $this->app->singleton(TurkeyLocationsService::class, function () {
+            return new TurkeyLocationsService(
+                resource_path('data/turkey-locations.json'),
+            );
+        });
     }
 
     public function boot(): void
