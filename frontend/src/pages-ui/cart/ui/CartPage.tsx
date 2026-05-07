@@ -3,6 +3,7 @@
 import { useMutation, useQueries, useQueryClient } from '@tanstack/react-query';
 import { Trash2 } from 'lucide-react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 
 import { CART_QUERY_KEY, useCart } from '@/entities/cart';
 import {
@@ -28,6 +29,11 @@ export function CartPage() {
   const qc = useQueryClient();
   const invalidateCart = () =>
     qc.invalidateQueries({ queryKey: CART_QUERY_KEY });
+
+  // ADR-017 — login sonrası loginMutation ?merged=1 ekleyerek redirect
+  // ediyor. Banner'ı bir kez göster (refresh/navigate sonrası kaybolur).
+  const searchParams = useSearchParams();
+  const showMergedBanner = searchParams.get('merged') === '1';
 
   const update = useMutation({
     mutationFn: async ({
@@ -72,15 +78,8 @@ export function CartPage() {
     );
   }
 
-  if (cart === null || cart === undefined) {
-    return (
-      <div className="mx-auto max-w-4xl space-y-4 px-4 py-12 text-center">
-        <p className="text-lg font-medium text-slate-900">Sepetinizi görmek için giriş yapın</p>
-        <Link href="/login">
-          <Button>Giriş Yap</Button>
-        </Link>
-      </div>
-    );
+  if (cart === undefined) {
+    return null;
   }
 
   if (cart.items.length === 0) {
@@ -104,6 +103,12 @@ export function CartPage() {
   return (
     <div className="mx-auto max-w-4xl space-y-6 px-4 py-8">
       <h1 className="text-2xl font-bold tracking-tight text-slate-900">Sepetim</h1>
+
+      {showMergedBanner && (
+        <p className="rounded-md border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-800">
+          Misafir sepetiniz hesabınızla birleştirildi.
+        </p>
+      )}
 
       <Card>
         <CardContent className="divide-y divide-slate-200 p-0">
@@ -217,13 +222,26 @@ function CartTotals({
             <span>Toplam:</span>
             <CartGrandTotal buckets={buckets} target={target} />
           </div>
-          <Link
-            href="/checkout"
-            className={!cart.isUniformCurrency ? 'pointer-events-none' : ''}
-            aria-disabled={!cart.isUniformCurrency}
-          >
-            <Button disabled={!cart.isUniformCurrency}>Ödemeye Geç</Button>
-          </Link>
+          {/*
+            ADR-017 — Guest sepetinden checkout zorunlu auth: Sipariş
+            Ver butonu /login?returnUrl=/checkout'a yönlendirir; backend
+            login sonrası MergeGuestCartCommand ile sepeti aktarır.
+          */}
+          {cart.isGuest ? (
+            <Link href="/login?returnUrl=/checkout">
+              <Button disabled={!cart.isUniformCurrency}>
+                Giriş Yap ve Sipariş Ver
+              </Button>
+            </Link>
+          ) : (
+            <Link
+              href="/checkout"
+              className={!cart.isUniformCurrency ? 'pointer-events-none' : ''}
+              aria-disabled={!cart.isUniformCurrency}
+            >
+              <Button disabled={!cart.isUniformCurrency}>Ödemeye Geç</Button>
+            </Link>
+          )}
         </div>
       </div>
     </div>

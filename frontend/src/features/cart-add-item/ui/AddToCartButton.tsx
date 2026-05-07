@@ -1,8 +1,5 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
-
-import { useCurrentUser } from '@/entities/user';
 import { ClientApiError } from '@/shared/api/client';
 import { Button } from '@/shared/ui';
 
@@ -15,30 +12,25 @@ interface AddToCartButtonProps {
   className?: string;
 }
 
+/**
+ * ADR-017 — auth check yok. Backend authenticated user için user cart'a,
+ * guest için cookie session'lı guest cart'a ekler. Login akışı mağaza
+ * checkout'unda devreye giriyor.
+ */
 export function AddToCartButton({
   productId,
   quantity = 1,
   disabled = false,
   className,
 }: AddToCartButtonProps) {
-  const router = useRouter();
-  const { data: user } = useCurrentUser();
   const mutation = useAddItemMutation();
-
-  function onClick() {
-    if (user === null || user === undefined) {
-      router.push('/login');
-      return;
-    }
-    mutation.mutate({ productId, quantity });
-  }
 
   const isError = mutation.error instanceof ClientApiError;
 
   return (
     <div className={className}>
       <Button
-        onClick={onClick}
+        onClick={() => mutation.mutate({ productId, quantity })}
         disabled={disabled || mutation.isPending}
         className="w-full"
       >

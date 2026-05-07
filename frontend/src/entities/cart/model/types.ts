@@ -17,7 +17,12 @@ export type CartStatus = 'active' | 'converted' | 'abandoned';
 
 export interface Cart {
   id: string;
-  userId: string;
+  /** ADR-017 — guest cart için null */
+  userId: string | null;
+  /** ADR-017 — yalnızca guest cart için doludur */
+  guestSessionId: string | null;
+  /** ADR-017 — guestSessionId !== null kısa yolu */
+  isGuest: boolean;
   status: CartStatus;
   convertedToOrderId: string | null;
   items: CartItem[];

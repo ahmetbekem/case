@@ -4,6 +4,7 @@ import { backendFetch, BackendError } from '@/shared/api/server-fetch';
 
 import { readAccessToken } from '../_lib/cookies';
 import { correlationIdFrom } from '../_lib/errors';
+import { forwardGuestCookie, forwardGuestSetCookie } from '../_lib/guest-cart-cookie';
 import { tryRefresh } from '../_lib/refresh';
 
 /**
@@ -61,6 +62,7 @@ async function callBackend(
   headers: Record<string, string>,
   bearer: string | undefined,
   correlationId: string | undefined,
+  cookie: string | undefined,
 ): Promise<Response> {
   // backendFetch JSON.stringify's body, but we already have a raw JSON
   // string from the browser — parse it back so the helper produces an
@@ -73,6 +75,7 @@ async function callBackend(
     body: parsedBody,
     bearer,
     correlationId,
+    cookie,
   });
 }
 
@@ -92,13 +95,15 @@ async function proxy(method: string, request: NextRequest, pathSegments: string[
   const fullPath = `${path}${request.nextUrl.search}`;
   const headers = buildForwardHeaders(request);
   const correlationId = correlationIdFrom(request.headers);
+  // ADR-017 — guest_cart_token cookie BFF-mediated.
+  const guestCookie = forwardGuestCookie(request);
 
   const rawBody = await readBody(request, method);
   let access = await readAccessToken();
 
   let response: Response;
   try {
-    response = await callBackend(fullPath, method, rawBody, headers, access, correlationId);
+    response = await callBackend(fullPath, method, rawBody, headers, access, correlationId, guestCookie);
   } catch (error) {
     return errorToProxyResponse(error);
   }
@@ -110,7 +115,7 @@ async function proxy(method: string, request: NextRequest, pathSegments: string[
     if (refreshed.ok) {
       access = refreshed.accessToken;
       try {
-        response = await callBackend(fullPath, method, rawBody, headers, access, correlationId);
+        response = await callBackend(fullPath, method, rawBody, headers, access, correlationId, guestCookie);
       } catch (error) {
         return errorToProxyResponse(error);
       }
@@ -132,11 +137,18 @@ async function forwardResponse(response: Response): Promise<NextResponse> {
   // sonrası veya hard refresh sonrası eski payload kalmasın.
   responseHeaders.set('cache-control', 'no-store, max-age=0');
 
-  return new NextResponse(body === '' ? null : body, {
+  const next = new NextResponse(body === '' ? null : body, {
     status: response.status,
     statusText: response.statusText,
     headers: responseHeaders,
   });
+
+  // Laravel'in Set-Cookie: guest_cart_token=... header'ını browser'a
+  // taşı (ADR-017). Diğer Set-Cookie'leri kasten yutuyoruz — auth
+  // cookie'leri özel route handler'larda set ediliyor.
+  forwardGuestSetCookie(response, next);
+
+  return next;
 }
 
 function errorToProxyResponse(error: unknown): NextResponse {

@@ -1,5 +1,7 @@
 'use client';
 
+import { useSearchParams } from 'next/navigation';
+
 import { ClientApiError } from '@/shared/api/client';
 import {
   Button,
@@ -16,9 +18,17 @@ import {
 import { useLoginMutation } from '../api/loginMutation';
 import { useLoginForm } from '../model/useLoginForm';
 
+/**
+ * ADR-017 — Guest cart "Sipariş Ver" akışı /login?returnUrl=/checkout'a
+ * yönlendirir. Login başarılı olunca returnUrl'e döneriz; cartMerged
+ * true ise URL'e ?merged=1 eklenir (CartPage banner gösterir).
+ */
 export function LoginForm() {
+  const searchParams = useSearchParams();
+  const returnUrl = sanitizeReturnUrl(searchParams.get('returnUrl'));
+
   const form = useLoginForm();
-  const mutation = useLoginMutation();
+  const mutation = useLoginMutation(returnUrl);
 
   const serverError =
     mutation.error instanceof ClientApiError ? mutation.error.message : null;
@@ -82,4 +92,14 @@ export function LoginForm() {
       </form>
     </Card>
   );
+}
+
+/**
+ * Open-redirect guard — yalnızca aynı origin'deki path'lere izin ver.
+ * Absolute URL veya protokol içeren değer reddedilir.
+ */
+function sanitizeReturnUrl(value: string | null): string {
+  if (value === null || value === '') return '/products';
+  if (!value.startsWith('/') || value.startsWith('//')) return '/products';
+  return value;
 }

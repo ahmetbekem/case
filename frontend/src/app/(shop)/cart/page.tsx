@@ -1,3 +1,5 @@
+import { Suspense } from 'react';
+
 import { CartPage } from '@/pages-ui/cart';
 
 export const metadata = {
@@ -5,5 +7,11 @@ export const metadata = {
 };
 
 export default function Page() {
-  return <CartPage />;
+  // CartPage useSearchParams (?merged=1 banner) kullanıyor; static
+  // prerender için Suspense şart.
+  return (
+    <Suspense fallback={null}>
+      <CartPage />
+    </Suspense>
+  );
 }

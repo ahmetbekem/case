@@ -20,13 +20,19 @@ export interface BackendFetchOptions extends Omit<RequestInit, 'body'> {
   /** Forward an end-user JWT — usually pulled from the access cookie by
    *  the BFF route handler (TASK 0.15). */
   bearer?: string;
+  /** ADR-017 — guest cart cookie mediation. Browser ↔ BFF ↔ Laravel
+   *  cross-origin olduğundan cookie jar paylaşılmıyor; BFF her iki
+   *  yönde de manuel forward etmeli. Bu alana iletilen header
+   *  (`name=value; name2=value2`) Laravel'e Cookie header olarak
+   *  geçer. */
+  cookie?: string;
 }
 
 export async function backendFetch(
   path: string,
   options: BackendFetchOptions = {},
 ): Promise<Response> {
-  const { body, correlationId, bearer, headers, ...rest } = options;
+  const { body, correlationId, bearer, cookie, headers, ...rest } = options;
 
   const requestHeaders = new Headers(headers);
   requestHeaders.set('X-Proxy-Secret', serverEnv.backendProxySecret());
@@ -41,6 +47,9 @@ export async function backendFetch(
   }
   if (bearer !== undefined) {
     requestHeaders.set('Authorization', `Bearer ${bearer}`);
+  }
+  if (cookie !== undefined && cookie !== '') {
+    requestHeaders.set('Cookie', cookie);
   }
 
   const url = `${serverEnv.laravelApiUrl().replace(/\/$/, '')}${path.startsWith('/') ? path : `/${path}`}`;
