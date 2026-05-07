@@ -5,4 +5,9 @@ export {
   usePublicSettings,
   type SystemSetting,
 } from './api/listSettings';
-export { useUpdateSettingMutation } from './api/updateSetting';
+export {
+  useUpdateSettingMutation,
+  type SettingUpdateResponse,
+  type SettingUpdateResponseRegular,
+  type SettingUpdateResponseBaseCurrency,
+} from './api/updateSetting';

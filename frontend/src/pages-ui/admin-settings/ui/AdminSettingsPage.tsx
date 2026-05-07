@@ -6,10 +6,12 @@ import { useState } from 'react';
 import {
   useAdminSettings,
   useUpdateSettingMutation,
+  type SettingUpdateResponse,
   type SystemSetting,
 } from '@/entities/system';
 import { useCurrentUser } from '@/entities/user';
 import { ClientApiError } from '@/shared/api/client';
+import { confirmDialog, errorAlert, successAlert } from '@/shared/lib/alert';
 import {
   Button,
   Card,
@@ -21,14 +23,15 @@ import {
   Label,
 } from '@/shared/ui';
 
+const BASE_CURRENCY_KEY = 'base_currency';
+
 /**
  * Sistem ayarlarını listeler + admin tek tek günceller. Yeni ayar
  * yaratma yok — seeder ile sabit set; admin yalnızca value'ları
  * değiştirir.
  *
- * UI: her ayar kart'ı, kategoriye göre gruplanmış. Inline edit (form
- * submission ile single mutation), no-op-on-same-value backend
- * tarafında zaten korunmuş (Setting::changeValue).
+ * ADR-016 — base_currency özel: SweetAlert ile onay + handler
+ * tarafında ürün repriceall + aktif cart abandon.
  */
 export function AdminSettingsPage() {
   const { data: user, isLoading: userLoading } = useCurrentUser();
@@ -64,6 +67,49 @@ export function AdminSettingsPage() {
     return acc;
   }, {});
 
+  async function handleSave(setting: SystemSetting, newValue: string): Promise<SettingUpdateResponse> {
+    if (setting.key === BASE_CURRENCY_KEY && newValue !== setting.value) {
+      const ok = await confirmDialog({
+        title: 'Base currency değiştirilecek',
+        html:
+          `<p>Sistem ana para birimi <strong>${escapeHtml(setting.value)}</strong> ` +
+          `→ <strong>${escapeHtml(newValue)}</strong> olarak değişecek.</p>` +
+          '<p class="swal2-text-block" style="margin-top:0.75rem">' +
+          '<strong>Tüm ürünlerin fiyatları</strong> güncel kura göre yeniden ' +
+          'hesaplanacak ve <strong>aktif sepetler</strong> sıfırlanacak. ' +
+          'Bu işlem geri alınamaz.' +
+          '</p>',
+        confirmButtonText: 'Evet, fiyatları güncelle',
+        cancelButtonText: 'Vazgeç',
+        icon: 'warning',
+      });
+      if (!ok) {
+        throw new Error('CANCELLED'); // SettingRow caller'ı yutar
+      }
+    }
+
+    const response = await update.mutateAsync({ key: setting.key, value: newValue });
+
+    if (response.kind === 'base_currency') {
+      await successAlert({
+        title: 'Base currency güncellendi',
+        html:
+          `<p><strong>${response.data.fromCurrency}</strong> → ` +
+          `<strong>${response.data.toCurrency}</strong> ` +
+          `(kur: ${response.data.rate.toFixed(6)}, tarih: ${response.data.rateDate})</p>` +
+          `<p style="margin-top:0.5rem">Güncellenen ürün: <strong>${response.data.productsUpdated}</strong>` +
+          ` · Aktif sepet kapatıldı: <strong>${response.data.cartsAbandoned}</strong></p>`,
+      });
+    } else {
+      await successAlert({
+        title: 'Ayar güncellendi',
+        text: `${response.data.key} = ${response.data.value}`,
+      });
+    }
+
+    return response;
+  }
+
   return (
     <div className="mx-auto max-w-4xl space-y-8 px-4 py-8">
       <header>
@@ -87,7 +133,7 @@ export function AdminSettingsPage() {
               <SettingRow
                 key={setting.key}
                 setting={setting}
-                onSave={(value) => update.mutateAsync({ key: setting.key, value })}
+                onSave={(value) => handleSave(setting, value)}
                 isPending={update.isPending}
               />
             ))}
@@ -129,7 +175,13 @@ function SettingRow({
       await onSave(value);
       setEditing(false);
     } catch (err) {
-      setError(err instanceof ClientApiError ? err.message : 'Beklenmeyen hata');
+      // SweetAlert "vazgeç" CANCELLED throw eder — sessizce ignore
+      if (err instanceof Error && err.message === 'CANCELLED') {
+        return;
+      }
+      const message = err instanceof ClientApiError ? err.message : 'Beklenmeyen hata';
+      setError(message);
+      void errorAlert({ title: 'İşlem başarısız', text: message });
     }
   }
 
@@ -199,4 +251,18 @@ function SettingRow({
       </CardContent>
     </Card>
   );
+}
+
+/**
+ * SweetAlert html'ine kullanıcı/setting değeri enjekte ettiğimiz için
+ * minimal escape — base_currency 3 char enum (TRY/USD/EUR) ama yine
+ * de defansif kalalım.
+ */
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 }
