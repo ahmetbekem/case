@@ -13,14 +13,15 @@
 
 1. [Conventions](#1-conventions)
 2. [Schema Layout](#2-schema-layout)
-3. [Identity Schema](#3-identity-schema)
+3. [Identity Schema](#3-identity-schema) — users, refresh_tokens, addresses
 4. [Catalog Schema](#4-catalog-schema)
-5. [Sales Schema](#5-sales-schema)
+5. [Sales Schema](#5-sales-schema) — carts (guest support), cart_items, orders (address snapshots), order_items
 6. [Currency Schema](#6-currency-schema)
-7. [Cross-Schema Relationships](#7-cross-schema-relationships)
-8. [Indexes Summary](#8-indexes-summary)
-9. [Migration Strategy](#9-migration-strategy)
-10. [ER Diagram](#10-er-diagram)
+7. [System Schema](#7-system-schema) — settings ⭐ ADR-016
+8. [Cross-Schema Relationships](#8-cross-schema-relationships)
+9. [Indexes Summary](#9-indexes-summary)
+10. [Migration Strategy](#10-migration-strategy)
+11. [ER Diagram](#11-er-diagram)
 
 ---
 
@@ -86,16 +87,19 @@ Her tabloda mevcut:
 testproject (database)
 ├── identity (schema)
 │   ├── users
-│   └── refresh_tokens
+│   ├── refresh_tokens
+│   └── addresses                ⭐ ADR-018
 ├── catalog (schema)
 │   └── products
 ├── sales (schema)
-│   ├── carts
+│   ├── carts                    ⭐ ADR-017 (user_id nullable, guest_session_id, expires_at)
 │   ├── cart_items
-│   ├── orders
+│   ├── orders                   ⭐ ADR-018 (delivery_address, billing_address JSONB + FKs)
 │   └── order_items
-└── currency (schema)
-    └── exchange_rates
+├── currency (schema)
+│   └── exchange_rates
+└── system (schema)              ⭐ ADR-016
+    └── settings
 ```
 
 **Schema oluşturma migration'ı (ilk migration):**
@@ -105,6 +109,7 @@ CREATE SCHEMA IF NOT EXISTS identity;
 CREATE SCHEMA IF NOT EXISTS catalog;
 CREATE SCHEMA IF NOT EXISTS sales;
 CREATE SCHEMA IF NOT EXISTS currency;
+CREATE SCHEMA IF NOT EXISTS system;   -- ADR-016
 ```
 
 ---
@@ -180,6 +185,52 @@ JWT refresh token'lar. **Token'ın kendisi saklanmaz**, hash'i saklanır. Rotati
 
 ---
 
+### 3.3 `identity.addresses`
+
+Kullanıcı adres rehberi (ADR-018). Bir kullanıcının max 10 aktif adresi olabilir; default delivery + default billing flag'leri DB-side garanti edilir. Sipariş anında `Address::toSnapshot()` JSONB olarak `sales.orders` tablosuna yazılır — adres sonradan silinse bile sipariş bilgisi bozulmaz (snapshot pattern).
+
+| Column | Type | Nullable | Default | Description |
+|--------|------|----------|---------|-------------|
+| `id` | UUID | NO | - | PK |
+| `user_id` | UUID | NO | - | FK → identity.users.id |
+| `title` | VARCHAR(50) | NO | - | "Ev", "İş", "Yazlık" |
+| `full_name` | VARCHAR(255) | NO | - | Teslimatta kullanılacak ad-soyad |
+| `phone` | VARCHAR(20) | NO | - | E.164 format (+905551234567) |
+| `country_code` | VARCHAR(2) | NO | `'TR'` | Şu an yalnızca TR (CHECK ile kilitli) |
+| `city` | VARCHAR(100) | NO | - | İl (TurkeyLocationsService doğrular) |
+| `district` | VARCHAR(100) | NO | - | İlçe |
+| `neighborhood` | VARCHAR(150) | YES | NULL | Mahalle (opsiyonel; serbest input) |
+| `postal_code` | VARCHAR(10) | YES | NULL | 5 haneli (regex) |
+| `address_line` | TEXT | NO | - | Açık adres (CHECK char_length >= 10) |
+| `address_line_2` | TEXT | YES | NULL | Apt/Daire/Kat |
+| `is_default_delivery` | BOOLEAN | NO | `false` | Tek default — partial unique index |
+| `is_default_billing` | BOOLEAN | NO | `false` | Tek default — partial unique index |
+| `created_at` | TIMESTAMPTZ | NO | NOW() | |
+| `updated_at` | TIMESTAMPTZ | YES | NULL | |
+| `deleted_at` | TIMESTAMPTZ | YES | NULL | Soft delete |
+
+**Constraints:**
+- `PRIMARY KEY (id)`
+- `FOREIGN KEY (user_id) REFERENCES identity.users(id) ON DELETE RESTRICT` (user silinmeden adresleri silinmeli — soft delete ile yumuşatılır)
+- `chk_addresses_country` — `CHECK (country_code = 'TR')` — multi-country için ALTER gerekir
+- `chk_addresses_phone` — `CHECK (phone ~ '^[+0-9 ()\-]+$')` — defansif filter; PhoneNumber VO E.164 normalize'i daha sıkı
+- `chk_addresses_address_line_length` — `CHECK (char_length(address_line) >= 10)`
+
+**Indexes:**
+- `idx_addresses_user_id` — `(user_id) WHERE deleted_at IS NULL` ⭐ partial — kullanıcı adres listingi
+- `uniq_addresses_default_delivery` — `UNIQUE (user_id) WHERE is_default_delivery = true AND deleted_at IS NULL` ⭐ — DB-side tek default delivery garantisi
+- `uniq_addresses_default_billing` — `UNIQUE (user_id) WHERE is_default_billing = true AND deleted_at IS NULL` ⭐
+
+**Snapshot Pattern:**
+- `Address::toSnapshot()` 12 field + `snapshotAt` ISO timestamp döner; PlaceOrderHandler `orders.delivery_address` (JSONB) ve `orders.billing_address` (JSONB) kolonlarına yazar
+- FK referansı (`orders.delivery_address_id`, `orders.billing_address_id`) nullable — adres soft-delete edilse bile snapshot ayakta kalır
+- Default re-pick policy: silinen adres default delivery/billing ise `findMostRecent()` ile en son aktif adres otomatik default'a promote edilir (DeleteAddressHandler)
+
+**IDOR Protection:**
+- Tüm address read/update/delete endpoint'leri `findByIdAndUser(addressId, userId)` üzerinden — başka kullanıcının adres ID'sine erişim 404 ADDRESS_NOT_FOUND (anti-enumeration)
+
+---
+
 ## 4. CATALOG SCHEMA
 
 ### 4.1 `catalog.products`
@@ -222,13 +273,15 @@ JWT refresh token'lar. **Token'ın kendisi saklanmaz**, hash'i saklanır. Rotati
 
 ### 5.1 `sales.carts`
 
-Aktif sepetler. Her kullanıcının **bir aktif sepeti** olur.
+Aktif sepetler. ADR-017 ile cart artık **user XOR guest session** ile identifiable: ya `user_id` ya `guest_session_id`, ikisi birden olamaz (DB-side `chk_carts_owner` CHECK constraint + entity validateOwnership).
 
 | Column | Type | Nullable | Default | Description |
 |--------|------|----------|---------|-------------|
 | `id` | UUID | NO | - | PK |
-| `user_id` | UUID | NO | - | FK → identity.users.id |
+| `user_id` | UUID | YES ⭐ | NULL | FK → identity.users.id (guest cart için NULL) |
+| `guest_session_id` | VARCHAR(36) ⭐ | YES | NULL | UUID v4 — `guest_cart_token` cookie değeri |
 | `status` | VARCHAR(32) | NO | `'active'` | Enum: `active`, `converted`, `abandoned` |
+| `expires_at` | TIMESTAMPTZ ⭐ | YES | NULL | Guest cart 30 gün TTL; user cart için NULL |
 | `converted_to_order_id` | UUID | YES | NULL | FK → sales.orders.id (sipariş verildiğinde) |
 | `created_at` | TIMESTAMPTZ | NO | NOW() | |
 | `updated_at` | TIMESTAMPTZ | YES | NULL | |
@@ -238,11 +291,20 @@ Aktif sepetler. Her kullanıcının **bir aktif sepeti** olur.
 - `FOREIGN KEY (user_id) REFERENCES identity.users(id) ON DELETE RESTRICT`
 - `FOREIGN KEY (converted_to_order_id) REFERENCES sales.orders(id) ON DELETE SET NULL`
 - `CHECK (status IN ('active', 'converted', 'abandoned'))`
+- `chk_carts_owner` ⭐ — `CHECK ((user_id IS NOT NULL AND guest_session_id IS NULL) OR (user_id IS NULL AND guest_session_id IS NOT NULL))` — XOR ownership
 
 **Indexes:**
-- `uniq_carts_user_active` — `UNIQUE (user_id) WHERE status = 'active'` ⭐ — kritik, kullanıcının tek aktif sepeti olur
+- `uniq_carts_user_active` — `UNIQUE (user_id) WHERE status = 'active' AND user_id IS NOT NULL` ⭐ partial — user'ın tek aktif sepeti
+- `uniq_carts_guest_active` ⭐ — `UNIQUE (guest_session_id) WHERE status = 'active' AND guest_session_id IS NOT NULL` partial — guest session'ın tek aktif sepeti
+- `idx_carts_expires_at` ⭐ — `(expires_at) WHERE status = 'active' AND guest_session_id IS NOT NULL` partial — `sales:clean-guest-carts` cron taraması için
 - `idx_carts_user_id` — `(user_id)`
 - `idx_carts_status` — `(status)`
+
+**Cleanup job:**
+- `php artisan sales:clean-guest-carts` günlük 03:00; `WHERE status='active' AND guest_session_id IS NOT NULL AND expires_at <= NOW()` rows DELETE (cart_items FK ON DELETE CASCADE ile beraber gider). Abandoned/converted cart'lar dokunulmaz (analytics).
+
+**Login/Register merge:**
+- `MergeGuestCartCommand` 3 senaryo: guest cart yok no-op; user cart yok → `transferOwnership` (guest_session_id=NULL, user_id set, expires_at=NULL); ikisi de var → `CartMerger.applyToUserCart` quantity sum + OLDEST snapshot price korunur, guest cart `markAsAbandoned()`
 
 > **Soft delete YOK:** Cart'lar `status` ile yönetilir. Order'a dönüştüğünde `status = 'converted'` olur, geçmişte tutulur (analytics için).
 
@@ -289,11 +351,15 @@ Siparişler. **Hot path tablosu** — çok okunur, indexler kritik.
 | `order_number` | VARCHAR(20) | NO | - | İnsan-okunabilir: `ORD-2026-000001` |
 | `user_id` | UUID | NO | - | FK → identity.users.id |
 | `status` | VARCHAR(32) | NO | `'pending'` | Enum aşağıda |
-| `subtotal` | DECIMAL(15,2) | NO | - | Net tutar (TRY base) |
-| `total` | DECIMAL(15,2) | NO | - | Final tutar (TRY base) — şu an subtotal = total |
+| `subtotal` | DECIMAL(15,2) | NO | - | Net tutar (base currency — ADR-016) |
+| `total` | DECIMAL(15,2) | NO | - | Final tutar (base currency) — şu an subtotal = total |
 | `display_currency` | VARCHAR(3) | NO | - | Kullanıcının seçtiği para birimi (TRY/USD/EUR) |
 | `display_total` | DECIMAL(15,2) | NO | - | display_currency cinsinden total |
-| `exchange_rate_snapshot` | DECIMAL(20,8) | NO | - | Sipariş anındaki TRY→display_currency kuru |
+| `exchange_rate_snapshot` | DECIMAL(20,8) | NO | - | Sipariş anındaki base→display kuru (immutable) |
+| `delivery_address` | JSONB ⭐ | YES | NULL | ADR-018 — sipariş anındaki teslimat adresi snapshot'ı |
+| `billing_address` | JSONB ⭐ | YES | NULL | Fatura adresi snapshot'ı (delivery ile aynı olabilir) |
+| `delivery_address_id` | UUID ⭐ | YES | NULL | FK → identity.addresses.id (orijinal referans; soft-delete sonrası null'a düşer) |
+| `billing_address_id` | UUID ⭐ | YES | NULL | FK → identity.addresses.id |
 | `notes` | TEXT | YES | NULL | İsteğe bağlı sipariş notu |
 | `cancelled_at` | TIMESTAMPTZ | YES | NULL | İptal zamanı |
 | `cancelled_reason` | VARCHAR(255) | YES | NULL | |
@@ -304,10 +370,30 @@ Siparişler. **Hot path tablosu** — çok okunur, indexler kritik.
 **Constraints:**
 - `PRIMARY KEY (id)`
 - `FOREIGN KEY (user_id) REFERENCES identity.users(id) ON DELETE RESTRICT`
+- `FOREIGN KEY (delivery_address_id) REFERENCES identity.addresses(id) ON DELETE SET NULL` ⭐ — adres silinince FK null'a düşer; JSONB snapshot'ı her hâlükârda korur
+- `FOREIGN KEY (billing_address_id) REFERENCES identity.addresses(id) ON DELETE SET NULL` ⭐
 - `CHECK (status IN ('pending', 'completed', 'cancelled'))`
 - `CHECK (subtotal >= 0 AND total >= 0 AND display_total >= 0)`
 - `CHECK (exchange_rate_snapshot > 0)`
 - `CHECK (display_currency IN ('TRY', 'USD', 'EUR'))`
+
+**JSONB Snapshot Format (delivery_address / billing_address):**
+```json
+{
+  "addressId": "uuid",
+  "title": "Ev",
+  "fullName": "Ahmet Bekem",
+  "phone": "+905551234567",
+  "countryCode": "TR",
+  "city": "İstanbul",
+  "district": "Kadıköy",
+  "neighborhood": "Caferağa",
+  "postalCode": "34710",
+  "addressLine": "Moda Cad. No: 123",
+  "addressLine2": null,
+  "snapshotAt": "2026-05-07T01:39:10+00:00"
+}
+```
 
 **Indexes:**
 - `uniq_orders_order_number` — `UNIQUE (order_number)`
@@ -315,6 +401,7 @@ Siparişler. **Hot path tablosu** — çok okunur, indexler kritik.
 - `idx_orders_status` — `(status)`
 - `idx_orders_created_at` — `(created_at DESC)` — admin listing
 - `idx_orders_user_id_status` — `(user_id, status)` — kullanıcının pending'leri vb.
+- `idx_orders_delivery_city` ⭐ — `((delivery_address->>'city')) WHERE delivery_address IS NOT NULL` — JSONB analytics ("İstanbul'a giden siparişler")
 
 **Order Number Generation:**
 - Format: `ORD-{YYYY}-{seq:06d}`
@@ -422,24 +509,73 @@ Bu sorgu Redis cache ile sarmalanır (`currency:rate:TRY:USD` key, 1 saat TTL).
 
 ---
 
-## 7. CROSS-SCHEMA RELATIONSHIPS
+## 7. SYSTEM SCHEMA
+
+### 7.1 `system.settings`
+
+ADR-016 — Sistem-wide konfigürasyon (base_currency, supported_currencies, default_display_currency, site_name vb.). Natural string key (`key` UNIQUE) ile sorgulanır; `key` UUID değil — repository pattern'i AbstractEloquentRepository istisnası (DECISIONS ADR-016 notu).
+
+| Column | Type | Nullable | Default | Description |
+|--------|------|----------|---------|-------------|
+| `id` | UUID | NO | - | PK (entity Id; ama lookups `key` üzerinden) |
+| `key` | VARCHAR(64) | NO | - | UNIQUE — `base_currency`, `default_display_currency`, `supported_currencies`, `site_name` |
+| `value` | TEXT | NO | - | Raw değer; tip `type` kolonuyla yorumlanır (string/json/int) |
+| `type` | VARCHAR(16) | NO | `'string'` | `string`, `json`, `int` (uygulama yorumu) |
+| `category` | VARCHAR(32) | NO | - | UI gruplama (`currency`, `general`, `branding`) |
+| `description` | TEXT | YES | NULL | Admin UI tooltip |
+| `is_public` | BOOLEAN | NO | `false` | `true` ise auth gerektirmeyen `/system/settings/public` endpoint'inde dönülür |
+| `created_at` | TIMESTAMPTZ | NO | NOW() | |
+| `updated_at` | TIMESTAMPTZ | YES | NULL | |
+
+**Constraints:**
+- `PRIMARY KEY (id)`
+- `UNIQUE (key)` — natural key
+- `CHECK (type IN ('string', 'json', 'int'))`
+
+**Cache Layer:**
+- `CachedSettingRepository` decorator Eloquent repo'yu Redis ile sarar; 5 dk TTL
+- `findByKey()`, `findAll()`, `findPublic()` cache hit yolu
+- `save()` çağrısında 3 cache key invalidate (`system:settings:k:{key}`, `system:settings:all`, `system:settings:public`)
+- Test ortamı `cache=array` driver — Redis bağımlılığı yok
+
+**Default seeded settings (4):**
+```sql
+('base_currency', 'TRY', 'string', 'currency', is_public=true)
+('default_display_currency', 'TRY', 'string', 'currency', is_public=true)
+('supported_currencies', '["TRY","USD","EUR"]', 'json', 'currency', is_public=true)
+('site_name', 'Dehasoft Test Store', 'string', 'general', is_public=true)
+```
+
+**Base Currency Change Flow (ADR-016):**
+- `PATCH /admin/system/settings/base_currency` AdminSettingsController'da branch:
+  - `key === 'base_currency'` → `ChangeBaseCurrencyCommand` (atomik: rate çöz → repriceAll products → abandonAllActive carts → setting update)
+  - Diğer key'ler → `UpdateSettingCommand` (sadece value update)
+- `system.base_currency_changed` audit event metadata: `{fromCurrency, toCurrency, rate, productsUpdated, cartsAbandoned}`
+
+---
+
+## 8. CROSS-SCHEMA RELATIONSHIPS
 
 PostgreSQL şemalar arası FK destekler. Aşağıdaki cross-schema FK'ler vardır:
 
 ```
-catalog.products.created_by   → identity.users.id
+catalog.products.created_by              → identity.users.id
 
-sales.carts.user_id           → identity.users.id
-sales.cart_items.product_id   → catalog.products.id
-sales.orders.user_id          → identity.users.id
-sales.order_items.product_id  → catalog.products.id
+identity.addresses.user_id               → identity.users.id          ⭐ ADR-018
+
+sales.carts.user_id                      → identity.users.id          (nullable — ADR-017 guest)
+sales.cart_items.product_id              → catalog.products.id
+sales.orders.user_id                     → identity.users.id
+sales.orders.delivery_address_id         → identity.addresses.id      ⭐ ADR-018 (ON DELETE SET NULL)
+sales.orders.billing_address_id          → identity.addresses.id      ⭐ ADR-018 (ON DELETE SET NULL)
+sales.order_items.product_id             → catalog.products.id
 ```
 
-**Migration order:** Identity → Catalog → Currency → Sales (dependency order)
+**Migration order:** Identity → System → Catalog → Currency → Sales (dependency order)
 
 ---
 
-## 8. INDEXES SUMMARY
+## 9. INDEXES SUMMARY
 
 Performans için kritik indeksler özeti:
 
@@ -467,7 +603,7 @@ CREATE EXTENSION IF NOT EXISTS btree_gin;     -- Compound indexes (optional)
 
 ---
 
-## 9. MIGRATION STRATEGY
+## 10. MIGRATION STRATEGY
 
 ### 9.1 File Naming
 
@@ -561,7 +697,7 @@ database/seeders/
 
 ---
 
-## 10. ER DIAGRAM
+## 11. ER DIAGRAM
 
 ```
 ┌─────────────────────────┐
