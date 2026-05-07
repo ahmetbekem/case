@@ -241,6 +241,47 @@ Tüm sayfa-route-endpoint haritası: [`docs/FRONTEND_GUIDE.md`](docs/FRONTEND_GU
 
 ---
 
+## Production Deploy
+
+Local geliştirme `.env`'i production'a deploy etme — `APP_DEBUG=true`
+4xx/5xx response'larında full Laravel stack trace + framework
+versiyonları + dosya yolları sızdırır (OWASP A05).
+
+### Adım 1: Production env üret
+```bash
+cp backend/.env.production.example backend/.env.production
+# Sonra .env.production'da boş olan secret'ları doldur:
+docker compose run --rm backend php artisan key:generate --show
+docker compose run --rm backend php -r 'echo bin2hex(random_bytes(32));'  # JWT_SECRET
+docker compose run --rm backend php -r 'echo bin2hex(random_bytes(32));'  # BACKEND_PROXY_SECRET
+```
+
+`SECURITY_ALLOWED_ORIGINS` production frontend domain'leri (https only,
+virgülle ayrılmış); `DB_HOST` / `REDIS_HOST` / `RABBITMQ_HOST` internal
+DNS adları (NOT 127.0.0.1).
+
+### Adım 2: Deploy validation gate
+```bash
+bash scripts/validate-prod-env.sh backend/.env.production
+# ❌ exit 1 ise: deploy yapma; eksikleri fix et
+# ✅ exit 0: production'a kopyala (secret manager'a feed et)
+```
+
+Script kontrol ettikleri:
+- `APP_ENV=production`, `APP_DEBUG=false`
+- `APP_KEY`, `JWT_SECRET`, `BACKEND_PROXY_SECRET` dolu (32+ char)
+- `DB_HOST` localhost değil, `DB_PASSWORD` 12+ char
+- `SECURITY_ALLOWED_ORIGINS` localhost içermez, `https://` only
+- `LOG_LEVEL` ≠ debug (warning), `L5_SWAGGER_GENERATE_ALWAYS=false` (warning)
+
+CI/CD pipeline'a integrate et (deploy job'undan önce):
+```yaml
+- name: Validate production env
+  run: bash scripts/validate-prod-env.sh backend/.env.production
+```
+
+---
+
 ## CI/CD
 
 `.github/workflows/`:
