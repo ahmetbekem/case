@@ -22,16 +22,34 @@ use Application\Currency\Handlers\Queries\GetExchangeRateHandler;
 use Application\Currency\Handlers\Queries\ListSupportedCurrenciesHandler;
 use Application\Currency\Queries\GetExchangeRateQuery;
 use Application\Currency\Queries\ListSupportedCurrenciesQuery;
+use Application\Identity\Commands\CreateAddressCommand;
+use Application\Identity\Commands\DeleteAddressCommand;
 use Application\Identity\Commands\LoginUserCommand;
 use Application\Identity\Commands\LogoutUserCommand;
 use Application\Identity\Commands\RefreshTokenCommand;
 use Application\Identity\Commands\RegisterUserCommand;
+use Application\Identity\Commands\SetDefaultBillingAddressCommand;
+use Application\Identity\Commands\SetDefaultDeliveryAddressCommand;
+use Application\Identity\Commands\UpdateAddressCommand;
+use Application\Identity\Handlers\Commands\CreateAddressHandler;
+use Application\Identity\Handlers\Commands\DeleteAddressHandler;
 use Application\Identity\Handlers\Commands\LoginUserHandler;
 use Application\Identity\Handlers\Commands\LogoutUserHandler;
 use Application\Identity\Handlers\Commands\RefreshTokenHandler;
 use Application\Identity\Handlers\Commands\RegisterUserHandler;
+use Application\Identity\Handlers\Commands\SetDefaultBillingAddressHandler;
+use Application\Identity\Handlers\Commands\SetDefaultDeliveryAddressHandler;
+use Application\Identity\Handlers\Commands\UpdateAddressHandler;
+use Application\Identity\Handlers\Queries\GetAddressHandler;
+use Application\Identity\Handlers\Queries\GetCitiesHandler;
 use Application\Identity\Handlers\Queries\GetCurrentUserHandler;
+use Application\Identity\Handlers\Queries\GetDistrictsHandler;
+use Application\Identity\Handlers\Queries\ListUserAddressesHandler;
+use Application\Identity\Queries\GetAddressQuery;
+use Application\Identity\Queries\GetCitiesQuery;
 use Application\Identity\Queries\GetCurrentUserQuery;
+use Application\Identity\Queries\GetDistrictsQuery;
+use Application\Identity\Queries\ListUserAddressesQuery;
 use Application\Sales\Commands\AddItemToCartCommand;
 use Application\Sales\Commands\CancelOrderCommand;
 use Application\Sales\Commands\ClearCartCommand;
@@ -80,6 +98,12 @@ final class BusServiceProvider extends ServiceProvider
         RefreshTokenCommand::class => RefreshTokenHandler::class,
         LogoutUserCommand::class   => LogoutUserHandler::class,
 
+        CreateAddressCommand::class                 => CreateAddressHandler::class,
+        UpdateAddressCommand::class                 => UpdateAddressHandler::class,
+        DeleteAddressCommand::class                 => DeleteAddressHandler::class,
+        SetDefaultDeliveryAddressCommand::class     => SetDefaultDeliveryAddressHandler::class,
+        SetDefaultBillingAddressCommand::class      => SetDefaultBillingAddressHandler::class,
+
         CreateProductCommand::class => CreateProductHandler::class,
         UpdateProductCommand::class => UpdateProductHandler::class,
         DeleteProductCommand::class => DeleteProductHandler::class,
@@ -104,6 +128,11 @@ final class BusServiceProvider extends ServiceProvider
      */
     protected array $queryHandlers = [
         GetCurrentUserQuery::class => GetCurrentUserHandler::class,
+
+        ListUserAddressesQuery::class   => ListUserAddressesHandler::class,
+        GetAddressQuery::class          => GetAddressHandler::class,
+        GetCitiesQuery::class           => GetCitiesHandler::class,
+        GetDistrictsQuery::class        => GetDistrictsHandler::class,
 
         GetProductQuery::class     => GetProductHandler::class,
         ListProductsQuery::class   => ListProductsHandler::class,
