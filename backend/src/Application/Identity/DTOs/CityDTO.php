@@ -24,9 +24,4 @@ final readonly class CityDTO extends AbstractOutputDTO
         public string $name,
     ) {
     }
-
-    public function jsonSerialize(): mixed
-    {
-        return $this->toArray();
-    }
 }

@@ -53,8 +53,38 @@ function seedExchangeRate(string $base, string $target, float $rate): void
     ]);
 }
 
+/**
+ * ADR-018 — Sipariş için adres zorunlu. Bu helper user'a varsayılan
+ * bir adres ekler (yoksa) ve ID'sini döner.
+ */
+function ensureAddressFor(array $session): string
+{
+    $list = test()->getJson('/api/v1/identity/addresses', authHeaders($session['accessToken']));
+    $existing = $list->json('data');
+    if (is_array($existing) && count($existing) > 0) {
+        return (string) $existing[0]['id'];
+    }
+    $created = test()->postJson(
+        '/api/v1/identity/addresses',
+        [
+            'title' => 'Test Ev',
+            'fullName' => 'Test User',
+            'phone' => '+905551234567',
+            'city' => 'İstanbul',
+            'district' => 'Kadıköy',
+            'addressLine' => 'Test Caddesi No: 1 Daire: 5',
+            'setAsDefaultDelivery' => true,
+            'setAsDefaultBilling' => true,
+        ],
+        authHeaders($session['accessToken']),
+    )->assertCreated();
+    return (string) $created->json('data.id');
+}
+
 function buildCartAndPlaceOrder(array $session, string $productId, int $qty = 2): array
 {
+    $addressId = ensureAddressFor($session);
+
     test()->postJson(
         '/api/v1/sales/cart/items',
         ['productId' => $productId, 'quantity' => $qty],
@@ -63,7 +93,7 @@ function buildCartAndPlaceOrder(array $session, string $productId, int $qty = 2)
 
     $response = test()->postJson(
         '/api/v1/sales/orders',
-        ['displayCurrency' => 'TRY'],
+        ['displayCurrency' => 'TRY', 'deliveryAddressId' => $addressId],
         authHeaders($session['accessToken']),
     )->assertCreated();
 
@@ -109,9 +139,10 @@ describe('POST /sales/orders — happy path', function () {
             authHeaders($session['accessToken']),
         )->assertOk();
 
+        $addressId = ensureAddressFor($session);
         $response = $this->postJson(
             '/api/v1/sales/orders',
-            ['displayCurrency' => 'USD'],
+            ['displayCurrency' => 'USD', 'deliveryAddressId' => $addressId],
             authHeaders($session['accessToken']),
         )->assertCreated();
 
@@ -125,10 +156,11 @@ describe('POST /sales/orders — happy path', function () {
 describe('POST /sales/orders — failures', function () {
     it('rejects empty cart with 409 EMPTY_CART', function () {
         $session = registerAndLoginCustomer('order-empty@user.test');
+        $addressId = ensureAddressFor($session);
 
         $this->postJson(
             '/api/v1/sales/orders',
-            ['displayCurrency' => 'TRY'],
+            ['displayCurrency' => 'TRY', 'deliveryAddressId' => $addressId],
             authHeaders($session['accessToken']),
         )->assertStatus(409)
           ->assertJsonPath('error.code', 'EMPTY_CART');
@@ -137,6 +169,7 @@ describe('POST /sales/orders — failures', function () {
     it('rejects insufficient stock with 409 INSUFFICIENT_STOCK', function () {
         $session = registerAndLoginCustomer('order-stock@user.test');
         $productId = seedProductForOrders('ORD-LOW-1', 50.0, 2);
+        $addressId = ensureAddressFor($session);
 
         test()->postJson(
             '/api/v1/sales/cart/items',
@@ -146,7 +179,7 @@ describe('POST /sales/orders — failures', function () {
 
         $this->postJson(
             '/api/v1/sales/orders',
-            ['displayCurrency' => 'TRY'],
+            ['displayCurrency' => 'TRY', 'deliveryAddressId' => $addressId],
             authHeaders($session['accessToken']),
         )->assertStatus(409)
           ->assertJsonPath('error.code', 'INSUFFICIENT_STOCK');

@@ -16,6 +16,9 @@ use Domain\Catalog\ValueObjects\ProductId;
 use Domain\Currency\Contracts\ExchangeRateRepositoryInterface;
 use Domain\Currency\Entities\ExchangeRate;
 use Domain\Currency\Services\CurrencyConverter;
+use Domain\Identity\Contracts\AddressRepositoryInterface;
+use Domain\Identity\Exceptions\AddressNotFoundException;
+use Domain\Identity\ValueObjects\AddressId;
 use Domain\Logging\Contracts\AuditLoggerInterface;
 use Domain\Logging\ValueObjects\AuditEvent;
 use Domain\Sales\Contracts\CartRepositoryInterface;
@@ -59,6 +62,7 @@ final class PlaceOrderHandler extends AbstractCommandHandler
         private readonly ProductRepositoryInterface $productRepository,
         private readonly ExchangeRateRepositoryInterface $exchangeRateRepository,
         private readonly CurrencyConverter $currencyConverter,
+        private readonly AddressRepositoryInterface $addressRepository,
         private readonly AuditLoggerInterface $auditLogger,
         TransactionInterface $transaction,
         LoggerInterface $logger,
@@ -82,6 +86,31 @@ final class PlaceOrderHandler extends AbstractCommandHandler
 
         $userId = UserId::fromString($command->getUserId());
         $displayCurrency = Currency::from($command->displayCurrency);
+
+        // ADR-018 — Adres validation IDOR-safe (findByIdAndUser).
+        // Cart/stock kontrolünden ÖNCE: kullanıcı geçersiz adres
+        // gönderirse stok düşmesin / cart'ı convert etmeye başlamayalım.
+        $deliveryAddress = $this->addressRepository->findByIdAndUser(
+            AddressId::fromString($command->deliveryAddressId),
+            $userId,
+        );
+        if ($deliveryAddress === null) {
+            throw AddressNotFoundException::withId($command->deliveryAddressId);
+        }
+
+        // Billing null → delivery ile aynı (UX kısayolu)
+        $billingAddressId = $command->billingAddressId ?? $command->deliveryAddressId;
+        if ($billingAddressId === $command->deliveryAddressId) {
+            $billingAddress = $deliveryAddress;
+        } else {
+            $billingAddress = $this->addressRepository->findByIdAndUser(
+                AddressId::fromString($billingAddressId),
+                $userId,
+            );
+            if ($billingAddress === null) {
+                throw AddressNotFoundException::withId($billingAddressId);
+            }
+        }
 
         $cart = $this->cartRepository->findActiveCartForUser($userId);
         if ($cart === null || $cart->isEmpty()) {
@@ -146,6 +175,13 @@ final class PlaceOrderHandler extends AbstractCommandHandler
 
         $orderNumber = $this->orderRepository->generateNumber();
 
+        // ADR-018 — Adres snapshot'ı şimdi alıyoruz (Order
+        // construct'ından önce). snapshotAt timestamp'i Order
+        // creation anına yakın (saniye seviyesinde aynı).
+        $deliverySnapshot = $deliveryAddress->toSnapshot();
+        $billingSnapshot = $billingAddress->toSnapshot();
+        $sameBilling = $billingAddress->getId()->value() === $deliveryAddress->getId()->value();
+
         $order = new Order(
             id: $orderId,
             orderNumber: $orderNumber,
@@ -158,6 +194,10 @@ final class PlaceOrderHandler extends AbstractCommandHandler
             exchangeRateSnapshot: $exchangeRateUsed,
             notes: $command->notes,
             items: $orderItems,
+            deliveryAddressSnapshot: $deliverySnapshot,
+            billingAddressSnapshot: $billingSnapshot,
+            deliveryAddressId: $deliveryAddress->getId()->value(),
+            billingAddressId: $billingAddress->getId()->value(),
         );
 
         $this->orderRepository->save($order);
@@ -179,6 +219,9 @@ final class PlaceOrderHandler extends AbstractCommandHandler
                 'displayCurrency' => $displayCurrency->value,
                 'displayTotal' => $displayTotal->amount,
                 'itemCount' => count($orderItems),
+                'deliveryCity' => $deliverySnapshot['city'],
+                'deliveryDistrict' => $deliverySnapshot['district'],
+                'sameBillingAddress' => $sameBilling,
             ],
         ));
 

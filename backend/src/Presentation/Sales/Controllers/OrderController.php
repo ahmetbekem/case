@@ -134,6 +134,8 @@ final class OrderController extends AbstractApiController
             correlationId: $this->getCorrelationId($request),
             userIp: $request->ip() ?? '0.0.0.0',
             displayCurrency: (string) $request->validated('displayCurrency'),
+            deliveryAddressId: (string) $request->validated('deliveryAddressId'),
+            billingAddressId: $request->validated('billingAddressId'),
             notes: $request->validated('notes'),
         );
         return $this->success(

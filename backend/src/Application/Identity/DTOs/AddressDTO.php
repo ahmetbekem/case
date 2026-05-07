@@ -84,9 +84,4 @@ final readonly class AddressDTO extends AbstractOutputDTO
     {
         return array_map(static fn (Address $a) => self::fromEntity($a), $addresses);
     }
-
-    public function jsonSerialize(): mixed
-    {
-        return $this->toArray();
-    }
 }

@@ -32,6 +32,10 @@ use OpenApi\Attributes as OA;
         new OA\Property(property: 'completedAt', type: 'string', format: 'date-time', nullable: true),
         new OA\Property(property: 'createdAt', type: 'string', format: 'date-time'),
         new OA\Property(property: 'updatedAt', type: 'string', format: 'date-time', nullable: true),
+        new OA\Property(property: 'deliveryAddress', type: 'object', nullable: true, description: 'ADR-018 — sipariş anında dondurulmuş JSONB snapshot. Adres sonradan silinse bile burada kalır.'),
+        new OA\Property(property: 'billingAddress', type: 'object', nullable: true, description: 'Teslimat ile aynı olabilir; sameBillingAddress audit metadata\'sında işaretli.'),
+        new OA\Property(property: 'deliveryAddressId', type: 'string', format: 'uuid', nullable: true, description: 'Orijinal adres referansı; soft-delete sonrası null\'a düşer.'),
+        new OA\Property(property: 'billingAddressId', type: 'string', format: 'uuid', nullable: true),
     ],
     type: 'object',
 )]
@@ -39,6 +43,11 @@ final readonly class OrderDTO extends AbstractOutputDTO
 {
     /**
      * @param array<int, OrderItemDTO> $items
+     */
+    /**
+     * @param array<int, OrderItemDTO> $items
+     * @param array<string, mixed>|null $deliveryAddress
+     * @param array<string, mixed>|null $billingAddress
      */
     public function __construct(
         public string $id,
@@ -59,6 +68,10 @@ final readonly class OrderDTO extends AbstractOutputDTO
         public ?string $completedAt,
         public string $createdAt,
         public ?string $updatedAt,
+        public ?array $deliveryAddress,
+        public ?array $billingAddress,
+        public ?string $deliveryAddressId,
+        public ?string $billingAddressId,
     ) {
     }
 
@@ -83,6 +96,10 @@ final readonly class OrderDTO extends AbstractOutputDTO
             completedAt: $order->getCompletedAt()?->format(\DateTimeInterface::ATOM),
             createdAt: $order->getCreatedAt()->format(\DateTimeInterface::ATOM),
             updatedAt: $order->getUpdatedAt()?->format(\DateTimeInterface::ATOM),
+            deliveryAddress: $order->getDeliveryAddressSnapshot(),
+            billingAddress: $order->getBillingAddressSnapshot(),
+            deliveryAddressId: $order->getDeliveryAddressId(),
+            billingAddressId: $order->getBillingAddressId(),
         );
     }
 

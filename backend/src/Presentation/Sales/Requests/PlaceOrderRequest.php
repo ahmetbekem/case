@@ -10,7 +10,7 @@ use OpenApi\Attributes as OA;
 
 #[OA\Schema(
     schema: 'PlaceOrderRequest',
-    required: ['displayCurrency'],
+    required: ['displayCurrency', 'deliveryAddressId'],
     properties: [
         new OA\Property(
             property: 'displayCurrency',
@@ -18,6 +18,19 @@ use OpenApi\Attributes as OA;
             enum: ['TRY', 'USD', 'EUR'],
             description: 'Siparişin görüntü para birimi — kur snapshot\'ı sipariş anında dondurulur',
             example: 'TRY',
+        ),
+        new OA\Property(
+            property: 'deliveryAddressId',
+            type: 'string',
+            format: 'uuid',
+            description: 'ADR-018 — Teslimat adresi ID. IDOR-safe (başka kullanıcının ID\'si 404).',
+        ),
+        new OA\Property(
+            property: 'billingAddressId',
+            type: 'string',
+            format: 'uuid',
+            nullable: true,
+            description: 'Fatura adresi ID. null verilirse delivery ile aynı kabul edilir.',
         ),
         new OA\Property(property: 'notes', type: 'string', maxLength: 5000, nullable: true),
     ],
@@ -36,8 +49,10 @@ final class PlaceOrderRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'displayCurrency' => ['required', 'string', Rule::in(['TRY', 'USD', 'EUR'])],
-            'notes'           => ['sometimes', 'nullable', 'string', 'max:5000'],
+            'displayCurrency'   => ['required', 'string', Rule::in(['TRY', 'USD', 'EUR'])],
+            'deliveryAddressId' => ['required', 'string', 'uuid'],
+            'billingAddressId'  => ['sometimes', 'nullable', 'string', 'uuid'],
+            'notes'             => ['sometimes', 'nullable', 'string', 'max:5000'],
         ];
     }
 

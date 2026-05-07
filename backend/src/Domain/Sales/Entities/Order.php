@@ -29,7 +29,19 @@ final class Order extends AbstractEntity
     private array $items;
 
     /**
-     * @param array<int, OrderItem> $items
+     * ADR-018 — deliveryAddressSnapshot ve billingAddressSnapshot
+     * yeni siparişler için ZORUNLU (PlaceOrderHandler her zaman
+     * doldurur). Persistence'tan hidrate edilen ESKİ siparişler
+     * (migration öncesi) null snapshot'lı olabilir; bu yüzden
+     * default null + hidrate uyumluluğu.
+     *
+     * deliveryAddressId / billingAddressId nullable — adres soft
+     * delete edilince DB FK ON DELETE SET NULL ile null'a düşer.
+     * Snapshot her hâlükârda korur.
+     *
+     * @param array<int, OrderItem>     $items
+     * @param array<string, mixed>|null $deliveryAddressSnapshot
+     * @param array<string, mixed>|null $billingAddressSnapshot
      */
     public function __construct(
         private readonly OrderId $id,
@@ -48,6 +60,10 @@ final class Order extends AbstractEntity
         private ?\DateTimeImmutable $completedAt = null,
         \DateTimeImmutable $createdAt = new \DateTimeImmutable(),
         ?\DateTimeImmutable $updatedAt = null,
+        private readonly ?array $deliveryAddressSnapshot = null,
+        private readonly ?array $billingAddressSnapshot = null,
+        private readonly ?string $deliveryAddressId = null,
+        private readonly ?string $billingAddressId = null,
     ) {
         if ($items === []) {
             throw new \InvalidArgumentException('Order must contain at least one item');
@@ -58,6 +74,32 @@ final class Order extends AbstractEntity
         $this->items = array_values($items);
         $this->createdAt = $createdAt;
         $this->updatedAt = $updatedAt;
+    }
+
+    /**
+     * @return array<string, mixed>|null
+     */
+    public function getDeliveryAddressSnapshot(): ?array
+    {
+        return $this->deliveryAddressSnapshot;
+    }
+
+    /**
+     * @return array<string, mixed>|null
+     */
+    public function getBillingAddressSnapshot(): ?array
+    {
+        return $this->billingAddressSnapshot;
+    }
+
+    public function getDeliveryAddressId(): ?string
+    {
+        return $this->deliveryAddressId;
+    }
+
+    public function getBillingAddressId(): ?string
+    {
+        return $this->billingAddressId;
     }
 
     public function getId(): OrderId
@@ -210,6 +252,10 @@ final class Order extends AbstractEntity
             'completedAt' => $this->completedAt?->format(\DateTimeInterface::ATOM),
             'createdAt' => $this->createdAt->format(\DateTimeInterface::ATOM),
             'updatedAt' => $this->updatedAt?->format(\DateTimeInterface::ATOM),
+            'deliveryAddress' => $this->deliveryAddressSnapshot,
+            'billingAddress' => $this->billingAddressSnapshot,
+            'deliveryAddressId' => $this->deliveryAddressId,
+            'billingAddressId' => $this->billingAddressId,
         ];
     }
 
@@ -239,6 +285,18 @@ final class Order extends AbstractEntity
             completedAt: isset($data['completedAt']) ? self::parseTimestamp($data['completedAt']) : null,
             createdAt: self::parseTimestamp($data['createdAt']),
             updatedAt: isset($data['updatedAt']) ? self::parseTimestamp($data['updatedAt']) : null,
+            deliveryAddressSnapshot: isset($data['deliveryAddress']) && is_array($data['deliveryAddress'])
+                ? $data['deliveryAddress']
+                : null,
+            billingAddressSnapshot: isset($data['billingAddress']) && is_array($data['billingAddress'])
+                ? $data['billingAddress']
+                : null,
+            deliveryAddressId: isset($data['deliveryAddressId']) && $data['deliveryAddressId'] !== null
+                ? (string) $data['deliveryAddressId']
+                : null,
+            billingAddressId: isset($data['billingAddressId']) && $data['billingAddressId'] !== null
+                ? (string) $data['billingAddressId']
+                : null,
         );
     }
 }

@@ -80,6 +80,12 @@ final class EloquentOrderRepository extends AbstractEloquentRepository implement
 
     public function save(Order $order): void
     {
+        // updateOrInsert kendisi cast'i tetiklemediğinden JSONB array'leri
+        // manuel json_encode etmek gerekiyor (full create/update üzerinden
+        // gitmiyoruz çünkü write-aggregate flow'u updateOrInsert).
+        $deliverySnapshot = $order->getDeliveryAddressSnapshot();
+        $billingSnapshot = $order->getBillingAddressSnapshot();
+
         OrderModel::query()->updateOrInsert(
             ['id' => $order->getId()->value()],
             [
@@ -98,6 +104,11 @@ final class EloquentOrderRepository extends AbstractEloquentRepository implement
                 'completed_at' => $order->getCompletedAt(),
                 'created_at' => $order->getCreatedAt(),
                 'updated_at' => $order->getUpdatedAt(),
+                // ADR-018 — JSONB snapshot + nullable FK
+                'delivery_address' => $deliverySnapshot !== null ? json_encode($deliverySnapshot, JSON_UNESCAPED_UNICODE) : null,
+                'billing_address' => $billingSnapshot !== null ? json_encode($billingSnapshot, JSON_UNESCAPED_UNICODE) : null,
+                'delivery_address_id' => $order->getDeliveryAddressId(),
+                'billing_address_id' => $order->getBillingAddressId(),
             ],
         );
 
@@ -146,6 +157,11 @@ final class EloquentOrderRepository extends AbstractEloquentRepository implement
             'completedAt' => $model->completed_at?->format(\DateTimeInterface::ATOM),
             'createdAt' => $model->created_at->format(\DateTimeInterface::ATOM),
             'updatedAt' => $model->updated_at?->format(\DateTimeInterface::ATOM),
+            // ADR-018 — cast 'array' otomatik decode eder; null güvenlikli
+            'deliveryAddress' => $model->delivery_address,
+            'billingAddress' => $model->billing_address,
+            'deliveryAddressId' => $model->delivery_address_id,
+            'billingAddressId' => $model->billing_address_id,
         ], $items);
     }
 }

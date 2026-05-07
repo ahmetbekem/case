@@ -21,5 +21,8 @@ final class OrderModel extends BaseModel
         'completed_at' => 'datetime',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
+        // ADR-018 — Postgres jsonb auto-decode + encode
+        'delivery_address' => 'array',
+        'billing_address' => 'array',
     ];
 }

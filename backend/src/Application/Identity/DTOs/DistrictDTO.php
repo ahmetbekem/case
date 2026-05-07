@@ -22,9 +22,4 @@ final readonly class DistrictDTO extends AbstractOutputDTO
         public string $name,
     ) {
     }
-
-    public function jsonSerialize(): mixed
-    {
-        return $this->toArray();
-    }
 }
