@@ -366,6 +366,133 @@ Her karar şu yapıda:
 
 ---
 
+## ADR-016: Single Base Currency System
+
+**Status:** Accepted
+**Date:** 2026-05-06
+
+**Context:** Product fiyatları her ürün için ayrı ayrı `currency` (TRY/USD/EUR) ile tutuluyordu. Bu, mixed-currency cart'larda subtotal hesaplamayı bozdu (1 USD ürün + 1 TRY ürün toplamı tek bir currency'e çevirmek için runtime conversion zincirleri gerekti). Admin "tek tıkla TRY → USD geç" akışı yoktu; product seed runtime'da farklı currency'ler taşıyordu.
+
+**Decision:**
+- Sistemde **tek bir base currency** var (`system.settings` → `base_currency`); tüm `catalog.products.price` bu currency'de tutulur
+- Frontend dönüşüm yalnızca **display layer**'da; user seçtiği `displayCurrency` ile UI çevirir, persistence'a hiç dokunmaz
+- Admin base_currency değiştirirse `ChangeBaseCurrencyHandler` atomik şekilde:
+  - (oldBase → newBase) kuru çözer (direct → inverse → TRY pivot)
+  - Stale guard: rate > 7 gün ise reddet
+  - Tek transaction: products.repriceAll + carts.abandonAllActive + setting update
+- Frontend'de admin product formunda **currency picker yok** — sadece "Fiyat (base_currency)" tek input
+
+**Rationale:**
+- Mixed currency mental model karmaşası yok — ürün tek currency'de, dönüşüm display
+- `system.base_currency_changed` audit event tek karar geçişini izleyebilir
+- Sales/order matematiği hep tek currency tabanlı; checkout'ta sadece displayTotal snapshot
+- Analytics raporları (sum/avg) doğrudan SQL agg'a uygun
+- KVKK + mali kayıt için historical order'larda `exchangeRateSnapshot` korunur
+
+**Consequences:**
+- ✅ Cart/order matematiği tek currency, hata yüzeyi azaldı
+- ✅ Admin base currency değişimi guarded + atomic + audit'lı
+- ✅ Frontend admin form basitleşti (currency picker yok)
+- ❌ Multi-region deployment için refactor gerekir (per-region base_currency)
+- ❌ ADR-016 öncesi mixed currency cart'lar `system/2024_01_06_000001_align_product_currency_with_base.php` migration'ında tek currency'e align edildi
+- ❌ Stale rate guard CI'da `currency:sync-rates` cron'unun çalıştığını varsayar; offline ortamda admin base currency değiştiremez
+
+**Alternatives Considered:**
+- Per-product currency (mevcut model) → mental load + checkout uniform-check overhead
+- USD base + display-time conversion → hızlı ama TRY ürünler için varsayılan currency kaymış olur (UX confusion)
+- Multi-base (region tablosu + per-region price) → 10 günlük scope için overkill
+
+---
+
+## ADR-017: Guest Cart with Session-Based Identification
+
+**Status:** Accepted
+**Date:** 2026-05-06
+
+**Context:** Login zorunluluğu konversiyon oranını düşürür. Modern e-ticarette (Amazon, Trendyol, Hepsiburada) guest cart standart UX pattern'i. Anonim kullanıcı sepete ürün ekleyebilmeli, sadece checkout (sipariş verme) anında auth zorunlu olmalı. Login sonrası guest cart, user'ın mevcut cart'ı ile otomatik merge olmalı.
+
+**Decision:**
+- `Cart` aggregate `user_id` VEYA `guest_session_id` ile identifiable (XOR — DB chk_carts_owner CHECK + entity validateOwnership)
+- Guest session UUID v4, httpOnly + Secure + SameSite=Strict cookie'de saklanır (`guest_cart_token`, 30 gün TTL)
+- DB partial unique index'ler tek aktif default garantiler:
+  - `uniq_carts_user_active` (WHERE user_id IS NOT NULL AND status='active')
+  - `uniq_carts_guest_active` (WHERE guest_session_id IS NOT NULL AND status='active')
+- Login/Register handler'ları `MergeGuestCartCommand` tetikler (try/catch — auth fail olmaz):
+  - Guest cart yok → no-op
+  - User cart yok → `transferOwnership` (en hafif yol)
+  - İkisi de var → `CartMerger.applyToUserCart` (quantity sum, OLDEST snapshot price korunur), guest cart abandoned
+- Checkout (PlaceOrder) ZORUNLU auth — guest order yok (KVKK denetim)
+- Guest cart 30 gün sonra `sales:clean-guest-carts` artisan ile otomatik silinir
+- BFF (Next.js) `guest_cart_token` cookie'sini browser ↔ Laravel arasında manuel forward eder (cross-origin)
+
+**Rationale:**
+- Konversiyon iyileşir (login friction yok)
+- Snapshot pricing zaten cart_items'ta var (oldest snapshot kuralı kullanıcıyı fiyat artışından korur)
+- KVKK: guest_session_id anonim (kişisel veri değil), user_id'ye merge edildiği an audit kaydedilir (`sales.cart_transferred_from_guest`)
+- Cookie güvenliği: 3 layer (HttpOnly + Secure + SameSite=Strict) XSS/CSRF/cookie-jacking koruması
+
+**Consequences:**
+- ✅ E-ticaret konversiyon iyileşir, modern UX
+- ✅ Guest browsing analytics yapılabilir (anonim)
+- ✅ Cart merge kuralı user adına matematiksel olarak adil (oldest snapshot)
+- ❌ Cleanup job zorunlu (storage flood koruması)
+- ❌ Merge logic karmaşık — full feature test coverage şart
+- ❌ Bot saldırı vektörü (cart spam) → rate-limit zorunlu (Code Review Fix #2 — `cart-write` 30/dakika throttle)
+- ❌ BFF cookie mediation kompleksitesi (Browser ↔ Next ↔ Laravel cross-origin)
+
+**Alternatives Considered:**
+- LocalStorage'da client-side cart → server-side state ile uyumsuz, snapshot zor, server-rendered fiyat doğrulaması yok
+- IP bazlı identification → CGNAT, mobil internet ile karışır, multi-tab confusion
+- Anonymous user account → DB şişirir (her ziyaretçi user row), admin user yönetimini bozar
+
+---
+
+## ADR-018: Address Management with Snapshot Pattern
+
+**Status:** Accepted
+**Date:** 2026-05-07
+
+**Context:** E-ticaret sistemde sipariş için adres bilgisi şart. Kullanıcı adresleri zamanla değişebilir veya silinebilir, ama eski siparişlerin adres bilgisi korunmalı (KVKK + audit + müşteri hizmetleri için "1 yıl önce hangi adrese gönderdik" sorusu). Türkiye için il/ilçe yapısı statik veri, runtime API bağımlılığı istemiyoruz.
+
+**Decision:**
+- Yeni modül: `Address` (Identity bounded context altında — User aggregate'e ait ama ayrı lifecycle)
+- Bir kullanıcının N (uygulama tarafında 10) aktif adresi olabilir (soft-delete'ler sayılmaz)
+- 1 default delivery + 1 default billing flag (aynı adres olabilir); DB partial unique index'leri tek default garantiler
+- Sipariş anında adres JSONB olarak snapshot'lanır (`orders.delivery_address`, `orders.billing_address`); FK referansı (`*_address_id`) nullable
+- Adres soft delete edilir (FK ON DELETE SET NULL — snapshot her hâlükârda korur)
+- Default re-pick policy: silinen adres default ise en son aktif adres otomatik default'a promote (DeleteAddressHandler)
+- Türkiye için il/ilçe statik liste — `backend/resources/data/turkey-locations.json` (81 il, 973 ilçe; `turkiyeapi.dev` kaynaklı, build sırasında transform)
+- `TurkeyLocationsService` singleton — runtime parse, case-insensitive lookup
+- IDOR koruması: tüm Address endpoint'leri `findByIdAndUser` üzerinden; cross-user erişim 404 ADDRESS_NOT_FOUND (anti-enumeration)
+- Phone E.164 normalize (`+905551234567`); display formatı `0 555 123 45 67`
+- PlaceOrderHandler `deliveryAddressId` zorunlu, `billingAddressId` null verilirse delivery ile aynı
+
+**Rationale:**
+- Snapshot pattern → adres değişse de eski sipariş bozulmaz; KVKK + muhasebe için zorunlu
+- JSONB → flexible, query'lenebilir (`idx_orders_delivery_city`), esnek schema
+- Soft delete → audit + history için referansı koru ama listings'ten gizle
+- Statik il/ilçe → external API'ye bağımlılık yok, hızlı (<10ms warm cache), offline çalışır
+- Default address → checkout UX iyileşir (otomatik seçim)
+- E.164 phone format → uluslararası standart, downstream (SMS gateway) uyumu
+
+**Consequences:**
+- ✅ Audit trail tam (KVKK uyumlu)
+- ✅ Sipariş history immutable (snapshot pattern)
+- ✅ UX rahat (default seçim + auto re-pick)
+- ✅ TR locations build-time embed; runtime API/DB call yok
+- ❌ Storage maliyeti: JSONB her order'da (~500 byte snapshot)
+- ❌ İl/ilçe data güncellemesi manuel (yeni mahalle/ilçe — annually rebuild + JSON regenerate)
+- ❌ Türkiye dışı için refactor gerekir (`countryCode` enum + per-country location service)
+- ❌ Address title strip_tags eksik (Code Review Fix backlog) — XSS defense-in-depth eksiği
+
+**Alternatives Considered:**
+- FK ile bağlama (snapshot yok) → adres silince order bozulur; soft delete edilse bile gereksiz JOIN + snapshot'ın yokluğu KVKK risk
+- Sadece string adres (tek kolon) → sorgulanabilirlik 0, analytics yapılamaz
+- External address API (örn Google Places) → 10 günlük scope için overkill, runtime bağımlılığı, latency, KVKK üçüncü taraf risk
+- TR-only enum (DB CHECK) → eklenen yeni il/ilçe migration gerektirir; JSON daha esnek
+
+---
+
 ## 📌 KARAR EKLEMEK
 
 Yeni bir mimari karar verildiğinde:
@@ -382,5 +509,5 @@ Eski karar değişirse:
 
 ---
 
-**Last Updated:** 2026-05-04
-**Toplam ADR:** 15
+**Last Updated:** 2026-05-07
+**Toplam ADR:** 18
