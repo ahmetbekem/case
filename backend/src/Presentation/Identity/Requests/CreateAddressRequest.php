@@ -56,7 +56,9 @@ final class CreateAddressRequest extends FormRequest
     protected function prepareForValidation(): void
     {
         $this->merge([
-            'title'        => trim((string) $this->input('title', '')),
+            // ORTA Fix #7 — title XSS defense-in-depth: React escape ile
+            // korunsa bile email/mobile render güvenliği için strip_tags
+            'title'        => strip_tags(trim((string) $this->input('title', ''))),
             'fullName'     => strip_tags(trim((string) $this->input('fullName', ''))),
             'addressLine'  => strip_tags(trim((string) $this->input('addressLine', ''))),
             'addressLine2' => $this->filled('addressLine2')
