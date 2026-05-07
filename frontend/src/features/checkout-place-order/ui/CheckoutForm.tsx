@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { useAddresses } from '@/entities/address';
 import { useCart } from '@/entities/cart';
@@ -40,22 +40,35 @@ export function CheckoutForm() {
   const displayCurrency = useCurrencyStore((s) => s.selected);
   const setDisplayCurrency = useCurrencyStore((s) => s.setSelected);
 
-  const [deliveryId, setDeliveryId] = useState<string | null>(null);
-  const [billingId, setBillingId] = useState<string | null>(null);
-  const [sameAsDelivery, setSameAsDelivery] = useState(true);
+  // ORTA Fix #8 — `react-hooks/set-state-in-effect` lint error fix:
+  // useEffect içinde setState yapmak yerine derived state. addresses
+  // hook output'undan hesapladığımız default'ları useMemo ile dondur,
+  // user override'ı ayrı state'te tut, render-time'da merge et.
+  const defaults = useMemo(() => {
+    if (addresses === undefined) return { delivery: null, billing: null };
+    const delivery = addresses.find((a) => a.isDefaultDelivery)?.id
+      ?? addresses[0]?.id
+      ?? null;
+    const billing = addresses.find((a) => a.isDefaultBilling)?.id ?? delivery;
+    return { delivery, billing };
+  }, [addresses]);
+
+  // User override state — başlangıçta null; render-time'da defaults'a fallback.
+  // sameAsDelivery defaults çakışırsa true (delivery === billing); user
+  // checkbox ile override edebilir.
+  const [deliveryOverride, setDeliveryOverride] = useState<string | null>(null);
+  const [billingOverride, setBillingOverride] = useState<string | null>(null);
+  const [sameOverride, setSameOverride] = useState<boolean | null>(null);
   const [notes, setNotes] = useState('');
 
-  // İlk yüklemede default adres'leri seç
-  useEffect(() => {
-    if (addresses === undefined) return;
-    const defaultDelivery = addresses.find((a) => a.isDefaultDelivery)?.id ?? addresses[0]?.id ?? null;
-    const defaultBilling = addresses.find((a) => a.isDefaultBilling)?.id ?? defaultDelivery;
-    setDeliveryId((current) => current ?? defaultDelivery);
-    setBillingId((current) => current ?? defaultBilling);
-    if (defaultDelivery !== null && defaultBilling === defaultDelivery) {
-      setSameAsDelivery(true);
-    }
-  }, [addresses]);
+  const deliveryId = deliveryOverride ?? defaults.delivery;
+  const billingId = billingOverride ?? defaults.billing;
+  const sameAsDelivery = sameOverride
+    ?? (defaults.delivery !== null && defaults.delivery === defaults.billing);
+
+  const setDeliveryId = (id: string) => setDeliveryOverride(id);
+  const setBillingId = (id: string) => setBillingOverride(id);
+  const setSameAsDelivery = (v: boolean) => setSameOverride(v);
 
   const mutation = usePlaceOrderMutation();
   const serverError =
