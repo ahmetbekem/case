@@ -23,3 +23,20 @@ Schedule::command('sales:clean-guest-carts')
     ->dailyAt('03:00')
     ->withoutOverlapping()
     ->onOneServer();
+
+// Code Review v2 KRİTİK Fix — Daily DB backup (pg_dump | gzip).
+// 02:00'de çalışır (cleanup'tan önce — temiz state'i yakala). Script
+// 30 günlük rolling daily + 12 aylık monthly retention uygular.
+// Çalışma yolu: container içinden değil, host'tan exec ediyoruz
+// (docker compose exec postgres pg_dump). Bu yüzden Schedule::exec
+// kullanıyoruz.
+Schedule::exec('bash /var/www/scripts/backup-db.sh')
+    ->dailyAt('02:00')
+    ->withoutOverlapping()
+    ->onOneServer()
+    ->onSuccess(function () {
+        \Log::info('DB backup completed successfully');
+    })
+    ->onFailure(function () {
+        \Log::error('DB backup FAILED — investigate immediately');
+    });

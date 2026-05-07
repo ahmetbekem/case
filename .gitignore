@@ -1,55 +1,47 @@
-# OS
-.DS_Store
-Thumbs.db
 
-# IDE
-.idea/
-.vscode/
-*.swp
-
-# Env
-.env
-.env.local
-.env.*.local
 !.env.example
-
-# Logs
+!backend/storage/logs/.gitkeep
+.cache/
+.DS_Store
+.env
+.env.*.local
+.env.local
+.idea/
+.nyc_output/
+.vscode/
 *.log
-
+*.pid
+*.swp
 # Backend (Laravel)
-backend/vendor/
+# Coverage
+# Env
+# Frontend (Next.js)
+# IDE
+# Infrastructure runtime data
+# Log Service (Node.js)
+# Logs
+# Misc
+# OS
+# Root tooling (Postman generation script bağımlılıkları)
+backend/.phpunit.cache/
+backend/.phpunit.result.cache
+backend/bootstrap/cache/
 backend/node_modules/
 backend/storage/framework/cache/
 backend/storage/framework/sessions/
 backend/storage/framework/views/
 backend/storage/logs/*
-!backend/storage/logs/.gitkeep
-backend/bootstrap/cache/
-backend/.phpunit.cache/
-backend/.phpunit.result.cache
-
-# Frontend (Next.js)
-frontend/node_modules/
-frontend/.next/
-frontend/out/
-frontend/dist/
-frontend/.turbo/
-
-# Log Service (Node.js)
-log-service/node_modules/
-log-service/dist/
-log-service/.tsbuildinfo
-
-# Root tooling (Postman generation script bağımlılıkları)
-node_modules/
-
-# Coverage
+backend/vendor/
+backups/
 coverage/
-.nyc_output/
-
-# Infrastructure runtime data
+frontend/.next/
+frontend/.turbo/
+frontend/dist/
+frontend/node_modules/
+frontend/out/
 infrastructure/data/
-
-# Misc
-*.pid
-.cache/
+log-service/.tsbuildinfo
+log-service/dist/
+log-service/node_modules/
+node_modules/
+Thumbs.db
