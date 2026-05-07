@@ -12,6 +12,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException as LaravelValidationException;
 use Infrastructure\Currency\Console\SyncCurrencyRatesArtisanCommand;
 use Infrastructure\Logging\Access\AccessLogMiddleware;
 use Infrastructure\Logging\Console\ReplayAuditFallbackCommand;
@@ -73,5 +74,40 @@ return Application::configure(basePath: dirname(__DIR__))
                 $payload['error']['context'] = $e->context;
             }
             return response()->json($payload, $e->getHttpStatusCode());
+        });
+
+        // Code Review v2 KRİTİK Fix #6 — Laravel FormRequest
+        // ValidationException default'ta {message,errors:{...}} shape
+        // döner; bu DomainException envelope'undan farklı. Frontend
+        // ClientApiError 422'yi anlamaz, "Request failed" generic
+        // mesaj gösterirdi. Burada uniform shape'e çeviriyoruz:
+        //
+        //   error.code      = VALIDATION_FAILED
+        //   error.message   = ilk hata mesajı (özet)
+        //   error.context   = { errors: { field: ["..."] }, all: "summary" }
+        //
+        // 'errors' map'i raw (frontend zaten parse edebilir); summary
+        // user-facing toast/banner için tek satır kısa mesaj.
+        $exceptions->render(function (LaravelValidationException $e, Request $request) {
+            if (!$request->expectsJson() && !str_starts_with($request->path(), 'api/')) {
+                return null; // web routes default render
+            }
+            $errors = $e->errors();
+            $first = collect($errors)->flatten()->first() ?? 'Validation failed';
+            // Backward-compat: top-level `errors` Laravel idiom ile uyumlu
+            // (assertJsonValidationErrors test helper'ları + mevcut frontend
+            // kontratları); aynı veriyi error.context.errors içinde de
+            // surface ediyoruz uniform envelope için.
+            return response()->json([
+                'error' => [
+                    'code' => 'VALIDATION_FAILED',
+                    'message' => $first,
+                    'context' => [
+                        'errors' => $errors,
+                    ],
+                ],
+                'message' => $first,
+                'errors' => $errors,
+            ], 422);
         });
     })->create();
