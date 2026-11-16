@@ -237,7 +237,13 @@ Tüm sayfa-route-endpoint haritası: [`docs/FRONTEND_GUIDE.md`](docs/FRONTEND_GU
 
 `UserSeeder` idempotent — tekrar çalıştırılınca aynı email'lerin şifresini günceller.
 
-`ProductSeeder` ardından **12 demo ürün** yüklenir (giyim/ayakkabı/elektronik/kitap/ev) — TRY/USD/EUR karışık, biri stoksuz. SKU üzerinden updateOrCreate.
+`ProductSeeder` ardından **15 demo ürün** yüklenir (giyim/ayakkabı/elektronik/kitap/ev/aksesuar) — tüm fiyatlar base currency'de (TRY, ADR-016), biri stoksuz. SKU üzerinden updateOrCreate.
+
+Seed kur verisi yüklemez. Para birimi dönüşümü için seed'den sonra bir kez çalıştır:
+
+```bash
+docker compose exec backend php artisan currency:sync-rates
+```
 
 ---
 

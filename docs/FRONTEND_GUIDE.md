@@ -347,7 +347,7 @@ Idempotent — tekrar çalıştırılınca aynı email'lerin şifresini güncell
 
 ### Demo Ürünler
 
-`ProductSeeder` ardından **12 ürün** yüklenir (giyim 3 / ayakkabı 2 / elektronik 3 / kitap 2 / ev 2). `created_by` admin kullanıcı. Para birimi karışık (TRY/USD/EUR) — currency switcher demo'su için. Bir ürün (`HOME-MUG-CERAMIC`) **stoksuz** — out-of-stock UI testi için.
+`ProductSeeder` ardından **15 ürün** yüklenir (giyim 3 / ayakkabı 2 / elektronik 3 / kitap 2 / ev 2 / aksesuar 3). `created_by` admin kullanıcı. Tüm fiyatlar base currency'de (TRY, ADR-016); currency switcher görüntüleme dönüşümünü `currency:sync-rates` ile çekilen kurlarla yapar. Bir ürün (`HOME-MUG-CERAMIC`) **stoksuz** — out-of-stock UI testi için.
 
 SKU üzerinden updateOrCreate; tekrar seed yeni kayıt yaratmaz.
 
