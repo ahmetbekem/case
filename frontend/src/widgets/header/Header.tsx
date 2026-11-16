@@ -34,7 +34,7 @@ export function Header() {
           href={isLoggedIn ? '/products' : '/'}
           className="text-lg font-bold tracking-tight text-slate-900"
         >
-          Dehasoft
+          E-Ticaret Demo
         </Link>
 
         <nav className="flex items-center gap-2 sm:gap-4">

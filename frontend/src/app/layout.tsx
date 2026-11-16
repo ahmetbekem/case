@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Dehasoft",
+  title: "E-Ticaret Demo",
   description: "E-ticaret platformu",
 };
 

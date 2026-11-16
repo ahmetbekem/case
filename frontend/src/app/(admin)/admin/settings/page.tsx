@@ -3,7 +3,7 @@ import { Footer } from '@/widgets/footer';
 import { Header } from '@/widgets/header';
 
 export const metadata = {
-  title: 'Sistem Ayarları | Dehasoft',
+  title: 'Sistem Ayarları | E-Ticaret Demo',
 };
 
 export default function Page() {

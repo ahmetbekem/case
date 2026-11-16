@@ -1,5 +1,5 @@
 {
-  "name": "dehasoft-test-tools",
+  "name": "eticaret-demo-tools",
   "version": "1.0.0",
   "private": true,
   "description": "Repo-level tooling — Postman collection üretimi gibi tek-amaçlı script bağımlılıkları için minimal package.json",

@@ -6,7 +6,7 @@
 
 ## 🎯 PROJE KİMLİĞİ
 
-**Ad:** Dehasoft Test Projesi
+**Ad:** E-Ticaret Demo Projesi
 **Tür:** 10 günlük teknik test — basit e-ticaret (auth + ürün + sepet + sipariş + multi-currency)
 **Stack:** Laravel 11 + PostgreSQL 15 + Redis 7 + RabbitMQ 3.13 + Elasticsearch 8.13 + Next.js 15 + Node.js 20
 **Mimari:** Onion + CQRS + DDD (Lite) + FSD (frontend) + Decoupled Logging Pipeline

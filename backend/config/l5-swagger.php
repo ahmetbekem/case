@@ -5,7 +5,7 @@ return [
     'documentations' => [
         'default' => [
             'api' => [
-                'title' => 'Dehasoft API Documentation',
+                'title' => 'E-Ticaret Demo API Documentation',
             ],
 
             'routes' => [

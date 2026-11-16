@@ -1,7 +1,7 @@
 import { SiteMapPage } from '@/pages-ui/site-map';
 
 export const metadata = {
-  title: 'Site Haritası | Dehasoft',
+  title: 'Site Haritası | E-Ticaret Demo',
 };
 
 export default function Page() {

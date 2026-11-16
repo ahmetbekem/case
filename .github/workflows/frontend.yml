@@ -52,7 +52,7 @@ jobs:
           LARAVEL_API_URL: http://backend.invalid/api/v1
           BACKEND_PROXY_SECRET: ci-dummy-secret-do-not-use-in-prod
           NODE_ENV: production
-          NEXT_PUBLIC_APP_NAME: Dehasoft
+          NEXT_PUBLIC_APP_NAME: E-Ticaret Demo
           NEXT_PUBLIC_DEFAULT_CURRENCY: TRY
         run: pnpm build
 

@@ -1,4 +1,4 @@
-# 🔒 Dehasoft Test Projesi - Security Architecture
+# 🔒 E-Ticaret Demo Projesi - Security Architecture
 
 > **CRITICAL:** Bu doküman 5 ana güvenlik tehdidini ve mitigation'larını tanımlar. Implementation **kesinlikle** bu kurallara uymak zorundadır. Güvenlik konusunda kısayol yoktur.
 
@@ -48,7 +48,7 @@
 - **Laravel API:** Güvenilir. Sadece proxy ile konuşur, internete açık DEĞİL.
 - **PostgreSQL/Redis/RabbitMQ:** Güvenilir. Sadece backend network'ünden erişilebilir.
 
-### 1.2 Threat Categories (Dehasoft Requirements)
+### 1.2 Threat Categories (Project Requirements)
 
 | # | Threat | Severity | Mitigation Section |
 |---|--------|----------|-------------------|
@@ -250,7 +250,7 @@ Browser'da Network tab açılır, Laravel URL'i gözükür, saldırgan doğrudan
 ```bash
 # frontend/.env.local
 # ❌ BU PUBLIC OLUR — Laravel URL'i ASLA buraya yazma
-NEXT_PUBLIC_APP_NAME="Dehasoft"
+NEXT_PUBLIC_APP_NAME="E-Ticaret Demo"
 NEXT_PUBLIC_DEFAULT_CURRENCY="TRY"
 
 # ✅ BU SERVER-SIDE — Browser'a sızmaz
@@ -439,8 +439,8 @@ cookies().set('refresh_token', refreshToken, {
 
 ```json
 {
-  "iss": "dehasoft-api",
-  "aud": "dehasoft-app",
+  "iss": "eticaret-demo-api",
+  "aud": "eticaret-demo-app",
   "sub": "550e8400-e29b-41d4-a716-446655440000",  // user id
   "iat": 1714823400,
   "exp": 1714824300,

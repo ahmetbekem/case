@@ -1,4 +1,4 @@
-# 📊 Dehasoft Test Projesi - Logging Service Architecture
+# 📊 E-Ticaret Demo Projesi - Logging Service Architecture
 
 > **CRITICAL:** Bu doküman log servisinin (Node.js + RabbitMQ + Elasticsearch) tam mimarisini tanımlar. Laravel'deki integration pattern'leri ve Node.js consumer'ın yapısı bu dokümana uymak zorundadır.
 

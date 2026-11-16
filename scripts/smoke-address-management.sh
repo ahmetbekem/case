@@ -38,14 +38,14 @@ DC=$($JQ '.data | length' "$T2")
 [ "$DC" = "39" ] || fail "Expected 39 districts, got $DC"
 ok "İstanbul 39 ilçe"
 
-bold "3) Login as admin@dehasoft.test"
+bold "3) Login as admin@example.test"
 JAR=$(mktemp)
 curl -s -X POST -H "Content-Type: application/json" \
   -c "$JAR" -o /dev/null \
-  -d '{"email":"admin@dehasoft.test","password":"Pass1234"}' \
+  -d '{"email":"admin@example.test","password":"Pass1234"}' \
   "$FRONTEND_URL/api/auth/login"
 ME=$(curl -s -b "$JAR" "$FRONTEND_URL/api/auth/me" | $JQ -r '.data.email // .data.user.email // .error.message')
-[ "$ME" = "admin@dehasoft.test" ] || fail "Login failed: $ME"
+[ "$ME" = "admin@example.test" ] || fail "Login failed: $ME"
 ok "Logged in"
 
 bold "4) POST /identity/addresses — yeni adres"

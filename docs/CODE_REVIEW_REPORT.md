@@ -211,7 +211,7 @@ Bu review v1'den farklı olarak post-refactor 3 yeni feature'ı kapsar:
 
 **Test/Demo: ✅ HAZIR** — 124 test PASS, 1036 assertion, e2e smoke (guest cart + address) 100% pass. Demo akışı problemsiz.
 
-**Dehasoft teslim:** ⚠️ **DÜZELTME ÖNERİSİ** — kısa vadeli 5 düzeltme (APP_DEBUG gate, cart rate limit, DECISIONS ADR ekle, ExchangeRateSeeder, CheckoutForm lint) yapıldıktan sonra teslim. Bu düzeltmeler ~3-4 saatlik iş.
+**Teslim:** ⚠️ **DÜZELTME ÖNERİSİ** — kısa vadeli 5 düzeltme (APP_DEBUG gate, cart rate limit, DECISIONS ADR ekle, ExchangeRateSeeder, CheckoutForm lint) yapıldıktan sonra teslim. Bu düzeltmeler ~3-4 saatlik iş.
 
 ### Feature Tamamlanma
 - ✅ **Brif gereksinimleri:** auth + ürün + sepet + sipariş + multi-currency tam

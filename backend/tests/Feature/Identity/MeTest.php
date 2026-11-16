@@ -35,7 +35,7 @@ describe('GET /api/v1/auth/me', function () {
         $header = rtrim(strtr(base64_encode(json_encode(['typ' => 'JWT', 'alg' => 'HS256'])), '+/', '-_'), '=');
         $payload = rtrim(strtr(base64_encode(json_encode([
             'iss' => config('app.name'),
-            'aud' => config('jwt.audience', 'dehasoft-app'),
+            'aud' => config('jwt.audience', 'eticaret-demo-app'),
             'sub' => '11111111-2222-3333-4444-555555555555',
             'iat' => time(),
             'exp' => time() + 3600,

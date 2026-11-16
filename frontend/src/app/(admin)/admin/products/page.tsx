@@ -3,7 +3,7 @@ import { Header } from '@/widgets/header';
 import { AdminProductsPage } from '@/pages-ui/admin-products';
 
 export const metadata = {
-  title: 'Ürün Yönetimi | Dehasoft',
+  title: 'Ürün Yönetimi | E-Ticaret Demo',
 };
 
 /**

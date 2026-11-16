@@ -1,4 +1,4 @@
-# 🏛️ Dehasoft Test Projesi - Project Structure & Architecture Guide
+# 🏛️ E-Ticaret Demo Projesi - Project Structure & Architecture Guide
 
 > **CRITICAL:** Bu doküman projenin tüm dizin yapısını, katman sorumluluklarını ve klasör organizasyonunu tanımlar. **Tüm kod kesinlikle bu yapıya uymak zorundadır.** Implementation'a başlamadan önce bu dokümanın tamamını okuyun.
 
@@ -1533,4 +1533,4 @@ Base structure tamam sayılır eğer:
 **Last Updated:** 2026-05-04
 **Version:** 1.0
 **Author:** Architecture & PM (Ahmet Bekem)
-**Project:** Dehasoft Test Projesi (10 gün)
+**Project:** E-Ticaret Demo Projesi (10 gün)

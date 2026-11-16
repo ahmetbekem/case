@@ -1,8 +1,8 @@
 {
     "openapi": "3.0.0",
     "info": {
-        "title": "Dehasoft API",
-        "description": "Dehasoft Test Projesi — basit e-ticaret API. Tüm public istekler Next.js BFF üzerinden geçer; direkt backend erişimi X-Proxy-Secret header doğrulaması ile reddedilir (ProxyOriginMiddleware).",
+        "title": "E-Ticaret Demo API",
+        "description": "E-Ticaret Demo Projesi — basit e-ticaret API. Tüm public istekler Next.js BFF üzerinden geçer; direkt backend erişimi X-Proxy-Secret header doğrulaması ile reddedilir (ProxyOriginMiddleware).",
         "contact": {
             "name": "Ahmet Bekem",
             "email": "ahmet@example.com"

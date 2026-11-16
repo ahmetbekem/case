@@ -1,6 +1,6 @@
 # Frontend Kullanım Rehberi
 
-Dehasoft test projesi frontend (Next.js 16 + React 19 + FSD) için sayfa-route-endpoint
+E-Ticaret Demo Projesi frontend (Next.js 16 + React 19 + FSD) için sayfa-route-endpoint
 haritası ve kullanıcı akışları.
 
 > **Canlı versiyon:** http://localhost:3030/site-map (bu doc'la birebir senkron — sayfa
@@ -332,7 +332,7 @@ Tam shadcn init yapılmadı — `cn.ts` helper + manual `Button`, `Input`, `Labe
 
 ```bash
 # Container'dan
-docker exec dehasoft-backend php artisan db:seed --force
+docker exec app-backend php artisan db:seed --force
 
 # veya host'tan (faker dev-deps gerektirir)
 cd backend && php artisan db:seed --force
@@ -340,8 +340,8 @@ cd backend && php artisan db:seed --force
 
 | Rol | Email | Şifre | Erişim |
 |-----|-------|-------|--------|
-| **admin** | `admin@dehasoft.test` | `Admin123!` | Tüm sayfalar + `/admin/products` |
-| **customer** | `customer@dehasoft.test` | `Customer123!` | `/cart`, `/checkout`, `/orders` |
+| **admin** | `admin@example.test` | `Admin123!` | Tüm sayfalar + `/admin/products` |
+| **customer** | `customer@example.test` | `Customer123!` | `/cart`, `/checkout`, `/orders` |
 
 Idempotent — tekrar çalıştırılınca aynı email'lerin şifresini günceller, yeni kayıt yaratmaz.
 

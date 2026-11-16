@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # OpenAPI 3.0 spec'i Postman 2.1 collection'a dönüştürür.
-# Idempotent — her çalıştırmada docs/postman/dehasoft.postman_collection.json
+# Idempotent — her çalıştırmada docs/postman/eticaret-demo.postman_collection.json
 # üzerine yazar. Ardından login request'inin "Tests" alanına auto-token
 # JavaScript'ini enjekte eder (Postman'de token'ları otomatik environment'a yazsın).
 #
@@ -11,7 +11,7 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 SPEC="${ROOT_DIR}/backend/storage/api-docs/api-docs.json"
 OUT_DIR="${ROOT_DIR}/docs/postman"
-OUT_FILE="${OUT_DIR}/dehasoft.postman_collection.json"
+OUT_FILE="${OUT_DIR}/eticaret-demo.postman_collection.json"
 
 mkdir -p "${OUT_DIR}"
 
@@ -40,4 +40,4 @@ echo "[postman] Generating collection from ${SPEC}"
 node "${ROOT_DIR}/scripts/inject-postman-auth.mjs" "${OUT_FILE}"
 
 echo "[postman] OK → ${OUT_FILE}"
-echo "[postman] Environment: ${OUT_DIR}/dehasoft.postman_environment.json"
+echo "[postman] Environment: ${OUT_DIR}/eticaret-demo.postman_environment.json"

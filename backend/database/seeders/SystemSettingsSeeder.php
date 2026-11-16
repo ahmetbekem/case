@@ -49,7 +49,7 @@ final class SystemSettingsSeeder extends Seeder
             ],
             [
                 'key' => SettingKey::SITE_NAME,
-                'value' => 'Dehasoft Test Store',
+                'value' => 'E-Ticaret Demo Store',
                 'type' => 'string',
                 'category' => 'general',
                 'description' => 'Site adı (header, email subject, vs.).',

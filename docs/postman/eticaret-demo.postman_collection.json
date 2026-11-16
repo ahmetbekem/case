@@ -7579,10 +7579,10 @@
   ],
   "info": {
     "_postman_id": "9479afda-2af2-47b4-a2de-1fc32e2c22ee",
-    "name": "Dehasoft API",
+    "name": "E-Ticaret Demo API",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "description": {
-      "content": "Dehasoft Test Projesi — basit e-ticaret API. Tüm public istekler Next.js BFF üzerinden geçer; direkt backend erişimi X-Proxy-Secret header doğrulaması ile reddedilir (ProxyOriginMiddleware).\n\nContact Support:\n Name: Ahmet Bekem\n Email: ahmet@example.com",
+      "content": "E-Ticaret Demo Projesi — basit e-ticaret API. Tüm public istekler Next.js BFF üzerinden geçer; direkt backend erişimi X-Proxy-Secret header doğrulaması ile reddedilir (ProxyOriginMiddleware).\n\nContact Support:\n Name: Ahmet Bekem\n Email: ahmet@example.com",
       "type": "text/plain"
     }
   }

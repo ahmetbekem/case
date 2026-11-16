@@ -3,7 +3,7 @@ import { Suspense } from 'react';
 import { CartPage } from '@/pages-ui/cart';
 
 export const metadata = {
-  title: 'Sepetim | Dehasoft',
+  title: 'Sepetim | E-Ticaret Demo',
 };
 
 export default function Page() {

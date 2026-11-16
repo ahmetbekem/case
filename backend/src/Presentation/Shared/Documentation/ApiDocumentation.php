@@ -17,10 +17,10 @@ use OpenApi\Attributes as OA;
  */
 #[OA\Info(
     version: '1.0.0',
-    description: 'Dehasoft Test Projesi — basit e-ticaret API. Tüm public istekler '
+    description: 'E-Ticaret Demo Projesi — basit e-ticaret API. Tüm public istekler '
         . 'Next.js BFF üzerinden geçer; direkt backend erişimi X-Proxy-Secret '
         . 'header doğrulaması ile reddedilir (ProxyOriginMiddleware).',
-    title: 'Dehasoft API',
+    title: 'E-Ticaret Demo API',
     contact: new OA\Contact(name: 'Ahmet Bekem', email: 'ahmet@example.com'),
 )]
 #[OA\Server(

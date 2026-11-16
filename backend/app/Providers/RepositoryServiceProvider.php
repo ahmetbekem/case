@@ -90,8 +90,8 @@ final class RepositoryServiceProvider extends ServiceProvider
         $this->app->singleton(JwtIssuerInterface::class, function () {
             return new HmacJwtIssuer(
                 secret: (string) config('jwt.secret'),
-                issuer: (string) config('app.name', 'dehasoft-api'),
-                audience: (string) config('jwt.audience', 'dehasoft-app'),
+                issuer: (string) config('app.name', 'eticaret-demo-api'),
+                audience: (string) config('jwt.audience', 'eticaret-demo-app'),
                 ttlMinutes: (int) config('jwt.ttl', 15),
             );
         });

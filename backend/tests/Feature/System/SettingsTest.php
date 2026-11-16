@@ -27,7 +27,7 @@ function seedSetting(string $key, string $value, bool $isPublic = false, string 
 function seedUserForSettings(string $role = 'admin'): array
 {
     $id = Uuid::uuid4()->toString();
-    $email = $role . '+' . substr($id, 0, 6) . '@dehasoft.test';
+    $email = $role . '+' . substr($id, 0, 6) . '@example.test';
     UserModel::query()->insert([
         'id' => $id,
         'email' => $email,

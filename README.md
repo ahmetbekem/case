@@ -1,4 +1,4 @@
-# Dehasoft Test Projesi
+# E-Ticaret Demo Projesi
 
 10 günlük teknik test — basit e-ticaret (auth + ürün + sepet + sipariş + multi-currency).
 
@@ -11,7 +11,7 @@
 ## Monorepo Yapısı
 
 ```
-dehasoft-test/
+eticaret-demo/
 ├── backend/                # Laravel 11 API (Onion + CQRS + DDD-Lite)
 ├── frontend/               # Next.js 16 (FSD + BFF proxy)
 ├── log-service/            # Node.js consumer (RabbitMQ → Elasticsearch)
@@ -33,8 +33,8 @@ dehasoft-test/
 ### 1) Repoyu klonla ve env dosyalarını hazırla
 
 ```bash
-git clone <repo> dehasoft-test
-cd dehasoft-test
+git clone <repo> eticaret-demo
+cd eticaret-demo
 cp .env.example .env
 cp backend/.env.example backend/.env
 cp frontend/.env.example frontend/.env.local
@@ -182,8 +182,8 @@ npm run typecheck && npm run lint && npm run build
 |---|---|
 | Swagger UI | http://localhost:8000/api/documentation |
 | OpenAPI 3.0 JSON | http://localhost:8000/docs |
-| Postman Collection | [`docs/postman/dehasoft.postman_collection.json`](docs/postman/dehasoft.postman_collection.json) |
-| Postman Environment | [`docs/postman/dehasoft.postman_environment.json`](docs/postman/dehasoft.postman_environment.json) |
+| Postman Collection | [`docs/postman/eticaret-demo.postman_collection.json`](docs/postman/eticaret-demo.postman_collection.json) |
+| Postman Environment | [`docs/postman/eticaret-demo.postman_environment.json`](docs/postman/eticaret-demo.postman_environment.json) |
 
 **Swagger UI:** Authorize butonu → `bearerAuth` (Bearer JWT) veya
 `cookieAuth` (access_token cookie). Try-it-out ile login → token persist
@@ -232,8 +232,8 @@ Tüm sayfa-route-endpoint haritası: [`docs/FRONTEND_GUIDE.md`](docs/FRONTEND_GU
 
 | Rol | Email | Şifre |
 |-----|-------|-------|
-| admin | `admin@dehasoft.test` | `Admin123!` |
-| customer | `customer@dehasoft.test` | `Customer123!` |
+| admin | `admin@example.test` | `Admin123!` |
+| customer | `customer@example.test` | `Customer123!` |
 
 `UserSeeder` idempotent — tekrar çalıştırılınca aynı email'lerin şifresini günceller.
 
@@ -338,7 +338,7 @@ ile devre dışıdır. "unhealthy" görüyorsan compose dosyanı güncelle.
 ### Log mesajları Elasticsearch'e gitmiyor
 1. RabbitMQ Management UI'da `logs.exchange`'e mesaj akıyor mu kontrol et.
 2. `logs.{audit,app,access}.queue` consumer sayısı **3** olmalı (log-service).
-3. `logs.dlq` doluyorsa: parse hatası ya da ES connection — `docker logs dehasoft-log-service`.
+3. `logs.dlq` doluyorsa: parse hatası ya da ES connection — `docker logs app-log-service`.
 4. ES template/ILM yüklü mü? `curl localhost:9200/_index_template/logs-audit | jq`.
 
 ---

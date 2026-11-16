@@ -23,8 +23,8 @@
 ## 2) Repoyu Klonla
 
 ```bash
-git clone <REPO-URL> dehasoft-test
-cd dehasoft-test
+git clone <REPO-URL> eticaret-demo
+cd eticaret-demo
 ```
 
 ---
@@ -135,8 +135,8 @@ curl http://localhost:3030/api/system/settings/public | jq '.data[0]'
 
 | Rol | Email | Şifre | Yetki |
 |-----|-------|-------|-------|
-| admin | `admin@dehasoft.test` | `Admin123!` | Tüm sayfalar + admin panelleri |
-| customer | `customer@dehasoft.test` | `Customer123!` | Sepet + sipariş + adres yönetimi |
+| admin | `admin@example.test` | `Admin123!` | Tüm sayfalar + admin panelleri |
+| customer | `customer@example.test` | `Customer123!` | Sepet + sipariş + adres yönetimi |
 
 > Şifreler `UserSeeder` idempotent çalışır — seed'i tekrar çalıştırırsan üzerine yazar.
 
@@ -223,7 +223,7 @@ Tüm production checklist için: [README.md → Production Deploy](../README.md#
 docker compose logs -f backend
 
 # DB shell
-docker compose exec postgres psql -U dehasoft -d testproject
+docker compose exec postgres psql -U app -d testproject
 
 # Redis CLI
 docker compose exec redis redis-cli

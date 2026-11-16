@@ -1,4 +1,4 @@
-# 📐 Dehasoft Test Projesi - Coding Standards & Patterns
+# 📐 E-Ticaret Demo Projesi - Coding Standards & Patterns
 
 > **CRITICAL:** Bu doküman backend (Laravel) için tüm kod template'lerini ve pattern'leri tanımlar. **Tüm kod kesinlikle bu kalıplara uymak zorundadır.**
 

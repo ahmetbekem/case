@@ -1,6 +1,6 @@
 # 🎯 Sistem Tanıtımı
 
-> **Dehasoft Test Projesi** — Onion Architecture + CQRS + DDD-Lite + FSD + Decoupled Logging mimarisinde Laravel 11 + Next.js 16 e-commerce demo. Misafir sepet, multi-currency, JWT-on-cookie BFF, RabbitMQ→Elasticsearch logging, audit hash chain.
+> **E-Ticaret Demo Projesi** — Onion Architecture + CQRS + DDD-Lite + FSD + Decoupled Logging mimarisinde Laravel 11 + Next.js 16 e-commerce demo. Misafir sepet, multi-currency, JWT-on-cookie BFF, RabbitMQ→Elasticsearch logging, audit hash chain.
 
 ---
 
@@ -333,8 +333,8 @@ Kibana:         http://localhost:5601
 RabbitMQ UI:    http://localhost:15672  (admin/admin)
 
 Test hesapları:
-  admin@dehasoft.test      / Admin123!
-  customer@dehasoft.test   / Customer123!
+  admin@example.test      / Admin123!
+  customer@example.test   / Customer123!
 
 Kurulum:        docs/KURULUM.md
 Kullanım:       docs/KULLANIM.md

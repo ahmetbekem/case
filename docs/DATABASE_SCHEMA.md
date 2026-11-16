@@ -1,4 +1,4 @@
-# 🗄️ Dehasoft Test Projesi - Database Schema
+# 🗄️ E-Ticaret Demo Projesi - Database Schema
 
 > **CRITICAL:** Bu doküman tüm tabloları, kolon tiplerini, kısıtları, ilişkileri ve indeksleri tanımlar. Migration'lar **kesinlikle** bu şemaya uymak zorundadır.
 
@@ -543,7 +543,7 @@ ADR-016 — Sistem-wide konfigürasyon (base_currency, supported_currencies, def
 ('base_currency', 'TRY', 'string', 'currency', is_public=true)
 ('default_display_currency', 'TRY', 'string', 'currency', is_public=true)
 ('supported_currencies', '["TRY","USD","EUR"]', 'json', 'currency', is_public=true)
-('site_name', 'Dehasoft Test Store', 'string', 'general', is_public=true)
+('site_name', 'E-Ticaret Demo Store', 'string', 'general', is_public=true)
 ```
 
 **Base Currency Change Flow (ADR-016):**

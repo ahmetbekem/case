@@ -27,9 +27,9 @@ final class ProductSeeder extends Seeder
 {
     public function run(): void
     {
-        $admin = UserModel::query()->where('email', 'admin@dehasoft.test')->first();
+        $admin = UserModel::query()->where('email', 'admin@example.test')->first();
         if ($admin === null) {
-            $this->command?->warn('[products] admin@dehasoft.test bulunamadı — UserSeeder önce çalıştırılmalı');
+            $this->command?->warn('[products] admin@example.test bulunamadı — UserSeeder önce çalıştırılmalı');
             return;
         }
         $createdBy = (string) $admin->id;

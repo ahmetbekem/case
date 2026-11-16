@@ -141,7 +141,7 @@ export function SiteMapPage() {
           Site Haritası
         </h1>
         <p className="text-sm text-slate-600">
-          Dehasoft test projesi — tüm sayfaların ve API endpoint&apos;lerinin
+          E-Ticaret Demo Projesi — tüm sayfaların ve API endpoint&apos;lerinin
           rehberi.{' '}
           <Link
             href="https://github.com"
@@ -198,7 +198,7 @@ export function SiteMapPage() {
             <p className="mb-1 inline-flex items-center rounded-full bg-rose-100 px-2 py-0.5 text-xs font-medium text-rose-900 ring-1 ring-inset ring-rose-300">
               admin
             </p>
-            <p className="font-mono text-slate-900">admin@dehasoft.test</p>
+            <p className="font-mono text-slate-900">admin@example.test</p>
             <p className="font-mono text-slate-700">Admin123!</p>
             <p className="mt-2 text-xs text-slate-600">
               Tüm sayfalar + /admin/products
@@ -208,7 +208,7 @@ export function SiteMapPage() {
             <p className="mb-1 inline-flex items-center rounded-full bg-sky-100 px-2 py-0.5 text-xs font-medium text-sky-900 ring-1 ring-inset ring-sky-300">
               customer
             </p>
-            <p className="font-mono text-slate-900">customer@dehasoft.test</p>
+            <p className="font-mono text-slate-900">customer@example.test</p>
             <p className="font-mono text-slate-700">Customer123!</p>
             <p className="mt-2 text-xs text-slate-600">
               Sepet + sipariş + checkout

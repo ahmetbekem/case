@@ -1,6 +1,6 @@
-# 📘 Dehasoft Test Projesi - API Documentation Strategy
+# 📘 E-Ticaret Demo Projesi - API Documentation Strategy
 
-> **CRITICAL:** Dehasoft TESLİMAT kriterlerinden biri "API dokümantasyonu (Postman/Swagger)". Bu doküman entegrasyon stratejisini ve standartlarını tanımlar.
+> **CRITICAL:** Teslimat kriterlerinden biri "API dokümantasyonu (Postman/Swagger)". Bu doküman entegrasyon stratejisini ve standartlarını tanımlar.
 
 **Version:** 1.0
 **Stack:** L5-Swagger (OpenAPI 3.0) + Postman Collection export
@@ -29,11 +29,11 @@
 
 ### 1.1 Hedef
 
-Dehasoft'a teslimde aşağıdakiler hazır olacak:
+Teslimde aşağıdakiler hazır olacak:
 
 1. ✅ **Swagger UI:** Erişilebilir interaktif dokümantasyon (`/api/documentation`)
 2. ✅ **OpenAPI JSON:** Standart export (`/docs/api-docs.json`)
-3. ✅ **Postman Collection:** Hazır import edilebilir `.json` dosyası (`docs/postman/dehasoft.postman_collection.json`)
+3. ✅ **Postman Collection:** Hazır import edilebilir `.json` dosyası (`docs/postman/eticaret-demo.postman_collection.json`)
 4. ✅ **Try-it-out:** Swagger UI'dan direkt test edilebilir (auth dahil)
 5. ✅ **README'de link:** Hızlı erişim için
 
@@ -43,10 +43,10 @@ Dehasoft'a teslimde aşağıdakiler hazır olacak:
 
 | Katman | Audience | Dokümantasyon |
 |--------|----------|---------------|
-| **Laravel API** (port 9000, internal) | Backend developers, Dehasoft inceleyici | Swagger/OpenAPI ile detaylı |
+| **Laravel API** (port 9000, internal) | Backend developers, Proje inceleyicisi | Swagger/OpenAPI ile detaylı |
 | **Next.js BFF** (`/api/*`, public) | Frontend developers | Markdown (kısa açıklama) |
 
-Dehasoft'un göreceği asıl dokümantasyon **Laravel API** Swagger'ıdır. Next.js BFF aynı endpoint'leri proxy'ler, ek bir dokümantasyon yükü oluşturmaz.
+İnceleyicinin göreceği asıl dokümantasyon **Laravel API** Swagger'ıdır. Next.js BFF aynı endpoint'leri proxy'ler, ek bir dokümantasyon yükü oluşturmaz.
 
 ### 1.3 Approach: Code-First Annotations
 
@@ -105,7 +105,7 @@ return [
     'documentations' => [
         'default' => [
             'api' => [
-                'title' => 'Dehasoft API Documentation',
+                'title' => 'E-Ticaret Demo API Documentation',
             ],
             'routes' => [
                 'api' => 'api/documentation',  // Swagger UI URL
@@ -209,8 +209,8 @@ use OpenApi\Attributes as OA;
 
 #[OA\Info(
     version: '1.0.0',
-    description: 'Dehasoft Test Projesi - E-ticaret API. Tüm endpoint\'ler Next.js BFF üzerinden çağrılmalıdır. Direct backend access yasaktır (X-Proxy-Secret zorunlu).',
-    title: 'Dehasoft API',
+    description: 'E-Ticaret Demo API. Tüm endpoint\'ler Next.js BFF üzerinden çağrılmalıdır. Direct backend access yasaktır (X-Proxy-Secret zorunlu).',
+    title: 'E-Ticaret Demo API',
     contact: new OA\Contact(email: 'ahmet@example.com'),
 )]
 #[OA\Server(url: 'http://localhost:9000/api/v1', description: 'Local development')]
@@ -261,7 +261,7 @@ L5_SWAGGER_GENERATE_ALWAYS=false  # Production'da deploy zamanı bir kez generat
 ```
 
 Production'da swagger UI'a erişim:
-- **Opsiyon A:** Public (Dehasoft için ideal — değerlendirici erişebilir)
+- **Opsiyon A:** Public (değerlendirme için ideal — değerlendirici erişebilir)
 - **Opsiyon B:** Basic auth ile korumalı (uzun vadeli production için)
 
 Test için Opsiyon A öneriliyor.
@@ -879,11 +879,11 @@ echo "Converting to Postman collection..."
 # openapi-to-postmanv2 npm package
 npx openapi-to-postmanv2 \
   -s storage/api-docs/api-docs.json \
-  -o ../docs/postman/dehasoft.postman_collection.json \
+  -o ../docs/postman/eticaret-demo.postman_collection.json \
   -p \
   -O folderStrategy=Tags,requestNameSource=Fallback
 
-echo "Postman collection generated: docs/postman/dehasoft.postman_collection.json"
+echo "Postman collection generated: docs/postman/eticaret-demo.postman_collection.json"
 ```
 
 `package.json` (root):
@@ -897,12 +897,12 @@ echo "Postman collection generated: docs/postman/dehasoft.postman_collection.jso
 
 ### 9.3 Postman Environment
 
-`docs/postman/dehasoft.postman_environment.json`:
+`docs/postman/eticaret-demo.postman_environment.json`:
 
 ```json
 {
-  "id": "dehasoft-local",
-  "name": "Dehasoft Local",
+  "id": "eticaret-demo-local",
+  "name": "E-Ticaret Demo Local",
   "values": [
     {
       "key": "baseUrl",
@@ -997,7 +997,7 @@ Browser → Next.js (`/api/catalog/products`) → Laravel (`/api/v1/catalog/prod
 ```bash
 docker-compose up -d
 # Swagger UI: http://localhost:9000/api/documentation
-# Postman: import docs/postman/dehasoft.postman_collection.json
+# Postman: import docs/postman/eticaret-demo.postman_collection.json
 ```
 
 ### 11.2 Generate Command Workflow
@@ -1054,7 +1054,7 @@ jobs:
         run: |
           npx openapi-to-postmanv2 \
             -s backend/storage/api-docs/api-docs.json \
-            -o docs/postman/dehasoft.postman_collection.json \
+            -o docs/postman/eticaret-demo.postman_collection.json \
             -p
 
       - name: Commit and push
@@ -1070,7 +1070,7 @@ jobs:
 
 Production'da Swagger UI'a erişim için:
 
-**Test için (Dehasoft değerlendirmesi):**
+**Test için (değerlendirme):**
 - `https://api.example.com/api/documentation` — public
 - `BACKEND_PROXY_SECRET` validation EXEMPT (proxy bypass kuralından muaf)
 
@@ -1114,8 +1114,8 @@ Implementation tamam sayılır eğer:
 **Postman:**
 - [ ] `openapi-to-postmanv2` package install
 - [ ] `scripts/generate-postman-collection.sh` çalışıyor
-- [ ] `docs/postman/dehasoft.postman_collection.json` üretiliyor
-- [ ] `docs/postman/dehasoft.postman_environment.json` mevcut
+- [ ] `docs/postman/eticaret-demo.postman_collection.json` üretiliyor
+- [ ] `docs/postman/eticaret-demo.postman_environment.json` mevcut
 - [ ] Login endpoint'inde auto-save token script
 - [ ] Postman'a import edilince tüm endpoint'ler çalışıyor
 

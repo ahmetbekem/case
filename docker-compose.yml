@@ -1,4 +1,4 @@
-name: dehasoft-test
+name: eticaret-demo
 
 services:
   # ─────────────────────────────────────────────────────────────
@@ -6,31 +6,31 @@ services:
   # ─────────────────────────────────────────────────────────────
   postgres:
     image: postgres:15-alpine
-    container_name: dehasoft-postgres
+    container_name: app-postgres
     restart: unless-stopped
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-testproject}
-      POSTGRES_USER: ${POSTGRES_USER:-dehasoft}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-dehasoft_pass}
+      POSTGRES_USER: ${POSTGRES_USER:-app}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-app_pass}
     ports:
       - "${POSTGRES_PORT:-5432}:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
       - ./infrastructure/postgres/init:/docker-entrypoint-initdb.d:ro
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-dehasoft} -d ${POSTGRES_DB:-testproject}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-app} -d ${POSTGRES_DB:-testproject}"]
       interval: 10s
       timeout: 5s
       retries: 5
     networks:
-      - dehasoft-net
+      - app-net
 
   # ─────────────────────────────────────────────────────────────
   # Redis 7 — cache (currency rates, JWT blacklist) + queue backend
   # ─────────────────────────────────────────────────────────────
   redis:
     image: redis:7-alpine
-    container_name: dehasoft-redis
+    container_name: app-redis
     restart: unless-stopped
     ports:
       - "${REDIS_PORT:-6379}:6379"
@@ -43,7 +43,7 @@ services:
       timeout: 5s
       retries: 5
     networks:
-      - dehasoft-net
+      - app-net
 
   # ─────────────────────────────────────────────────────────────
   # RabbitMQ 3.13 — log message broker (audit/app/access exchanges)
@@ -51,7 +51,7 @@ services:
   # ─────────────────────────────────────────────────────────────
   rabbitmq:
     image: rabbitmq:3.13-management-alpine
-    container_name: dehasoft-rabbitmq
+    container_name: app-rabbitmq
     restart: unless-stopped
     environment:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-admin}
@@ -71,14 +71,14 @@ services:
       timeout: 10s
       retries: 5
     networks:
-      - dehasoft-net
+      - app-net
 
   # ─────────────────────────────────────────────────────────────
   # Elasticsearch 8.13 — log storage (audit/app/access indices)
   # ─────────────────────────────────────────────────────────────
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.13.0
-    container_name: dehasoft-elasticsearch
+    container_name: app-elasticsearch
     restart: unless-stopped
     environment:
       - discovery.type=single-node
@@ -99,14 +99,14 @@ services:
       timeout: 10s
       retries: 10
     networks:
-      - dehasoft-net
+      - app-net
 
   # ─────────────────────────────────────────────────────────────
   # Kibana 8.13 — log visualization (http://localhost:5601)
   # ─────────────────────────────────────────────────────────────
   kibana:
     image: docker.elastic.co/kibana/kibana:8.13.0
-    container_name: dehasoft-kibana
+    container_name: app-kibana
     restart: unless-stopped
     environment:
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
@@ -121,7 +121,7 @@ services:
       timeout: 10s
       retries: 10
     networks:
-      - dehasoft-net
+      - app-net
 
   # ─────────────────────────────────────────────────────────────
   # APPLICATION SERVICES — uncomment as bootstraps land
@@ -134,15 +134,15 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: dehasoft-backend
+    container_name: app-backend
     restart: unless-stopped
     environment:
       DB_CONNECTION: pgsql
       DB_HOST: postgres
       DB_PORT: 5432
       DB_DATABASE: ${POSTGRES_DB:-testproject}
-      DB_USERNAME: ${POSTGRES_USER:-dehasoft}
-      DB_PASSWORD: ${POSTGRES_PASSWORD:-dehasoft_pass}
+      DB_USERNAME: ${POSTGRES_USER:-app}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-app_pass}
       REDIS_CLIENT: predis
       REDIS_HOST: redis
       REDIS_PORT: 6379
@@ -158,7 +158,7 @@ services:
       APP_ENV: ${APP_ENV:-local}
       APP_DEBUG: ${APP_DEBUG:-true}
       APP_KEY: ${APP_KEY:-}
-      APP_NAME: Dehasoft
+      APP_NAME: E-Ticaret Demo
       JWT_SECRET: ${JWT_SECRET:-}
       BACKEND_PROXY_SECRET: ${BACKEND_PROXY_SECRET}
       SECURITY_ALLOWED_ORIGINS: ${SECURITY_ALLOWED_ORIGINS:-http://localhost:3000}
@@ -178,7 +178,7 @@ services:
       start_period: 20s
       retries: 3
     networks:
-      - dehasoft-net
+      - app-net
 
   # ─────────────────────────────────────────────────────────────
   # Queue worker — same image, command override skips supervisord and
@@ -188,7 +188,7 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: dehasoft-queue-worker
+    container_name: app-queue-worker
     restart: unless-stopped
     command: ["php", "/var/www/artisan", "queue:work", "--queue=logs,default", "--tries=3", "--timeout=60", "--sleep=1"]
     # Queue worker has no HTTP listener — disable the inherited image
@@ -200,8 +200,8 @@ services:
       DB_HOST: postgres
       DB_PORT: 5432
       DB_DATABASE: ${POSTGRES_DB:-testproject}
-      DB_USERNAME: ${POSTGRES_USER:-dehasoft}
-      DB_PASSWORD: ${POSTGRES_PASSWORD:-dehasoft_pass}
+      DB_USERNAME: ${POSTGRES_USER:-app}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-app_pass}
       REDIS_CLIENT: predis
       REDIS_HOST: redis
       REDIS_PORT: 6379
@@ -219,7 +219,7 @@ services:
       redis: { condition: service_healthy }
       rabbitmq: { condition: service_healthy }
     networks:
-      - dehasoft-net
+      - app-net
 
   # ─────────────────────────────────────────────────────────────
   # Frontend (Next.js 16 standalone) — BFF + UI
@@ -228,7 +228,7 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    container_name: dehasoft-frontend
+    container_name: app-frontend
     restart: unless-stopped
     environment:
       # Internal Docker DNS — backend container exposes port 80 (nginx).
@@ -237,7 +237,7 @@ services:
       BACKEND_PROXY_SECRET: ${BACKEND_PROXY_SECRET}
       LOG_LEVEL: ${LOG_LEVEL:-info}
       NODE_ENV: ${NODE_ENV:-production}
-      NEXT_PUBLIC_APP_NAME: Dehasoft
+      NEXT_PUBLIC_APP_NAME: E-Ticaret Demo
       NEXT_PUBLIC_DEFAULT_CURRENCY: TRY
     ports:
       - "${FRONTEND_PORT:-3000}:3000"
@@ -251,7 +251,7 @@ services:
       start_period: 20s
       retries: 3
     networks:
-      - dehasoft-net
+      - app-net
 
   # ─────────────────────────────────────────────────────────────
   # Log service (Node.js/TypeScript) — RabbitMQ → Elasticsearch
@@ -263,7 +263,7 @@ services:
     build:
       context: ./log-service
       dockerfile: Dockerfile
-    container_name: dehasoft-log-service
+    container_name: app-log-service
     restart: unless-stopped
     environment:
       NODE_ENV: ${NODE_ENV:-production}
@@ -278,7 +278,7 @@ services:
       rabbitmq: { condition: service_healthy }
       elasticsearch: { condition: service_healthy }
     networks:
-      - dehasoft-net
+      - app-net
 
 # ─────────────────────────────────────────────────────────────
 volumes:
@@ -292,6 +292,6 @@ volumes:
     driver: local
 
 networks:
-  dehasoft-net:
+  app-net:
     driver: bridge
-    name: dehasoft-net
+    name: app-net

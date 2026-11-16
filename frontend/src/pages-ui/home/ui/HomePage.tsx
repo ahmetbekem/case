@@ -167,7 +167,7 @@ export function HomePage() {
       <section className="rounded-xl border border-slate-200 bg-gradient-to-br from-slate-50 to-white p-8 sm:p-12">
         <div className="max-w-3xl space-y-4">
           <span className="inline-flex items-center rounded-full bg-slate-900 px-3 py-1 text-xs font-medium text-white">
-            Dehasoft Test Projesi
+            E-Ticaret Demo Projesi
           </span>
           <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
             E-ticaret demo — auth, sepet, sipariş, multi-currency.

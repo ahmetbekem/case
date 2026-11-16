@@ -22,12 +22,12 @@ jobs:
         image: postgres:15-alpine
         env:
           POSTGRES_DB: testproject_test
-          POSTGRES_USER: dehasoft
-          POSTGRES_PASSWORD: dehasoft_pass
+          POSTGRES_USER: app
+          POSTGRES_PASSWORD: app_pass
         ports:
           - 5432:5432
         options: >-
-          --health-cmd "pg_isready -U dehasoft -d testproject_test"
+          --health-cmd "pg_isready -U app -d testproject_test"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
@@ -80,8 +80,8 @@ jobs:
           DB_HOST: 127.0.0.1
           DB_PORT: '5432'
           DB_DATABASE: testproject_test
-          DB_USERNAME: dehasoft
-          DB_PASSWORD: dehasoft_pass
+          DB_USERNAME: app
+          DB_PASSWORD: app_pass
           APP_ENV: testing
         run: php artisan migrate --force --no-interaction
 

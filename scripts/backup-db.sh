@@ -18,7 +18,7 @@
 #   Schedule::exec('bash /app/scripts/backup-db.sh')->dailyAt('02:00');
 #
 # Production'da S3/Minio sync için son adım:
-#   aws s3 sync $BACKUP_DIR s3://dehasoft-db-backups/$(hostname)/
+#   aws s3 sync $BACKUP_DIR s3://eticaret-demo-db-backups/$(hostname)/
 
 set -euo pipefail
 
@@ -27,7 +27,7 @@ BACKUP_DIR="${BACKUP_DIR:-./backups}"
 RETENTION_DAYS="${RETENTION_DAYS:-30}"
 DOCKER_SERVICE="${DOCKER_SERVICE:-postgres}"
 DB_NAME="${DB_NAME:-testproject}"
-DB_USER="${DB_USER:-dehasoft}"
+DB_USER="${DB_USER:-app}"
 
 # ─── Setup ───────────────────────────────────────────────────
 mkdir -p "$BACKUP_DIR/daily" "$BACKUP_DIR/monthly"

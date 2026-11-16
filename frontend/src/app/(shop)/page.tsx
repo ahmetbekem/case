@@ -1,7 +1,7 @@
 import { HomePage } from '@/pages-ui/home';
 
 export const metadata = {
-  title: 'Dehasoft — E-ticaret Demo',
+  title: 'E-Ticaret Demo',
   description:
     'Laravel + Next.js + RabbitMQ + Elasticsearch tabanlı e-ticaret test projesi.',
 };

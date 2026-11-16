@@ -5,15 +5,15 @@
 -- and tables inside it are populated by Laravel migrations during
 -- the test suite's RefreshDatabase trait.
 --
--- POSTGRES_USER (default: dehasoft) is granted ownership; the test
+-- POSTGRES_USER (default: app) is granted ownership; the test
 -- DB lives alongside the primary `testproject` DB on the same cluster.
 -- ─────────────────────────────────────────────────────────────
 
 CREATE DATABASE testproject_test
-    WITH OWNER = dehasoft
+    WITH OWNER = app
          ENCODING = 'UTF8'
          LC_COLLATE = 'en_US.utf8'
          LC_CTYPE = 'en_US.utf8'
          TEMPLATE = template0;
 
-GRANT ALL PRIVILEGES ON DATABASE testproject_test TO dehasoft;
+GRANT ALL PRIVILEGES ON DATABASE testproject_test TO app;

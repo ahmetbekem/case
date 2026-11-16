@@ -1,5 +1,5 @@
 {
-  "name": "@dehasoft/log-service",
+  "name": "@eticaret-demo/log-service",
   "version": "0.1.0",
   "private": true,
   "description": "RabbitMQ → Elasticsearch log consumer (audit, app, access)",

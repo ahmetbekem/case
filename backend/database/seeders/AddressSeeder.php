@@ -22,8 +22,8 @@ final class AddressSeeder extends Seeder
 {
     public function run(): void
     {
-        $customer = UserModel::query()->where('email', 'customer@dehasoft.test')->first();
-        $admin = UserModel::query()->where('email', 'admin@dehasoft.test')->first();
+        $customer = UserModel::query()->where('email', 'customer@example.test')->first();
+        $admin = UserModel::query()->where('email', 'admin@example.test')->first();
 
         if ($customer !== null) {
             $this->seedFor($customer->id, [

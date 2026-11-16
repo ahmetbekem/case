@@ -18,7 +18,7 @@ ADR-017 Guest Cart — login zorunlu değil; sadece sipariş için auth.
 3. Header'da sepet sayacı `1` görünür
 4. http://localhost:3030/cart → ürün listede; quantity arttır → backend snapshot
 5. **"Giriş Yap ve Sipariş Ver"** tıkla → /login?returnUrl=/checkout
-6. Login (`customer@dehasoft.test` / `Customer123!`)
+6. Login (`customer@example.test` / `Customer123!`)
 7. Auto-redirect → /checkout
    - URL'de `?merged=1` görünür → "Misafir sepetiniz hesabınızla birleştirildi" yeşil banner
    - Sepet hala dolu — guest cart user'a transfer edildi
@@ -41,7 +41,7 @@ ADR-017 Guest Cart — login zorunlu değil; sadece sipariş için auth.
 
 ### Akış C — Admin Akışı
 
-1. Login (`admin@dehasoft.test` / `Admin123!`)
+1. Login (`admin@example.test` / `Admin123!`)
 2. Header'da **"Admin"** dropdown → "Ürün Yönetimi" + "Sistem Ayarları"
 3. **/admin/products** — inline ekle/sil/stok ayarla
    - Currency picker **YOK** (ADR-016 tek base currency)
@@ -89,7 +89,7 @@ http://localhost:8000/api/documentation
 ```bash
 # Collection import
 ls docs/postman/
-# dehasoft.postman_collection.json + dehasoft.postman_environment.json
+# eticaret-demo.postman_collection.json + eticaret-demo.postman_environment.json
 ```
 
 - Login request'inde otomatik token-save script var → sonraki Bearer auth-aware request'ler hazır
@@ -101,7 +101,7 @@ ls docs/postman/
 # Login + cookie jar
 JAR=$(mktemp)
 curl -s -X POST -H "Content-Type: application/json" -c "$JAR" \
-  -d '{"email":"customer@dehasoft.test","password":"Customer123!"}' \
+  -d '{"email":"customer@example.test","password":"Customer123!"}' \
   http://localhost:3030/api/auth/login | jq
 
 # Adres listesi
@@ -229,10 +229,10 @@ ls backups/monthly/      # ayın 1'inde archive
 
 ### Restore (testproject_restore_test örneği)
 ```bash
-docker compose exec postgres createdb -U dehasoft testproject_restore_test
+docker compose exec postgres createdb -U app testproject_restore_test
 gunzip -c backups/daily/testproject_*.sql.gz \
-  | docker compose exec -T postgres psql -U dehasoft -d testproject_restore_test
-docker compose exec postgres psql -U dehasoft -d testproject_restore_test \
+  | docker compose exec -T postgres psql -U app -d testproject_restore_test
+docker compose exec postgres psql -U app -d testproject_restore_test \
   -c "SELECT count(*) FROM identity.addresses;"
 ```
 

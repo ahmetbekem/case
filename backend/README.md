@@ -45,7 +45,7 @@ php artisan l5-swagger:generate
 
 # Postman collection yenile (root'tan)
 cd .. && bash scripts/generate-postman-collection.sh
-# → docs/postman/dehasoft.postman_collection.json
+# → docs/postman/eticaret-demo.postman_collection.json
 ```
 
 Development env'de `L5_SWAGGER_GENERATE_ALWAYS=true` her request'te

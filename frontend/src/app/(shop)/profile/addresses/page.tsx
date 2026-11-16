@@ -1,7 +1,7 @@
 import { ProfileAddressesPage } from '@/pages-ui/profile-addresses';
 
 export const metadata = {
-  title: 'Adreslerim | Dehasoft',
+  title: 'Adreslerim | E-Ticaret Demo',
 };
 
 export default function Page() {

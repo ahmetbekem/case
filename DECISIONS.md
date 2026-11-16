@@ -113,7 +113,7 @@ Her karar şu yapıda:
 **Decision:** Frontend (browser) ASLA Laravel API'ye doğrudan istek atmaz. Tüm istekler Next.js BFF üzerinden geçer. Laravel public erişime kapalıdır.
 
 **Rationale:**
-- Dehasoft test brifinde "API endpoint exposure" güvenlik kriteri
+- Test brifinde "API endpoint exposure" güvenlik kriteri
 - BFF cookie management'ı kolaylaştırır
 - Backend versioning frontend'e sızmıyor
 

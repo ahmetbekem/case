@@ -20,14 +20,14 @@ final class UserSeeder extends Seeder
     public function run(): void
     {
         $this->seedUser(
-            email: 'admin@dehasoft.test',
+            email: 'admin@example.test',
             password: 'Admin123!',
             fullName: 'Demo Admin',
             role: 'admin',
         );
 
         $this->seedUser(
-            email: 'customer@dehasoft.test',
+            email: 'customer@example.test',
             password: 'Customer123!',
             fullName: 'Demo Customer',
             role: 'customer',

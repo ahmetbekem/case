@@ -43,6 +43,6 @@ export const serverEnv = {
  * forbidden here — the eslint banned-imports rule enforces it.
  */
 export const publicEnv = {
-  appName: process.env.NEXT_PUBLIC_APP_NAME ?? 'Dehasoft',
+  appName: process.env.NEXT_PUBLIC_APP_NAME ?? 'E-Ticaret Demo',
   defaultCurrency: process.env.NEXT_PUBLIC_DEFAULT_CURRENCY ?? 'TRY',
 } as const;

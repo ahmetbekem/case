@@ -22,6 +22,6 @@ export const useCurrencyStore = create<CurrencyStore>()(
       selected: 'TRY',
       setSelected: (selected) => set({ selected }),
     }),
-    { name: 'dehasoft.currency' },
+    { name: 'eticaret-demo.currency' },
   ),
 );
